@@ -6,7 +6,9 @@
 		public function WinConsoleLong(){
 			addEventListener(MouseEvent.CLICK,onClick,0,0,1);
 		}
-		public function onClick(e){visible=!visible}
+		public function onClick(e){
+			//visible=!visible
+		}
 		public function log(txt:String){
 			if(enabled){
 				tfLines.text+=txt+"\n";

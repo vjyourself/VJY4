@@ -153,11 +153,13 @@
 			invalidateGeometry();
 		}
 		var uvData : Vector.<Number>;
+		var data:Vector.<Number>;
 		var firstBuilt:Boolean = true;
+		var tt : CompactSubGeometry
 		protected override function buildGeometry(target : CompactSubGeometry):void
 		{
 			
-
+			tt=target;
 			var length=pathPos.length;
 
 			var numVerts : uint = length*(circSeg+2);
@@ -167,19 +169,13 @@
 			var vertexNormals : Vector.<Number>
 			//var vertexTangents : Vector.<Number>
 			var indices : Vector.<uint>
-			
-			if(firstBuilt){
+		
 				vertices = new Vector.<Number>(numVerts * 3, true);
 				vertexNormals = new Vector.<Number>(numVerts * 3, true);
 				//var vertexTangents : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
 				indices = new Vector.<uint>(numTriangles * 3, true);
 				uvData = new Vector.<Number>(numVerts*2, true);
-			}else{
-				vertices = target.vertexData;
-				vertexNormals = target.vertexNormalData;
-				//tangents = target.vertexTangentData;
-				indices = target.indexData;
-			}
+		
 			 /*
 			var vertices : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
 			var vertexNormals : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
@@ -190,7 +186,7 @@
 			
 			//if(firstBuilt){
 			
-			if(true){
+	
 			//vertex
 			var vind=0;
 			var uind=0;
@@ -199,7 +195,7 @@
 			var vc:Vector3D = new Vector3D();
 			var nc:Vector3D = new Vector3D();
 			var uv2=0;var uv2Inc=1/((pathPos.length-1)/2);
-			trace("UV2INC::"+uv2Inc);
+			//trace("UV2INC::"+uv2Inc);
 			
 			var shiftii=0;
 			var mulRadius=1;
@@ -234,9 +230,9 @@
 				uv2+=uv2Inc;
 				if((uv2==1)||(uv2==0)) uv2Inc*=-1;
 			}
-			}
 			
-			if(firstBuilt){
+			
+			
 			//index
 			var iind=0;
 			//var divCirc=holesCirc+facesCirc;
@@ -267,11 +263,11 @@
 					
 				}
 			}
-			target.updateIndexData(indices);
-			}
 			
-			target.autoDeriveVertexTangents=true;
-			var data=new Vector.<Number>(numVerts * 13, true);
+			
+			
+			//target.autoDeriveVertexTangents=true;
+			data=new Vector.<Number>(numVerts * 13, true);
 			for(var i=0;i<numVerts;i++){
 				data[i*13+0]=vertices[i*3+0];
 				data[i*13+1]=vertices[i*3+1];
@@ -290,13 +286,14 @@
 			}
 			target.updateData(data);
 			
+				target.updateIndexData(indices);
 			//target.autoDeriveVertexNormals=true;
-			//target.autoDeriveVertexTangents=true;
+			
 			//target.updateVertexData(vertices);
 			//target.updateVertexNormalData(vertexNormals);
 			//target.updateVertexTangentData(vertexTangents);
 			
-			firstBuilt=false;
+			
 		}
 		
 		public function getPosition(sideInd,perc):Object{
@@ -321,8 +318,10 @@
 		public function getPositionCirc(sideInd,perc):Object{
 			var pos={x:0,y:0}
 			//if(circRandom>0)mulRadius=1-Math.random()*circRandom;
-			pos.x=Math.sin((sideInd+perc)*Math.PI)*radius;
-			pos.y=Math.cos((sideInd+perc)*Math.PI)*radius;
+			//pos.x=Math.sin((sideInd+perc)*Math.PI)*radius;
+			//pos.y=Math.cos((sideInd+perc)*Math.PI)*radius;
+			pos.x=radius*(1-perc*2);//(Math.random()*2-1)*radius;
+			pos.y=(Math.random()*2-1)*50-100;
 			return pos;
 		}
 
@@ -342,5 +341,117 @@
 			}*/
 			//target.updateUVData(uvData);
 		}
+		public var spritesDiv:Number=4;
+		public var spritesX:Number=0;
+		public var spritesY:Number=0;
+		public var spritesCC:Number=0;
+		var uvs0:Vector.<Number>;
+		var uvs1:Vector.<Number>;
+		public var aniPerc:Number=0;
+		public var aniPerc2:Number=0;
+
+		public function onEF(e=null){		
+			if((shiftAniVal!=0)||(zoomVal!=1)||(zoomYVal!=1)||(distroVal!=0)){
+					
+			}
+			onEFShiftZoomDistro();
+		}
+
+		var verts:int=0;
+		function saveOriginalValues(){
+			if(uvs0==null){
+				verts=data.length/13;
+				uvs0=new Vector.<Number>(verts*2,true);
+				for(var i=0;i<verts;i++){
+					uvs0[i*2+0]=data[i*13+9];
+					uvs0[i*2+1]=data[i*13+10];
+				}
+			}
+		}
+
+		public var distroVal:Number=0;
+		public var zoomVal:Number=1;
+		public var zoomYVal:Number=1;
+		public var shiftVal:Number=0;
+		public var shiftAniVal:Number=100;
+		public function onEFShiftZoomDistro(e=null){	
+			saveOriginalValues();
+
+			//aniPerc2+=aniPerc/100;if(aniPerc2>10000)aniPerc2-=10000;
+			if(!distroInit){
+				uvs1=new Vector.<Number>(verts*2,true);
+				for(var i=0;i<verts;i++){
+					uvs1[i*2+0]=Math.random();
+					uvs1[i*2+1]=Math.random();
+				}
+				distroInit=true;
+			}else{
+				for(var i=0;i<verts;i++){
+					uvs1[i*2+0]+=(Math.random()*2-1)*0.05;
+					uvs1[i*2+1]+=(Math.random()*2-1)*0.05;
+				}
+			}
+			shiftVal+=shiftAniVal/150; if(shiftVal>1) shiftVal-=1;
+			for(var i=0;i<verts;i++) {
+				data[i*13+9]=uvs0[i*2+0]*zoomVal+shiftVal*zoomVal+distroVal*distroVal*uvs1[i*2]*zoomVal;
+				data[i*13+10]=(uvs0[i*2+1]+shiftVal+distroVal*distroVal*uvs1[i*2+1])*zoomVal*zoomYVal;
+			}
+			tt.updateData(data);
+		}
+
+		var distroInit:Boolean=false;
+		public function onEFDistroNoise(e=null){
+			saveOriginalValues();
+			if(!distroInit){
+				uvs1=new Vector.<Number>(verts*2,true);
+				for(var i=0;i<verts;i++){
+					uvs1[i*2+0]=Math.random();
+					uvs1[i*2+1]=Math.random();
+				}
+				distroInit=true;
+			}else{
+				for(var i=0;i<verts;i++){
+					uvs1[i*2+0]+=(Math.random()*2-1)*0.05;
+					uvs1[i*2+1]+=(Math.random()*2-1)*0.05;
+				}
+			}
+
+			for(var i=0;i<verts;i++) {
+				//rnd vibes
+				//data[i*13+9]=(uvs0[i*2+0]+0.3*aniPerc*Math.random());
+				//data[i*13+10]=(uvs0[i*2+1]+0.3*aniPerc*Math.random());
+				data[i*13+9]=(uvs0[i*2+0]+distroVal*distroVal*uvs1[i*2]);
+				data[i*13+10]=(uvs0[i*2+1]+distroVal*distroVal*uvs1[i*2+1]);
+			}
+			tt.updateData(data);
+		}
+
+			//SPRITE ANIM
+			/*
+			spritesCC++
+			if(spritesCC>3){
+				spritesCC=0;
+			
+			var verts=data.length/13;
+			if(uvs0==null){
+				uvs0=new Vector.<Number>(verts*2,true);
+				for(var i=0;i<verts;i++){
+					uvs0[i*2+0]=data[i*13+9]/spritesDiv;
+					uvs0[i*2+1]=data[i*13+10]/spritesDiv;
+				}
+			}
+			
+			spritesX++;if(spritesX>=spritesDiv){ spritesX=0;spritesY++}
+			if(spritesY>=spritesDiv){spritesX=0;spritesY=0}
+			for(var i=0;i<verts;i++) {
+				data[i*13+9]=(uvs0[i*2+0]+spritesX/spritesDiv);
+				//if(data[i*13+9]>1)data[i*13+9]-=1;
+				data[i*13+10]=(uvs0[i*2+1]+spritesY/spritesDiv);
+				//if(data[i*13+10]>1)data[i*13+10]-=1;
+			}
+			
+			tt.updateData(data);
+		}*/
+		
 	}
 }

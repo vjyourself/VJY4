@@ -119,7 +119,7 @@
 						//temp rechanel...
 					code.wf.color=context.getNext({type:"color",stream:"A"});
 					//code.wf.color=0;
-				}
+					}
 					var wf = new WireframePipeLegacy(poss,code.path.rot,code.params,code.wf);
 					wf.x=pos0.x;
 					wf.y=pos0.y;

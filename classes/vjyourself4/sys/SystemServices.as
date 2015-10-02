@@ -189,7 +189,7 @@
 				video = new Video();
 				init2b();
 			}
-			function init2b(e=null){
+		function init2b(e=null){
 				//cloud
 				if(params.cloud!=null){
 					log(1,"Cloud");

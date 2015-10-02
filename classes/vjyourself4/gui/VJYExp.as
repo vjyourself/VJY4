@@ -7,8 +7,12 @@
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.utils.getDefinitionByName;
+	import flash.display.BitmapData;
+	import flash.media.CameraRoll;
 
 	public class VJYExp  extends Sprite{
+		var cameraRoll:CameraRoll;
+			
 		public var _debug:Object;
 		public var _meta:Object={name:""};
 		public function setDLevels(l1,l2,l3,l4){dLevels=[l1,l2,l3,l4];}
@@ -22,6 +26,9 @@
 		var winLanding:Sprite;
 		var scenes:Array;
 		var buttMenu;
+		var buttHelp;
+		var buttReset;
+		var buttScreenShot;
 		var overlayCtrls:VJYOverlayCtrl;
 		public var state:String="";
 
@@ -56,18 +63,6 @@
 		public function start(){
 			
 			state="start";
-			//setState("menu");
-			trace("mikk");
-			trace("#################################################");
-			//trace(JSON.stringify(sys.cloud.scenes));
-			/*
-			if(sys.input.gamepad_enabled){
-				sys.input.gamepadManager.events.addEventListener("Gamepad0_RB",doShot,0,0,1);
-			}*/
-			//console.visible=false;
-			//console.enabled=false;
-			//console.clear();
-			//removeChild(console as Sprite);
 			
 			overlayCtrls= new VJYOverlayCtrl();
 			overlayCtrls.wDimX=wDimX;
@@ -82,7 +77,10 @@
 				overlayCtrls.visible=false;
 				var cWinLanding:Class = getDefinitionByName("WinLanding") as Class;
 				var cMenuItem = getDefinitionByName("MenuItem") as Class;
-				var cButtTriMenu = getDefinitionByName("ButtTriMenu") as Class;
+				var cButtMenu = getDefinitionByName("ButtCircMenu") as Class;
+				var cButtHelp = getDefinitionByName("ButtCircHelp") as Class;
+				var cButtScreenShot = getDefinitionByName("ButtCircScreenShot") as Class;
+				var cButtReset = getDefinitionByName("ButtCircReset") as Class;
 			winLanding = new cWinLanding();
 			addChild(winLanding);
 			winLanding["mid"].visible=false;
@@ -94,102 +92,71 @@
 				var img=new imgc();
 				mm.img.addChild(img);
 				mm.tf.text=sys.cloud.RScenes.NS[scenes[i].name].name;
-				mm.x=85+(i%2)*183;
-				mm.y=240+(Math.floor(i/2))*115;
+
+				mm.x=45+(i%3)*145-280;
+				mm.y=305+(Math.floor(i/3))*145-280;
 				mm.butt.addEventListener(MouseEvent.CLICK,onMenuItem,0,0,1);
 				mm.name=i;
 				winLanding["mid"].addChild(mm);
 			}
-			buttMenu = new cButtTriMenu();
-			buttMenu.x=15;
-			buttMenu.y=15;
+
+			buttMenu = new cButtMenu();
 			buttMenu.addEventListener(MouseEvent.CLICK,onMenu,0,0,1);
 			buttMenu.visible=false;
 			addChild(buttMenu);
+			buttHelp = new cButtHelp();
+			buttHelp.addEventListener(MouseEvent.CLICK,onHelp,0,0,1);
+			buttHelp.visible=false;
+			addChild(buttHelp);
+			buttScreenShot = new cButtScreenShot();
+			buttScreenShot.addEventListener(MouseEvent.CLICK,onScreenShot,0,0,1);
+			buttScreenShot.visible=false;
+			addChild(buttScreenShot);
+			buttReset = new cButtReset();
+			buttReset.addEventListener(MouseEvent.CLICK,onReset,0,0,1);
+			buttReset.visible=false;
+			addChild(buttReset);
+
 			}
-			// winLanding.buttStart.addEventListener(MouseEvent.CLICK,onStart,0,0,1);
-			//winLanding.buttFullscreen.addEventListener(MouseEvent.CLICK,onFullScreen,0,0,1);
-			//winLanding.buttSubmit.addEventListener(MouseEvent.CLICK,onSubmit,0,0,1);
 			
-			/*
-			boxControl = new BoxControl();
-			addChild(boxControl);
-			boxControl.buttMenu.addEventListener(MouseEvent.CLICK,onMenu,0,0,1);
-			boxControl.visible=false;
-			sys.screen.events.addEventListener(Event.RESIZE,onResize,0,0,1);
-			
-			boxArtist = new BoxArtist();
-			addChild(boxArtist);
-			boxArtist.visible=false;
-			
-			//get artists
-			var ca=sys.cloud.C3D.NS["Artists"];
-			artists=[];
-			for(var i=1;i<ca.length;i++) {artists.push(ca[i]);trace("AAA:"+ca[i].name);}
-			
-			var xx=0;var yy=0;
-			for(var i=0;i<artists.length;i++){
-				var it=new ItemArtist();
-				it.tfName.text=artists[i].name;
-				winLanding.addChild(it);
-				it.x=60+xx*174;
-				it.y=164+yy*34;
-				it.butt.addEventListener(MouseEvent.CLICK,onStart,0,0,1);
-				it.name=i;
-				xx++;if(xx>=2){xx=0;yy++}
-			}
-			*/
 			onResize();
 			aniInit_run=true;
 			onEF();
-			//consoleMini.visible=false;
+			
 		}
-		function onMenuItem(e:MouseEvent){
-			var ind=e.target.parent.name;
-			trace("!!!!!!!!!!!!!!!"+ind);
-			ns.scene.setScene(scenes[ind].name,{"rebuild":true,"sceneFlags":true});
-			winLanding.visible=false;
-			buttMenu.visible=true;
-			overlayCtrls.updateScene();
-			overlayCtrls.visible=true;
-		}
-		function onMenu(e){
-			overlayCtrls.visible=false;
-			buttMenu.visible=false;
-			winLanding.visible=true;
-		}
+		var sButtMenu=1;
 		public function onResize(e=null){
 			wDimX=sys.screen.wDimX;
 			wDimY=sys.screen.wDimY;
 			
-			/*
-			shade.x=0;
-			shade.width=sys.screen.wDimX;
-			shade.height=sys.screen.wDimY;
-			
-			boxControl.x=0;
-			boxControl.y=sys.screen.wDimY-34;
-			boxArtist.x=(sys.screen.wDimX-boxArtist.width)/2;
-			boxArtist.y=-2;
-			*/
-			
-			var sButtMenu=wDimY/768;
+			sButtMenu=wDimY/768;
 			
 			buttMenu.scaleX=sButtMenu;
 			buttMenu.scaleY=sButtMenu;
+			buttHelp.scaleX=sButtMenu;
+			buttHelp.scaleY=sButtMenu;
+			buttScreenShot.scaleX=sButtMenu;
+			buttScreenShot.scaleY=sButtMenu;
+			buttReset.scaleX=sButtMenu;
+			buttReset.scaleY=sButtMenu;
 			
 			buttMenu.x=15;
 			buttMenu.y=15;
-
-
+			buttHelp.x=wDimX-15-buttHelp.width;
+			buttHelp.y=15;
+			buttScreenShot.x=15;
+			buttScreenShot.y=wDimY-15-buttScreenShot.height;
+			buttReset.x=wDimX-15-buttReset.width;
+			buttReset.y=wDimY-15-buttReset.height;
+			
 			winLanding.x=0;
 			winLanding.y=0;
 			//mid
 			var sMid:Number=wDimY/768;
 			winLanding["mid"].scaleX=sMid;
 			winLanding["mid"].scaleY=sMid;
-			winLanding["mid"].x=(wDimX-560)/2;
-			winLanding["mid"].y=(wDimY-550)/2;
+			winLanding["mid"].x=wDimX/2;
+			winLanding["mid"].y=wDimY/2;
 			
 			winLanding["shade"].width=wDimX;
 			winLanding["shade"].height=wDimY/24;
@@ -203,9 +170,6 @@
 			winLanding["shade2"].y=0;
 			winLanding["shade2"].visible=false;
 			
-			
-
-
 			overlayCtrls.wDimX=wDimX;
 			overlayCtrls.wDimY=wDimY;
 			overlayCtrls.onResize();
@@ -213,7 +177,56 @@
 			sys.input.wLimTop=overlayCtrls.wLimTop;
 			sys.input.wLimBottom=overlayCtrls.wLimBottom;
 		}
+
+		public function openNextScene(){
+			openScene(sceneInd+1);
+		}
+		function onMenuItem(e:MouseEvent){
+			var ind=e.target.parent.name;
+			trace("!!!!!!!!!!!!!!!"+ind);
+			openScene(ind);
+		}
+		var sceneInd:Number=0;
+		function openScene(ind){
+			sceneInd=(ind%scenes.length);
+			ns.scene.setScene(scenes[sceneInd].name,{"rebuild":true,"sceneFlags":true});
+			winLanding.visible=false;
+			buttMenu.visible=true;
+			buttHelp.visible=true;
+			buttScreenShot.visible=true;
+			buttReset.visible=true;
+			overlayCtrls.updateScene();
+			overlayCtrls.visible=true;
+		}
+		function onMenu(e){
+			overlayCtrls.visible=false;
+			buttMenu.visible=false;
+			winLanding.visible=true;
+			buttHelp.visible=false;
+			buttScreenShot.visible=false;
+			buttReset.visible=false;
+		}
+		function onHelp(e){
+			overlayCtrls.toggleHelp();
+		}
+		function onReset(e){
+			overlayCtrls.reset();
+		}
+		function onScreenShot(e){
+			var win = new OverlayScreenshot();
+			win.x=wDimX/2;
+			win.y=wDimY/2;
+			win.scaleX=sButtMenu;
+			win.scaleY=sButtMenu;
+			addChild(win);
+			if(cameraRoll==null) cameraRoll = new CameraRoll();
+			var bmpD:BitmapData=ns.sys.screen.getScreenShot();
+			cameraRoll.addBitmapData(bmpD);
+			bmpD.dispose();
+		}
+		
 		public function onEF(e=null){
+		//	winLanding["shade"].visible=false;
 			if(state=="start"){
 				overlayCtrls.onEF();
 				if(aniInit_run){

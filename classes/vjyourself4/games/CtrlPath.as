@@ -62,7 +62,7 @@
 		public var cameraRotZ:Number=0;
 		public var pathRot:Matrix3D;
 		
-		public var beforeMe:Number=2400;
+		public var beforeMe:Number=5400;
 		public var afterMe:Number=200;
 
 		public var cameraMode:String="beginning";

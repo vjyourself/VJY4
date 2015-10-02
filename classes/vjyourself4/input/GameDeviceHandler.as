@@ -76,10 +76,20 @@
 				state.RB=cs.RB.value == 1;
 				state.Start=cs.Start.value == 1;
 				state.Back=cs.Back.value == 1;
-				state.Left=cs.Left.value == 1;
-				state.Right=cs.Right.value == 1;
-				state.Up=cs.Up.value == 1;
-				state.Down=cs.Down.value == 1;
+				switch(calibr.DPad){
+					case "BUTTON":
+					state.Left=cs.Left.value == 1;
+					state.Right=cs.Right.value == 1;
+					state.Up=cs.Up.value == 1;
+					state.Down=cs.Down.value == 1;
+					break;
+					case "AXIS":
+					state.Left=cs.Left.value == -1;
+					state.Right=cs.Right.value == 1;
+					state.Up=cs.Up.value == 1;
+					state.Down=cs.Down.value == -1;
+					break;
+				}
 				
 			}
 		}
@@ -109,10 +119,17 @@
 			//RS:"BUTTON_107",
 			Start:"",
 			Back:"",
+			/*
 			Up:"BUTTON_19",
 			Down:"BUTTON_20",
 			Left:"BUTTON_21",
 			Right:"BUTTON_22"
+			*/
+			Up:"AXIS_16",
+			Down:"AXIS_16",
+			Left:"AXIS_15",
+			Right:"AXIS_15"
+			
 		}
 		public static var calibr_Linux_NVIDIA ={
 			LeftStick_X:1,
@@ -121,7 +138,8 @@
 			RightStick_Y:-1,
 	
 			LeftTrigger:{fullRange:false,a:true},
-			RightTrigger:{fullRange:false,a:true}
+			RightTrigger:{fullRange:false,a:true},
+			DPad:"AXIS"
 			
 		}
 		// **** Linux (Android) - OUYA ****************************************************************
@@ -156,7 +174,8 @@
 			RightStick_Y:1,
 	
 			LeftTrigger:{fullRange:false,a:true},
-			RightTrigger:{fullRange:false,a:true}
+			RightTrigger:{fullRange:false,a:true},
+			DPad:"BUTTON"
 			
 		}
 		// **** MAC - XBOX ****************************************************************
@@ -189,7 +208,8 @@
 			RightStick_Y:-1,
 	
 			LeftTrigger:{fullRange:true,a:true},
-			RightTrigger:{fullRange:true,a:true}
+			RightTrigger:{fullRange:true,a:true},
+			DPad:"BUTTON"
 			
 		}
 		
@@ -225,7 +245,8 @@
 	
 			//fullrange -1 - 1 ; normal 0 -1 --- a:analouge
 			LeftTrigger:{fullRange:false,a:true},
-			RightTrigger:{fullRange:false,a:true}
+			RightTrigger:{fullRange:false,a:true},
+			DPad:"BUTTON"
 			
 		}
 		

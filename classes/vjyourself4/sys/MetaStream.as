@@ -46,7 +46,12 @@
 					if(show){
 						var txt=name+"> "+msg;
 						trace(txt);
-						if(console!=null) console.log(txt);
+						if(console!=null){
+							console.log(txt);
+							if(msg.substr(0,7)=="Resize "){
+								if(console["tfSide"]!=null) console["tfSide"].text=msg.substr(7);
+							}
+						}
 						if(consoleMini!=null) consoleMini.tf.text=txt;
 					}
 			}

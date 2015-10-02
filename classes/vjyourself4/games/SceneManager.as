@@ -108,6 +108,14 @@
 			log(2,"< Fore Comps >");
 			ns.fore.build(currScene.state.fore);
 
+			//filter
+			log(2,"< Filter >");
+			if(currScene.state.filter!=null){
+				ns.filter.setParams(currScene.state.filter);
+			}else{
+				ns.filter.setParams("Normal");
+			}
+
 			ns.sceneVary.evalObjPath();
 			ns.sceneVary.autoEvalObjPath=true;
 

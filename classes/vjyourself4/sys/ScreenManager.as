@@ -138,6 +138,15 @@
 		public function quitApp(e=null){
 			fscommand("quit");
 		}
+		public function getScreenShot():BitmapData{
+			var bmpDSS = new BitmapData(wDimX,wDimY,false,0);
+			if(view!=null){
+				view.renderer.queueSnapshot(bmpDSS);
+				//view.renderer.swapBackBuffer = false;
+				view.render();
+			}
+			return bmpDSS;
+		}
 		public function saveScreenShot(e=null){
 			if(view!=null){
 				var bmpDSS = new BitmapData(wDimX,wDimY,false,0);

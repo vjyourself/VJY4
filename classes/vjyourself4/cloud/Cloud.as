@@ -674,7 +674,9 @@ package vjyourself4.cloud{
 				cont.scene={l:scenes,e:RScenes.NS,m:RScenes}
 				cont.color={l:colors,e:CCol.NS,m:CCol}
 				cont.texture={l:themes,e:R3D.NS,m:R3D}
+				cont.ImageSequence={l:themes,e:C3D.NS,m:C3D}
 				cont.spaceG={l:spacesG,e:spaces};
+				cont.space={l:spaces,e:RPrg.NS.cont.programs.path};
 				
 				//first init
 				log(1,"COMPLETE");

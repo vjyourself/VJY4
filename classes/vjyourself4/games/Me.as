@@ -26,7 +26,7 @@
 		public var pos:Vector3D = new Vector3D();
 		public var rot:Matrix3D = new Matrix3D();
 		
-		var gui:GUIMe;
+		//var gui:GUIMe;
 		/*
 		public var x:Number=0;
 		public var y:Number=0;
@@ -54,6 +54,8 @@
 		}
 
 		public function nextCameraMode(){
+			if(cameraMode=="inside")cameraMode="outside";
+			else cameraMode="inside";
 			/*
 			cameraAnglesInd=(cameraAnglesInd+1)%cameraAngles.length;
 			cameraAngle=cameraAngles[cameraAnglesInd];
@@ -118,7 +120,7 @@
 				break;
 			}
 			
-			if(gui) gui.tfPos.text=Math.floor(pos.x)+" / "+Math.floor(pos.y)+" / "+Math.floor(pos.z);
+			//if(gui) gui.tfPos.text=Math.floor(pos.x)+" / "+Math.floor(pos.y)+" / "+Math.floor(pos.z);
 		}
 		
 		public function toOrigo(){

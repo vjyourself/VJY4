@@ -30,12 +30,12 @@
 
 		var gamepad;
 		public var mode:String="GamepadMulti";
-		public var type:String="Live";
+
 		public function Grammar(){}
 		
 		public function init(){
 			if(params.mode!=null) mode=params.mode;
-			if(params.type!=null) type=params.type;
+	
 			if(params.bind!=null){
 				if(params.bind.vary!=null) vary_path=params.bind.vary; 
 				if(params.bind.anal!=null) anal_path=params.bind.anal;	
@@ -44,34 +44,19 @@
 			setBind("anal",anal_path);
 			if(ns.sys.input.gamepad_enabled){
 			switch(mode){
-				case "GamepadSingle":
+				case "SinglePlayer":
 				gamepad = new GamepadSingle();
 				gamepad.ns=ns;
 				gamepad.events.addEventListener("Trig",onTrig);
-				switch(type){
-					
-					case "Discovery":
-					//DEF
-					gamepad.analNum=6;
-					gamepad.analPage_num=3;
-					gamepad.analPage_mode="step";
-					gamepad.analPage_butt="LB";
-					
-					gamepad.trigNum=8;
-					gamepad.trigPage_num=1;
-					gamepad.trigPage_mode="combo";
-					gamepad.trigPage_butt="LB";
-					gamepad.trigButtons=["Up","Right","Down","Left","X","Y","A","B"];
-					if(params.gamepadParams!=null) for(var i in params.gamepadParams) gamepad[i]=params.gamepadParams[i];
-					break;
-				}
+				gamepad.params=params.gamepadSingle;
 				gamepad.init();
 				break;
-				case "GamepadMulti":
+				case "MultiPlayer":
 				gamepad = new GamepadMulti();
 				gamepad.ns=ns;
-				gamepad.init();
+				gamepad.params=params.gamepadMulti;
 				gamepad.events.addEventListener("Trig",onTrig);
+				gamepad.init();
 				break;
 			}
 			}else{
@@ -107,44 +92,15 @@
 			//trace("SDFSFSDFSDFSDF");
 			//trace(mode);
 			switch(mode){
-				case "GamepadSingle":
+				case "SinglePlayer":
 				gamepad.onEF(e);
 				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) ns.scene.anal.setInput(i,gamepad.anal[i]);
-			/*
-				ns.mid.cs.GP.synthPath.type.setInput(0,gamepad.anal[0][0]);
-				ns.mid.cs.GP.synthPath.type.setInput(1,gamepad.anal[0][1]);
-				ns.mid.cs.GP.synthPath.type.setInput(4,gamepad.anal[0][2]);
-				ns.mid.cs.GP.synthPath.type.setInput(5,gamepad.anal[0][3]);
-
-				ns.mid.cs.GP.synthPath.type.setInput(2,gamepad.anal[1][0]);
-				ns.mid.cs.GP.synthPath.type.setInput(3,gamepad.anal[1][1]);
-				ns.mid.cs.GP.synthPath.type.setInput(6,gamepad.anal[1][2]);
-				ns.mid.cs.GP.synthPath.type.setInput(7,gamepad.anal[1][3]);
-		
-				ns.fore.cs.overlay.setInput(0,gamepad.anal[2][0]);
-				ns.fore.cs.overlay.setInput(1,gamepad.anal[2][1]);
-				ns.fore.cs.overlay.setInput(2,gamepad.anal[2][2]);
-				ns.fore.cs.overlay.setInput(3,gamepad.anal[2][3]);
-
-				ns.back.cs.ctrlSky.setInput(0,gamepad.anal[3][0]);
-				ns.back.cs.gridBox.setInput(0,gamepad.anal[3][1]);
-			*/
 				break;
 
-				case "GamepadMulti":
+				case "MultiPlayer":
 				gamepad.onEF(e);
-				
-				if(gamepad.anal[0][0]!=0) ns.scene.anal.setInput(0,gamepad.anal[0][0]);
-				if(gamepad.anal[0][1]!=0) ns.scene.anal.setInput(1,gamepad.anal[0][1]);
-				if(gamepad.anal[1][0]!=0) ns.scene.anal.setInput(2,gamepad.anal[1][0]);
-				if(gamepad.anal[1][1]!=0) ns.scene.anal.setInput(3,gamepad.anal[1][1]);
-
-				ns.scene.anal.setInput(4,gamepad.anal[0][2]);
-				ns.scene.anal.setInput(5,gamepad.anal[0][3]);
-				ns.scene.anal.setInput(6,gamepad.anal[1][2]);
-				ns.scene.anal.setInput(7,gamepad.anal[1][3]);
-
-				
+				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) ns.scene.anal.setInput(i,gamepad.anal[i]);
+			
 				break;
 			}
 

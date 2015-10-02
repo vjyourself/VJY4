@@ -105,6 +105,7 @@
 						//SINGLE e,i,v
 						}else{
 							ch.nested=false;
+							if(chm.val_type!=null) ch.val_type=chm.val_type;
 							if(chm.vals is String){
 								vals=[];
 								var cv=ns._sys.cloud.cont[chm.vals].l;
@@ -176,6 +177,21 @@
 			}
 			return s;
 		}
+		public function getVal(ch){
+			return channels[ch].v;
+		}
+		public function getValName(ind){
+			var ch=channels[ind];
+			if(ch.val_type!=null){
+				var e=ns._sys.cloud.cont[ch.val_type].e;
+				if(ch.val_type=="space"){
+					return e["Prg"+ch.v].n;
+				}else{
+					var el=e[ch.v];
+					return el[0].n;
+				}
+			}else return ch.v
+		}
 		public function next(ind:Number,lev:Number=0){
 			trace("NEXT",ind,lev,channels.length);
 			if(ind<channels.length){
@@ -200,7 +216,7 @@
 					trace("VARY");
 					trace(ch.e);
 					trace(ch.v);
-					
+					trace(ch.prop,ch.v);
 					ch.obj.compParams.setParam(ch.prop,ch.v);
 					break;
 					case "func":

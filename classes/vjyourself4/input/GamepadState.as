@@ -10,6 +10,7 @@
 		public var state={};
 		public var ind:int=0;
 		public var changed:Boolean=false;
+		public var fireGlobal:Boolean=false;
 		
 		public function GamepadState():void
 		{
@@ -23,7 +24,8 @@
 			changed=false;
 			for(var i=0;i<buttons.length;i++)if(!state[buttons[i]]&&n[buttons[i]]) { 
 				events.dispatchEvent(new Event("Gamepad"+ind+"_"+buttons[i]));
-				events.dispatchEvent(new DynamicEvent("GamepadButton",{ind:ind,button:buttons[i]}));
+				if(fireGlobal) events.dispatchEvent(new DynamicEvent("GamepadButton",{ind:ind,button:buttons[i]}));
+				events.dispatchEvent(new DynamicEvent("GamepadButton"+ind,{ind:ind,button:buttons[i]}));
 				changed=true;
 			}
 			changed=changed||(state.LeftTrigger!=n.LeftTrigger);

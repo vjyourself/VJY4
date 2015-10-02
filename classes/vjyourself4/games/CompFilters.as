@@ -19,13 +19,14 @@
 		
 		var ind:Number=0;
 		var filters:Array;
-		var ff:Array;
+		var ff:Array=[];
 		var filterOn:Boolean=false;
 		var filterCC:Number=0;
 		var filterDelay:Number=60*10;
 		var active:Boolean=false;
 		var autoOff:Object;
 		var firstSet:Boolean=true;
+		var type:String="Normal";
 		public function CompFilters(){
 			away3d.filters.BlurFilter3D;
 			away3d.filters.RadialBlurFilter3D;
@@ -68,6 +69,7 @@
 								//filters.push([]);
 			}
 			*/
+			setParams(params);
 		}
 		public function setParam(n,v){
 			switch(n){
@@ -80,20 +82,24 @@
 			}
 		}
 		public function setVal(name:String){
-			var code=ns.cloud.RFilters.NS[name];
-			if(ff!=null){
-				for(var i=0;i<ff.length;i++)ff[i].dispose();
-				ff[i]=null;
-			}
-			ff=[];
-			for(var i=0;i<code.length;i++) ff.push(Assembler.createObject(code[i]));
-			if(firstSet){
-				//filter can't be set on the first frame... >> will cause crazy error
-				active=true;
-				filterCC=0;
-				firstSet=false;
-			}else{
-				ns.view.filters3d=ff;
+			if(type!=name){
+				var code=ns.cloud.RFilters.NS[name];
+				if(ff!=null){
+					for(var i=0;i<ff.length;i++){
+						ff[i].dispose();
+						ff[i]=null;
+					}
+				}
+				ff=[];
+				for(var i=0;i<code.length;i++) ff.push(Assembler.createObject(code[i]));
+				if(firstSet){
+					//filter can't be set on the first frame... >> will cause crazy error
+					active=true;
+					filterCC=0;
+					firstSet=false;
+				}else{
+					ns.view.filters3d=ff;
+				}
 			}
 		}
 		/*

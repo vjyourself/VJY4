@@ -93,12 +93,14 @@
 		
 			elems.up.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha),Math.cos(alpha),0));
 			elems.down.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(-alpha),Math.cos(-alpha),0));
+			if(rhythm!=null){
 			if(rhythm.counter[1]==0){
 				elems.up.l.color=0;
 				elems.down.l.color=colorDown;
 			}else{
 				elems.up.l.color=colorUp;
 				elems.down.l.color=0;
+			}
 			}
 		}
 	}
