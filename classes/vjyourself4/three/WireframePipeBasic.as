@@ -1,4 +1,4 @@
-﻿package vjyourself4.three
+package vjyourself4.three
 {
 	import flash.geom.Vector3D;
 	import flash.geom.Matrix3D;
@@ -18,52 +18,51 @@
 		public var pathRot:Array;
 		
 
-		public var segNum:Number=12;
-		public var segWidth:Number=360;
-		public var segShift0:Number=0;
-		public var segShiftInc:Number=0;
+		public var segCount:Number=12;
+		public var segLoop:String="auto";
+		var slp:Boolean=true;
 
-		public var rotZ0:Number=0;
-		public var x0:Number=0;
-		public var y0:Number=0;
-		public var wave:String="";
+		public var angleSpread:Number=360;
+		public var angleStart:Number=0;
+		public var angleShift:Number=0;
+		
+		public var box0:Object;
+		public var box1:Object;
+		var box:Object={width:240,height:240,x:0,y:0};
+		var boxChange:Boolean = false;
+		var boxDelta:Object={};
 		
 		public var shape:String="circle";
-		public var lines:Object={plane:true,planeClose:true,planeLoop:true,long:true}
+		public var lines:Object={plane:true,planeClose:true,planeFirst:false,long:true}
+		public var scaleDown:Number=1;
 
-		public var circleParams:Object={radius:120,radiusRandom:0};
-		public var planeParams:Object={width:120,heightRandom:0};
-		public var randomParams:Object={width:120,height:120};
-		public var sinParams:Object={width:120,height:120,freqX:1,freqY:1};
-		public var starParams:Object={radiusOut:120,radiusIn:60}
+		public var circleParams:Object={};
+		public var planeParams:Object={};
+		public var sinParams:Object={freqX:1,freqY:1};
+		public var starParams:Object={innerPerc:0.6}
 
+		public var noise:Object={x:0,y:0,z:0};
+	
 		public var getPlaneVertex:Function;
 		
 		//color / thickness - from parent class
 		
-		public function WireframePipeBasic(myPathPos:Array, myPathRot:Array, p:Object=null, pp:Object=null) {
+		public function WireframePipeBasic(code) {
 			super();
 			
-			if(p==null)p={};if(pp==null)pp={};
-			
-			for(var i in p)if(hasOwnProperty(i))this[i]=p[i];
-			
-			for(var i in pp)if(hasOwnProperty(i))this[i]=pp[i];
-			
-			//trace("PP:"+p["linesCirc"]);
-
-			pathPos=myPathPos;
-			pathRot=myPathRot;
-			
+			pathPos=code.path.pos;
+			pathRot=code.path.rot;
+		
+			for ( var i in code ) if ( hasOwnProperty(i) ) this[i]=code[i];
+			for ( var i in code.wf ) if ( hasOwnProperty(i) ) this[i]=code.wf[i];
+		
 		}
 		
 		public function updateGeometry(){
 			invalidateGeometry();
 		}
 
-		/**
-		 * @inheritDoc
-		 */
+	
 		override protected function buildGeometry() : void
 		{
 			buildGeometryStatic();
@@ -72,73 +71,76 @@
 		
 		
 		function buildGeometryStatic(){
-			//who makes a difference
-			//radius
-			//segNum
-			//segNumShift
-			//linesH
-			//linesCirc
+			
+			//Init Box
+			for(var iii in box0) box[iii]=box0[iii];
+			if(box1!=null){
+				boxChange=true;
+				for(var iii in box) boxDelta[iii]=box1[iii]-box0[iii];
+			}
 
-			//PLUS
-			// radius0 radius1  // radius - random
+			//Init Plane function
+			getPlaneVertex=this[shape+"GetVertex"];
+			switch(shape){
+				case "circle":case "star":slp=true;break;
+				case "sin":sinParams.shift=sinParams.shift0;break;
+				default:slp=false;break;
+			}
+			if(segLoop!="auto") slp=segLoop=="yes";
+			var segCountR:Number = segCount;if(!slp) segCountR++;
+			
+			//Init variables for Building
+			var drawPlane:Boolean;
+			var pp:Object={x:0,y:0};
+			var i:Number;
+			var ii:Number;
+			var segInd=0;
+			var prevCircle:Array=[];
+			var segShift=angleStart;
+			var percRot=0;
 			var v0:Vector3D = new Vector3D(0,0,0);
 			var v1:Vector3D = new Vector3D(0,0,0);
 			var vc0:Vector3D = new Vector3D(0,0,0);
 			var vc1:Vector3D = new Vector3D(0,0,0);
 			var vc00:Vector3D;
-			
-			var pp:Object={x:0,y:0};
-			var i:Number;
-			var ii:Number;
 
-			var segInd=0;
-			var prevCircle:Array=[];
-			var segShift=segShift0;
-			var percRot=0;
-			
-
-			var rotZ=rotZ0;
-			var rotZMatrix = new Matrix3D();
-			rotZMatrix.appendRotation(rotZ,new Vector3D(0,0,1));
-
-			getPlaneVertex=this[shape+"GetVertex"];
-			switch(shape){
-				case "circle":
-				circleParams.rr=circleParams.radius;
-				break;
-				case "sin":
-				sinParams.shift=sinParams.shift0;
-				break;
-			}
-		
+			//Start Building WireFrame
 			for(i=0;i<pathPos.length;i++){
-				v1 = pathPos[i];
-				//updateOrAddSegment(segInd, v0, v1);
-				//segInd++;
-				v0=v1;
-				//draw Circle
-				vc00= new Vector3D();
-				var segNumR:Number=segNum;if(!lines.planeLoop)segNumR++;
-				for(ii=0;ii<segNumR;ii++){
-					percRot=Math.round(segWidth/segNum*ii+segShift)%360;
+				//calculate actual box params
+				if(boxChange) for(var iii in boxDelta) box[iii]=box0[iii]+boxDelta[iii]*i/(pathPos.length-1);
+				//function specific per Plane updates
+				switch(shape){
+					case "sin":sinParams.percY=i/(pathPos.length-1);break;
+				}
 
+				v1 = pathPos[i];
+				v0 = v1;
+				vc00 = new Vector3D();
+				
+				drawPlane=lines.plane && (!(i==0 && ! lines.planeFirst ));
+
+				for(ii=0;ii<segCountR;ii++){
+					percRot=Math.round(angleSpread/segCount*ii+segShift);
 					getPlaneVertex(pp,percRot,ii);
 				
-					vc1.x=pp.x+x0;
-					vc1.y=pp.y+y0;
-					vc1.z=0;
-					vc1=rotZMatrix.transformVector(vc1);
+					vc1.x=pp.x+box.x+((noise.x==0)?0:(Math.random()-0.5)*noise.x);
+					vc1.y=pp.y+box.y+((noise.y==0)?0:(Math.random()-0.5)*noise.y);
+					vc1.z=(noise.z==0)?0:(Math.random()-0.5)*noise.z;
+					if(scaleDown!=1) vc1.scaleBy(scaleDown);
+					//vc1=rotZMatrix.transformVector(vc1);
 					vc1=pathRot[i].transformVector(vc1);
 					vc1.incrementBy(pathPos[i]);
-					//circle
+					
+					//AddLine.Plane
 					if(ii>0){
-						if(lines.plane){
+						if(drawPlane){
 							updateOrAddSegment(segInd,vc0,vc1);
 							segInd++;
 						}
 					}else vc00.copyFrom(vc1);
 					vc0.copyFrom(vc1);
-					//lines
+				
+					//AddLine.Long
 					if((i>0)&&lines.long){
 						updateOrAddSegment(segInd,prevCircle[ii],vc1);
 						segInd++;
@@ -146,63 +148,47 @@
 					prevCircle[ii]=vc1.clone();
 				}
 				
-				segShift+=segShiftInc;
-				switch(shape){
-					case "circle":
-					break;
-					case "sin":
-					sinParams.shift+=sinParams.shiftInc;
-					break;
-				}
+				segShift+=angleSpread/segCount*angleShift;
 				
-				if(lines.planeClose){
+				//last closing segment on Plane
+				if(lines.planeClose && drawPlane){
 					updateOrAddSegment(segInd,vc00,vc1);
 					segInd++;
 				}
 
 			}
 
-			
 		}
+
+		/* Plane Generating Functions */
 
 		public function circleGetVertex(pp:Object,percRot:Number,ind:Number){
-			if(circleParams.radiusRandom>0) circleParams.rr=circleParams.radius+Math.random()*circleParams.radiusRandom;
-			pp.x=Math.sin(Math.PI*2*percRot/360)*circleParams.rr;
-			pp.y=Math.cos(Math.PI*2*percRot/360)*circleParams.rr;
+			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2;
+			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2;
 		}
 		public function starGetVertex(pp:Object,percRot:Number,ind:Number){
-			var rr=(ind%2)?starParams.radiusOut:starParams.radiusIn;
-			pp.x=Math.sin(Math.PI*2*percRot/360)*rr;
-			pp.y=Math.cos(Math.PI*2*percRot/360)*rr;
+			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2*((ind%2)?1:starParams.innerPerc);
+			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2*((ind%2)?1:starParams.innerPerc);
 		}
 		public function planeGetVertex(pp:Object,percRot:Number,ind:Number){
-			switch(wave){
-				case "":
-				pp.x=(percRot/180-1)*planeParams.width/2;
-				pp.y=0;if(planeParams.heightRandom>0)pp.y=Math.random()*planeParams.heightRandom;
-				break;
-				case "music":
-				pp.x=(percRot/180-1)*planeParams.width/2;
-				pp.y=100*waveData[Math.floor((waveData.length-1)*percRot/360)];
-				//pp.y=0;if(planeParams.heightRandom>0)pp.y=Math.random()*planeParams.heightRandom;
-				
-				break;
-			}
+			pp.x=(percRot/180-1)*box.width/2;
+			pp.y=0;
 		}
 		public function sinGetVertex(pp:Object,percRot:Number,ind:Number){
-			pp.x=(percRot/180-1)*sinParams.width/2;
-			pp.y=Math.sin(Math.PI*2*(percRot*sinParams.freqX+sinParams.shift)/360)*sinParams.height/2;
+			pp.x=(percRot/180-1)*box.width/2;
+			pp.y=Math.sin(Math.PI*2*(percRot*sinParams.freqX+sinParams.freqY*sinParams.percY*360)/360)*box.height/2;
 		}
 		public function randomGetVertex(pp:Object,percRot:Number,ind:Number){
-			pp.x=(Math.random()*2-1)*randomParams.width/2;
-			pp.y=(Math.random()*2-1)*randomParams.height/2;
+			pp.x=(Math.random()-0.5)*box.width;
+			pp.y=(Math.random()-0.5)*box.height;
 		}
 
-		public var waveData:Array=[0];
+		/*
 		public function onEF(){
 			removeAllSegments();
 			invalidateGeometry();
 			buildGeometryStatic();
-		}
+		}*/
+		
 	}
 }

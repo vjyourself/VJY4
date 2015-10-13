@@ -87,8 +87,8 @@
 			elems.point.l.y=ns.me.pos.y;
 			elems.point.l.z=ns.me.pos.z;
 
-			
-				var col=(rhythm.counter[1]==0)?colorUp:colorDown;
+			var col=colorUp;
+			if(rhythm!=null) col=(rhythm.counter[1]==0)?colorUp:colorDown;
 				elems.dir.l.color=col;
 				elems.dir.l.ambientColor=col;
 				elems.point.l.color=col;

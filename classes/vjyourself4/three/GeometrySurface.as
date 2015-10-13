@@ -8,21 +8,10 @@
 
 	use namespace arcane;
 
-	/*
-		radius
-		height
-		circSeg
-		circSegShift	
-
-		twist0
-		curve0
-		curve1
-		fillPerc
-		
-		doubleSided
-	*/
-	
-	public class GeometryPipeLegacy extends PrimitiveBase
+	/**
+	 * A Cube primitive mesh.
+	 */
+	public class GeometryPipeBasic extends PrimitiveBase
 	{
 		private var _width : Number;
 		private var _height : Number;
@@ -33,8 +22,16 @@
 		private var _segmentsH : Number;
 		private var _segmentsD : Number;
 
-	
-
+		/**
+		 * Creates a new Cube object.
+		 * @param width The size of the cube along its X-axis.
+		 * @param height The size of the cube along its Y-axis.
+		 * @param depth The size of the cube along its Z-axis.
+		 * @param segmentsW The number of segments that make up the cube along the X-axis.
+		 * @param segmentsH The number of segments that make up the cube along the Y-axis.
+		 * @param segmentsD The number of segments that make up the cube along the Z-axis.
+		 * @param tile6 The type of uv mapping to use. When true, a texture will be subdivided in a 2x3 grid, each used for a single face. When false, the entire image is mapped on each face.
+		 */
 		public var pathPos:Array;
 		public var pathRot:Array;
 		
@@ -63,7 +60,7 @@
 
 		public var curve:Number=1; //calculated from curve0-curve1
 		
-		public function GeometryPipeLegacy(myPathPos:Array,myPathRot:Array,p:Object=null)
+		public function GeometryPipeBasic(myPathPos:Array,myPathRot:Array,p:Object=null)
 		{
 			super();
 			pathPos=myPathPos;
@@ -321,8 +318,10 @@
 		public function getPositionCirc(sideInd,perc):Object{
 			var pos={x:0,y:0}
 			//if(circRandom>0)mulRadius=1-Math.random()*circRandom;
-			pos.x=Math.sin((sideInd+perc)*Math.PI)*radius;
-			pos.y=Math.cos((sideInd+perc)*Math.PI)*radius;
+			//pos.x=Math.sin((sideInd+perc)*Math.PI)*radius;
+			//pos.y=Math.cos((sideInd+perc)*Math.PI)*radius;
+			pos.x=radius*(1-perc*2);//(Math.random()*2-1)*radius;
+			pos.y=(Math.random()*2-1)*50-100;
 			return pos;
 		}
 

@@ -9,6 +9,7 @@
 		var prgs:Array;
 		public function Logic(){
 			LogicStartHigh;
+			LogicCirco;
 		}
 		public function init(){
 			prgs=[];

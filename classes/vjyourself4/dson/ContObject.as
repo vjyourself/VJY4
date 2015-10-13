@@ -36,7 +36,9 @@
 						var staticArray =false;
 						if(prop[0] is Array) if(prop[0].length==0) staticArray=true;
 						if(staticArray){
-							statics[i]=prop[1];
+							var oc= new ContArray(prop[1],params);
+							conts[i]=oc;
+							//statics[i]=prop[1];
 						}else{
 							var prgName;
 							var prgParams=[];

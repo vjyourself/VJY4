@@ -83,6 +83,7 @@
 		}
 		public function setVal(name:String){
 			if(type!=name){
+				type=name;
 				var code=ns.cloud.RFilters.NS[name];
 				if(ff!=null){
 					for(var i=0;i<ff.length;i++){

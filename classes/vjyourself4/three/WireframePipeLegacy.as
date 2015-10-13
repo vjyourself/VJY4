@@ -3,9 +3,18 @@
 	import flash.geom.Vector3D;
 	import away3d.primitives.WireframePrimitiveBase;
 
-	/**
-	 * A WirefameCube primitive mesh.
-	 */
+	/*
+	radius
+	height
+	circSeg
+	circSegShift
+
+	flat
+	
+	linesCirc
+	linesH
+	*/
+
 	public class WireframePipeLegacy extends WireframePrimitiveBase
 	{
 		private var _width : Number;
@@ -99,6 +108,7 @@
 
 		public function onEF(){}
 		public var waveData:Array;
+
 		function buildGeometryStatic(){
 			//who makes a difference
 			//radius

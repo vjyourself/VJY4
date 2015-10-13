@@ -8,9 +8,7 @@
 
 	use namespace arcane;
 
-	/**
-	 * A Cube primitive mesh.
-	 */
+	
 	public class GeometryPipeBasic extends PrimitiveBase
 	{
 		private var _width : Number;
@@ -22,74 +20,51 @@
 		private var _segmentsH : Number;
 		private var _segmentsD : Number;
 
-		/**
-		 * Creates a new Cube object.
-		 * @param width The size of the cube along its X-axis.
-		 * @param height The size of the cube along its Y-axis.
-		 * @param depth The size of the cube along its Z-axis.
-		 * @param segmentsW The number of segments that make up the cube along the X-axis.
-		 * @param segmentsH The number of segments that make up the cube along the Y-axis.
-		 * @param segmentsD The number of segments that make up the cube along the Z-axis.
-		 * @param tile6 The type of uv mapping to use. When true, a texture will be subdivided in a 2x3 grid, each used for a single face. When false, the entire image is mapped on each face.
-		 */
+	
+
 		public var pathPos:Array;
 		public var pathRot:Array;
-		
-		//public var shape:Number=0;
-		//public var circRandom:Number=0;
-		//public var holesCirc:Number=0;
-		//public var holesH:Number=0;
-		//public var facesCirc:Number=1;
-		//public var facesH:Number=1;
-
-		public var circSegShift:Number=0; // shiftii - not active !!
-		
-	
 
 		public var doubleSided:Boolean=false;
-		public var radius:Number=80;
+		public var uv:Object={mirrorU:true,countU:2,mirrorV:true,countV:2};
+
+		public var segCount:Number=12;
+		public var segLoop:String="auto";
+		var slp:Boolean=true;
+
+		public var angleSpread:Number=360;
+		public var angleStart:Number=0;
+		public var angleShift:Number=0;
 		
-		public var circSeg:Number=36;
+		public var box0:Object;
+		public var box1:Object;
+		var box:Object={width:240,height:240,x:0,y:0};
+		var boxChange:Boolean = false;
+		var boxDelta:Object={};
+
+		public var shape:String="circle";
+		public var lines:Object={plane:true,planeClose:true,planeFirst:false,long:true}
+
+		public var circleParams:Object={};
+		public var planeParams:Object={};
+		public var sinParams:Object={freqX:1,freqY:1};
+		public var starParams:Object={innerPerc:0.6}
+
+		public var noise:Object={x:0,y:0,z:0};
 	
-		public var twist0:Number=0; // initial rotation of pipe (rotating whole segment)
-
-		public var curve0:Number=1;
-		public var curve1:Number=1;
-		public var fillPerc:Number=1;
-		public var height:Number=80;
-
-		public var curve:Number=1; //calculated from curve0-curve1
+		public var getPlaneVertex:Function;
 		
-		public function GeometryPipeBasic(myPathPos:Array,myPathRot:Array,p:Object=null)
+		public function GeometryPipeBasic(code:Object)
 		{
 			super();
-			pathPos=myPathPos;
-			pathRot=myPathRot;
-			if(p==null)p={};
-			for(var i in p)if(hasOwnProperty(i))this[i]=p[i];
-			
-			/*
-			_width = width;
-			_height = height;
-			_depth = depth;
-			_segmentsW = segmentsW;
-			_segmentsH = segmentsH;
-			_segmentsD = segmentsD;
-			_tile6 = tile6;
-			*/
+			pathPos=code.path.pos;
+			pathRot=code.path.rot;
+		
+			for ( var i in code ) if ( hasOwnProperty(i) ) this[i]=code[i];
+			for ( var i in code.mesh ) if ( hasOwnProperty(i) ) this[i]=code.mesh[i];
 		}
 
 
-		
-
-		/**
-		 * The type of uv mapping to use. When false, the entire image is mapped on each face. 
-		 * When true, a texture will be subdivided in a 3x2 grid, each used for a single face.
-		 * Reading the tiles from left to right, top to bottom they represent the faces of the
-		 * cube in the following order: bottom, top, back, left, front, right. This creates
-		 * several shared edges (between the top, front, left and right faces) which simplifies
-		 * texture painting.
-		 */
 		public function get tile6() : Boolean
 		{
 			return _tile6;
@@ -160,75 +135,91 @@
 		{
 			
 			tt=target;
-			var length=pathPos.length;
 
-			var numVerts : uint = length*(circSeg+2);
-			var numTriangles : uint = (length-1)*circSeg*2*(doubleSided?2:1);
-			
-			var vertices : Vector.<Number>
-			var vertexNormals : Vector.<Number>
-			//var vertexTangents : Vector.<Number>
-			var indices : Vector.<uint>
+			//Init Box
+			for(var iii in box0) box[iii]=box0[iii];
+			if(box1!=null){
+				boxChange=true;
+				for(var iii in box) boxDelta[iii]=box1[iii]-box0[iii];
+			}
 		
-				vertices = new Vector.<Number>(numVerts * 3, true);
-				vertexNormals = new Vector.<Number>(numVerts * 3, true);
-				//var vertexTangents : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
-				indices = new Vector.<uint>(numTriangles * 3, true);
-				uvData = new Vector.<Number>(numVerts*2, true);
-		
-			 /*
-			var vertices : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
+			//Init Plane Function
+			getPlaneVertex=this[shape+"GetVertex"];			
+			switch(shape){
+				case "circle":case "star":slp=true;break;
+				case "sin":sinParams.shift=sinParams.shift0;break;
+				default:slp=false;break;
+			}
+			//if(segLoop!="auto") slp=segLoop=="yes";
+			//var segCountR = segCount; if(!slp) segCountR++;
+			var segCountR=segCount+1;
+
+			//Init Buffers
+			var length=pathPos.length;
+			var numVerts : uint = length*(segCountR);
+			var numTriangles : uint = (length-1)*segCount*2*(doubleSided?2:1);
+			var vertices : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);	
 			var vertexNormals : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
-			var vertexTangents : Vector.<Number> = new Vector.<Number>(numVerts * 3, true);
+			//var vertexTangents : Vector.<Number>
 			var indices : Vector.<uint> = new Vector.<uint>(numTriangles * 3, true);
 			uvData = new Vector.<Number>(numVerts*2, true);
-			*/
+
+			//Init variables for Build
 			
-			//if(firstBuilt){
-			
-	
-			//vertex
 			var vind=0;
 			var uind=0;
-			
 			var v:Vector3D = new Vector3D();
 			var vc:Vector3D = new Vector3D();
 			var nc:Vector3D = new Vector3D();
-			var uv2=0;var uv2Inc=1/((pathPos.length-1)/2);
-			//trace("UV2INC::"+uv2Inc);
+			var uv2Inc=1/(pathPos.length-1)*uv.countU;
+			var uv2=0;
+			var segShift=angleStart;
 			
-			var shiftii=0;
-			var mulRadius=1;
-			var twist=twist0;
-			var twistMatrix = new Matrix3D();
-			twistMatrix.appendRotation(twist,new Vector3D(0,0,1));
+			var pp:Object={x:0,y:0};
+			var percRot:Number=0;
+
+			//Building the Geometry
 			for(var i=0;i<pathPos.length;i++){
+				//calculate actual box params
+				if(boxChange) for(var iii in boxDelta) box[iii]=box0[iii]+boxDelta[iii]*i/(pathPos.length-1);
+				//function specific per Plane updates
+				switch(shape){
+					case "sin":sinParams.percY=i/(pathPos.length-1);break;
+				}
+				
 				v = pathPos[i];
-				//draw Circle
-				var ii:uint;
-				shiftii+=circSegShift;
-				//two sides
-				curve=curve0+(curve1-curve0)*i/(pathPos.length-1);
-				for(var sideInd=0;sideInd<2;sideInd++){
-					for(var segInd=0;segInd<circSeg/2+1;segInd++){
-						var perc=segInd/(circSeg/2);perc=(1-fillPerc)/2+perc*fillPerc;
-						var pos = getPosition(sideInd,perc);
-						vc.x=pos.x;vc.y=pos.y;vc.z=0;
-						vc=twistMatrix.transformVector(vc);
+
+
+				for(ii=0;ii<segCountR;ii++){
+					percRot=Math.round(angleSpread/segCount*ii+segShift);
+					getPlaneVertex(pp,percRot,ii);
+						
+						vc.x=pp.x+box.x+((noise.x==0)?0:(Math.random()-0.5)*noise.x);
+						vc.y=pp.y+box.y+((noise.y==0)?0:(Math.random()-0.5)*noise.y);
+						vc.z=(noise.z==0)?0:(Math.random()-0.5)*noise.z;
+						
 						vc=pathRot[i].transformVector(vc);
 						vc.incrementBy(v);
 						nc=v.subtract(vc);
-						vertices[vind]=vc.x;vertexNormals[vind]=nc.x; vind++;//vertexTangents[vind]=0;vind++;
-						vertices[vind]=vc.y;vertexNormals[vind]=nc.y; vind++;//vertexTangents[vind]=0;vind++;
-						vertices[vind]=vc.z;vertexNormals[vind]=nc.z; vind++;//vertexTangents[vind]=0;vind++;
+						vertices[vind]=vc.x;vertexNormals[vind]=nc.x; vind++;
+						vertices[vind]=vc.y;vertexNormals[vind]=nc.y; vind++;
+						vertices[vind]=vc.z;vertexNormals[vind]=nc.z; vind++;
 						uvData[uind]=uv2;uind++;
-						if(sideInd==0) uvData[uind]=segInd/circSeg*2;
-						else uvData[uind]=1-segInd/circSeg*2;
+						if(uv.mirrorV) uvData[uind]=( (ii<=segCount/2)?ii/segCount*2:2-ii/segCount*2 )*uv.countV/2;
+						else uvData[uind]=ii/segCountR*uv.countV;
 						uind++;
-					}
+					
 				}
+
+				segShift+=angleSpread/segCount*angleShift;
+
+
+				//UV.u
 				uv2+=uv2Inc;
-				if((uv2==1)||(uv2==0)) uv2Inc*=-1;
+				if(uv.mirrorU){
+					if((uv2==1)||(uv2==0)) uv2Inc*=-1;
+				}
+
 			}
 			
 			
@@ -237,31 +228,28 @@
 			var iind=0;
 			//var divCirc=holesCirc+facesCirc;
 			for(var i=0;i<pathPos.length-1;i++){
-				for(var sideInd=0;sideInd<2;sideInd++){
-					for(var segInd=0;segInd<circSeg/2;segInd++){
-						var ii=sideInd*(circSeg/2+1)+segInd;
+				for(var ii=0;ii<segCount;ii++){
 						
-						indices[iind]=i*(circSeg+2)+ii+1;iind++;
-						indices[iind]=(i+1)*(circSeg+2)+ii;iind++;
-						indices[iind]=i*(circSeg+2)+ii;iind++;
+						indices[iind]=i*(segCountR)+ii+1;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii;iind++;
+						indices[iind]=i*(segCountR)+ii;iind++;
 					
-						indices[iind]=(i+1)*(circSeg+2)+ii+1;iind++;
-						indices[iind]=(i+1)*(circSeg+2)+ii;iind++;
-						indices[iind]=i*(circSeg+2)+ii+1;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii+1;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii;iind++;
+						indices[iind]=i*(segCountR)+ii+1;iind++;
+						
 						if(doubleSided){
-						indices[iind]=i*(circSeg+2)+ii;iind++;
-						indices[iind]=(i+1)*(circSeg+2)+ii;iind++;
-						indices[iind]=i*(circSeg+2)+ii+1;iind++;
+						indices[iind]=i*(segCountR)+ii;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii;iind++;
+						indices[iind]=i*(segCountR)+ii+1;iind++;
 						
 					
-						indices[iind]=i*(circSeg+2)+ii+1;iind++;
-						indices[iind]=(i+1)*(circSeg+2)+ii;iind++;
-						indices[iind]=(i+1)*(circSeg+2)+ii+1;iind++;
+						indices[iind]=i*(segCountR)+ii+1;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii;iind++;
+						indices[iind]=(i+1)*(segCountR)+ii+1;iind++;
 						}
 					
 					}
-					
-				}
 			}
 			
 			
@@ -269,6 +257,7 @@
 			//target.autoDeriveVertexTangents=true;
 			data=new Vector.<Number>(numVerts * 13, true);
 			for(var i=0;i<numVerts;i++){
+
 				data[i*13+0]=vertices[i*3+0];
 				data[i*13+1]=vertices[i*3+1];
 				data[i*13+2]=vertices[i*3+2];
@@ -284,63 +273,44 @@
 				data[i*13+9]=uvData[i*2+0];
 				data[i*13+10]=uvData[i*2+1];
 			}
+
 			target.updateData(data);
-			
-				target.updateIndexData(indices);
+			target.updateIndexData(indices);
+
 			//target.autoDeriveVertexNormals=true;
-			
 			//target.updateVertexData(vertices);
 			//target.updateVertexNormalData(vertexNormals);
 			//target.updateVertexTangentData(vertexTangents);
-			
-			
 		}
 		
-		public function getPosition(sideInd,perc):Object{
-			var pos={x:0,y:0};
-			var posWall = getPositionWalls(sideInd,perc);
-			var posCirc = getPositionCirc(sideInd,perc);
-			pos.x=(posWall.x+(posCirc.x-posWall.x)*curve);
-			pos.y=(posWall.y+(posCirc.y-posWall.y)*curve);
-			return pos;
-		}
-		public function getPositionWalls(sideInd,perc):Object{
-			var pos={x:0,y:0}
-					if(sideInd==0){
-						pos.x=radius;
-						pos.y=height*(1-perc*2);
-					}else{
-						pos.x=-radius;
-						pos.y=height*(perc*2-1);
-					}
-			return pos;
-		}
-		public function getPositionCirc(sideInd,perc):Object{
-			var pos={x:0,y:0}
-			//if(circRandom>0)mulRadius=1-Math.random()*circRandom;
-			//pos.x=Math.sin((sideInd+perc)*Math.PI)*radius;
-			//pos.y=Math.cos((sideInd+perc)*Math.PI)*radius;
-			pos.x=radius*(1-perc*2);//(Math.random()*2-1)*radius;
-			pos.y=(Math.random()*2-1)*50-100;
-			return pos;
-		}
+		/* Plane Generating Functions */
 
-		/**
-		 * @inheritDoc
-		 */
+		public function circleGetVertex(pp:Object,percRot:Number,ind:Number){
+			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2;
+			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2;
+		}
+		public function starGetVertex(pp:Object,percRot:Number,ind:Number){
+			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2*((ind%2)?1:starParams.innerPerc);
+			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2*((ind%2)?1:starParams.innerPerc);
+		}
+		public function planeGetVertex(pp:Object,percRot:Number,ind:Number){
+			pp.x=(percRot/180-1)*box.width/2;
+			pp.y=0;
+		}
+		public function sinGetVertex(pp:Object,percRot:Number,ind:Number){
+			pp.x=(percRot/180-1)*box.width/2;
+			pp.y=Math.sin(Math.PI*2*(percRot*sinParams.freqX+sinParams.freqY*sinParams.percY*360)/360)*box.height/2;
+		}
+		public function randomGetVertex(pp:Object,percRot:Number,ind:Number){
+			pp.x=(Math.random()-0.5)*box.width;
+			pp.y=(Math.random()-0.5)*box.height;
+		} 
+
 		override protected function buildUVs(target : CompactSubGeometry) : void
 		{
-			/*
-			var uvData : Vector.<Number>;
-			var numUvs=4*2;
-			uvData = new Vector.<Number>(numUvs, true);
-			var uvi=0;
-			for(var i=0;i<4;i++){
-				uvData[uvi++]=0;
-				uvData[uvi++]=0;
-			}*/
-			//target.updateUVData(uvData);
+			
 		}
+
 		public var spritesDiv:Number=4;
 		public var spritesX:Number=0;
 		public var spritesY:Number=0;

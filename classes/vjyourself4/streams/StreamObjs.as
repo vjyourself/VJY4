@@ -8,6 +8,7 @@
 	import vjyourself4.dson.DSON;
 	import vjyourself4.dson.TransVar;
 	//import vjyourself4.prgs.PRG;
+	import vjyourself4.streams.logic.*;
 	
 	public class StreamObjs{
 		public var type:String="Objs";
@@ -23,6 +24,8 @@
 		
 		public var prgObj:Object;
 		public var prgPos:Object;
+		public var prg:Object;
+		var dsonPrg:DSON;
 		
 		public var id:String="";
 		public var name:String="";
@@ -50,6 +53,10 @@
 		public var state:String="";
 		
 		public var assemblerObj3D:AssemblerObj3D;
+
+		public var logic;
+		var logicList:Array=[];
+
 		public function StreamObjs(){
 			transVar = new TransVar();
 			transVar.NS = trans;
@@ -60,18 +67,21 @@
 			if(contextHandler==null) contextHandler={};
 			elems=[];
 			state="Running";
-			prgObj=createDSON(prgObj);
-			//prgPos=createDSON(prgPos);
+			if(prgObj!=null) dsonPrg = new DSON(prgObj,{cloud:cloud,context:contextHandler});
+			else dsonPrg = new DSON(prg,{cloud:cloud,context:contextHandler});
+		
+			var ll= new ColorRun();
+			ll.stream=this;
+			logicList.push(ll);
 		}
 		
-		function createDSON(obj):DSON{
-			var ret=obj;
-			if(!((obj is DSON) )){
-			   ret= new DSON(obj,{cloud:cloud,context:contextHandler});
-			}
-			return ret;
+		//if path's own coordinate space (p0,p1) is shifted
+		public function updateLength(d:Number){
+			lengthPos+=d;
+			for(var i=0;i<elems.length;i++)elems[i].lengthPos+=d;
 		}
-		
+
+		//if world's whole coord space shifted ( resetToOrigo )
 		public function coordShift(shift:Vector3D){
 			for(var i=0;i<elems.length;i++){
 				var el=elems[i];
@@ -80,10 +90,7 @@
 				el.obj3D.z+=shift.z;
 			}
 		}
-		public function updateLength(d:Number){
-			lengthPos+=d;
-			for(var i=0;i<elems.length;i++)elems[i].lengthPos+=d;
-		}
+		
 		
 		public function onEF(e:Object=null){
 			transVar.update();
@@ -95,7 +102,7 @@
 				var pathPos=path.getPos(lengthPos);
 				var pathRot=path.getRot(lengthPos);
 				
-				var objM=prgObj.getNext();
+				var objM=dsonPrg.getNext();
 				if(objM.gap!=null) gap=objM.gap;
 				//var objPos=prgPos.getNext();
 				var obj = assemblerObj3D.build(objM);
@@ -117,6 +124,7 @@
 				cont.addChild(obj.obj3D);
 				parity=(parity+1)%2;
 				var el={
+					logic:{},
 					pos:pathPos,
 					sX:obj.obj3D.scaleX,
 					sY:obj.obj3D.scaleY,
@@ -251,6 +259,8 @@
 					i--;
 				}
 			}
+			for(var i=0;i<logicList.length;i++) logicList[i].onEF();
+
 			if( (state=="Decomposing") && (elems.length==0))state="Finished";
 		}
 		
@@ -282,7 +292,7 @@
 			global=null;
 			contextHandler=null;
 			inputVJY=null;
-			prgObj=null;
+			dsonPrg=null;
 		
 			state="Finished";
 		}

@@ -56,101 +56,72 @@
 			
 			switch(code.cn){
 				
-				case "WFPipeBasic":
-				case "WFPipeLegacy":
-				obj3D={};
-				var poss=code.path.pos;
-				var pos0=poss[0].clone();
-				for(var i=0;i<poss.length;i++) poss[i].decrementBy(pos0);
-				//trace("PARAMS: "+new JSONEncoder(code.params).getString());
-				if(code.wf.color!=null) {
-					code.wf.color=ColorType.toNumber(code.wf.color);
-					//temp rechanel...
-					if(context!=null) code.wf.color=context.getNext({type:"color",stream:"A"});
-					//code.wf.color=0;
-				}
-				var wf;
-				switch(code.cn){
-					case "WFPipeBasic": wf= new WireframePipeBasic(poss,code.path.rot,code.params,code.wf);break;
-					case "WFPipeLegacy": wf= new WireframePipeLegacy(poss,code.path.rot,code.params,code.wf);break;
-				}
-				wf.x=pos0.x;
-				wf.y=pos0.y;
-				wf.z=pos0.z;
-				obj3D.wf=wf;
-				obj.obj3D=obj3D;
-				addLogic(obj,code);
+				case "Surface":
+				
 				break;
 
-				case "MeshPipeBasic":
-				case "MeshPipeLegacy":
+				/********** Pipe Basic **************************************************************/
+				case "PipeBasic":
 				obj3D={};
-				var poss=code.path.pos;
-				var pos0=poss[0].clone();
-				for(var i=0;i<poss.length;i++) poss[i].decrementBy(pos0);
 				
-				switch(code.cn){
-					case "MeshPipeLegacy":var geom = new GeometryPipeLegacy(poss,code.path.rot,code.params);break;
-					case "MeshPipeBasic":var geom = new GeometryPipeBasic(poss,code.path.rot,code.params);break;
-				}
-				var mat = createMat(code.mesh.mat,res,"mat",dispose);
-				var mesh = new Mesh(geom,mat);
-				mesh.x=pos0.x;
-				mesh.y=pos0.y;
-				mesh.z=pos0.z;
-				obj3D.mesh=mesh;
-				res.geom=geom;
-				res.mat=mat;
-				obj.obj3D=obj3D;
-				addLogic(obj,code);
-				break;
-
-				/***** PathPipe *****************************************************************************/
-				case "PathPipe":
-				obj3D={};
-				var poss=code.path.pos;
-				var pos0=poss[0].clone();
-				for(var i=0;i<poss.length;i++) poss[i].decrementBy(pos0);
-				
-				if((code.wf!=null)&&((code.wf_visible==null)||(code.wf_visible==true))){
-					//trace("PARAMS: "+new JSONEncoder(code.params).getString());
-					if(code.wf.color!=null){
+				//If WF
+				if(code.wf.visible){			
+					//convert color
+					if(code.wf.color!=null) {
 						code.wf.color=ColorType.toNumber(code.wf.color);
-						//temp rechanel...
-					code.wf.color=context.getNext({type:"color",stream:"A"});
-					//code.wf.color=0;
+						//overwrite by context
+						if(context!=null) code.wf.color=context.getNext({type:"color",stream:"A"});
 					}
-					var wf = new WireframePipeLegacy(poss,code.path.rot,code.params,code.wf);
-					wf.x=pos0.x;
-					wf.y=pos0.y;
-					wf.z=pos0.z;
+					//create WF
+					var wf = new WireframePipeBasic(code);
 					obj3D.wf=wf;
 				}
-				if( (code.mesh!=null) && ((code.mesh_visible==null)||(code.mesh_visible==true)) ){
-					//relative
-					/*
-					var pos0=code.path.pos[0].clone();
-					var poss=[];
-					for(var i=0;i<code.path.pos.length;i++) poss.push( code.path.pos[i].subtract(pos0) );
-					*/
-					
-					
-					var geom = new GeometryPipeLegacy(poss,code.path.rot,code.params);
+
+				//If Mesh
+				if(code.mesh.visible){	
+					var geom = new GeometryPipeBasic(code);
 					var mat = createMat(code.mesh.mat,res,"mat",dispose);
-					//if(code.mesh.matt!=null ) mat = R3Dcont.mat[code.mesh.matt];
-					//if(code.mesh.mat!=null ) mat = R3Dcont.mat[code.mesh.mat];
-					//trace("********************************** "+code.mesh.mat+" : "+R3Dcont.mat[code.mesh.mat]);
 					var mesh = new Mesh(geom,mat);
-					mesh.x=pos0.x;
-					mesh.y=pos0.y;
-					mesh.z=pos0.z;
 					obj3D.mesh=mesh;
 					res.geom=geom;
 					res.mat=mat;
 				}
+
 				obj.obj3D=obj3D;
 				addLogic(obj,code);
 				break;
+
+				
+
+				/***** Pipe Legacy *****************************************************************************/
+				case "PathPipe":
+				obj3D={};
+				
+				//If WF
+				if((code.wf!=null)&&((code.wf_visible==null)||(code.wf_visible==true))){
+					if(code.wf.color!=null){
+						//code.wf.color=ColorType.toNumber(code.wf.color);
+						//color always from context
+						code.wf.color=context.getNext({type:"color",stream:"A"});
+					}
+					var wf = new WireframePipeLegacy(code.path.pos,code.path.rot,code.params,code.wf);
+					obj3D.wf=wf;
+				}
+
+				//If Mesh
+				if( (code.mesh!=null) && ((code.mesh_visible==null)||(code.mesh_visible==true)) ){	
+					var geom = new GeometryPipeLegacy(code.path.pos,code.path.rot,code.params);
+					var mat = createMat(code.mesh.mat,res,"mat",dispose);
+					var mesh = new Mesh(geom,mat);
+					obj3D.mesh=mesh;
+					res.geom=geom;
+					res.mat=mat;
+				}
+
+				obj.obj3D=obj3D;
+				addLogic(obj,code);
+				break;
+				
 				
 				/****** SimpleObj ******************************************************************************/
 				/*
@@ -349,3 +320,55 @@
 		}
 	}
 }
+
+
+/*
+				case "WFPipeBasic":
+				case "WFPipeLegacy":
+				obj3D={};
+				var poss=code.path.pos;
+				var pos0=poss[0].clone();
+				for(var i=0;i<poss.length;i++) poss[i].decrementBy(pos0);
+				//trace("PARAMS: "+new JSONEncoder(code.params).getString());
+				if(code.wf.color!=null) {
+					code.wf.color=ColorType.toNumber(code.wf.color);
+					//temp rechanel...
+					if(context!=null) code.wf.color=context.getNext({type:"color",stream:"A"});
+					//code.wf.color=0;
+				}
+				var wf;
+				switch(code.cn){
+					case "WFPipeBasic": wf= new WireframePipeBasic(poss,code.path.rot,code.params,code.wf);break;
+					case "WFPipeLegacy": wf= new WireframePipeLegacy(poss,code.path.rot,code.params,code.wf);break;
+				}
+				wf.x=pos0.x;
+				wf.y=pos0.y;
+				wf.z=pos0.z;
+				obj3D.wf=wf;
+				obj.obj3D=obj3D;
+				addLogic(obj,code);
+				break;
+
+				case "MeshPipeBasic":
+				case "MeshPipeLegacy":
+				obj3D={};
+				var poss=code.path.pos;
+				var pos0=poss[0].clone();
+				for(var i=0;i<poss.length;i++) poss[i].decrementBy(pos0);
+				
+				switch(code.cn){
+					case "MeshPipeLegacy":var geom = new GeometryPipeLegacy(poss,code.path.rot,code.params);break;
+					case "MeshPipeBasic":var geom = new GeometryPipeBasic(poss,code.path.rot,code.params);break;
+				}
+				var mat = createMat(code.mesh.mat,res,"mat",dispose);
+				var mesh = new Mesh(geom,mat);
+				mesh.x=pos0.x;
+				mesh.y=pos0.y;
+				mesh.z=pos0.z;
+				obj3D.mesh=mesh;
+				res.geom=geom;
+				res.mat=mat;
+				obj.obj3D=obj3D;
+				addLogic(obj,code);
+				break;
+				*/
