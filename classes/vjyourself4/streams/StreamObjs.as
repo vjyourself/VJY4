@@ -70,9 +70,9 @@
 			if(prgObj!=null) dsonPrg = new DSON(prgObj,{cloud:cloud,context:contextHandler});
 			else dsonPrg = new DSON(prg,{cloud:cloud,context:contextHandler});
 		
-			var ll= new ColorRun();
-			ll.stream=this;
-			logicList.push(ll);
+			//var ll= new ColorRun();
+			//ll.stream=this;
+			//logicList.push(ll);
 		}
 		
 		//if path's own coordinate space (p0,p1) is shifted
@@ -101,27 +101,22 @@
 				
 				var pathPos=path.getPos(lengthPos);
 				var pathRot=path.getRot(lengthPos);
+			//	trace("ROT "+pathRot);
+				//var vv=pathRot.transformVector(new Vector3D(1,0,0));
+				//trace(vv.x+","+vv.y+","+vv.z);
 				
 				var objM=dsonPrg.getNext();
 				if(objM.gap!=null) gap=objM.gap;
-				//var objPos=prgPos.getNext();
 				var obj = assemblerObj3D.build(objM);
-				
 				
 				var transM=new Matrix3D();
 				transM.append(obj.obj3D.transform);
-				
-				/*
-				if(objPos.rotationZ!=null){
-					trace("ROTATOIN::::::::::"+objPos.rotationZ);
-					trans.appendRotation(objPos.rotationZ,new Vector3D(0,0,1));
-				}
-				trans.appendTranslation(objPos.x,objPos.y,0);*/
 				transM.append(pathRot);
 				transM.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
 				obj.obj3D.transform = transM;
-				//trace("cont:"+cont);
 				cont.addChild(obj.obj3D);
+				if(obj.logicActive) obj.logic.init();
+
 				parity=(parity+1)%2;
 				var el={
 					logic:{},

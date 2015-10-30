@@ -1,4 +1,9 @@
-﻿package vjyourself4.cycle{
+﻿/*
+
+[{},1,2,3,4]
+
+*/
+package vjyourself4.cycle{
 	public class Cycle{
 		public var NS:Object;
 		public var patt;
@@ -15,6 +20,7 @@
 		var cycLoopInd:Number=0;
 		var cycLast:Boolean=false;
 		var meta:Object;
+		var n:String;
 		
 		public var last:Boolean=false;
 		public var first:Boolean=false;

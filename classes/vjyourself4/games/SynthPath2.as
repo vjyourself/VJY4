@@ -105,7 +105,7 @@
 			e.space.init();
 			var lp=path.p0;
 			if(spaces.length>1)lp=path.p1;
-			e.space.startSpace(ns._sys.cloud.RPrg.cont.programs.path["Prg"+p.prgN],lp);
+			e.space.startSpace(ns._sys.cloud.RPrg.cont.programs.path[p.prgN],lp);
 			anal.tars.push(e.space.anal);
 		}
 

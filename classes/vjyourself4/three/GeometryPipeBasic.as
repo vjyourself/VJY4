@@ -150,8 +150,8 @@
 				case "sin":sinParams.shift=sinParams.shift0;break;
 				default:slp=false;break;
 			}
-			//if(segLoop!="auto") slp=segLoop=="yes";
-			//var segCountR = segCount; if(!slp) segCountR++;
+			if(segLoop!="auto") slp=segLoop=="yes";
+			var segCountR = segCount; if(!slp) segCountR++;
 			var segCountR=segCount+1;
 
 			//Init Buffers
@@ -206,7 +206,7 @@
 						vertices[vind]=vc.z;vertexNormals[vind]=nc.z; vind++;
 						uvData[uind]=uv2;uind++;
 						if(uv.mirrorV) uvData[uind]=( (ii<=segCount/2)?ii/segCount*2:2-ii/segCount*2 )*uv.countV/2;
-						else uvData[uind]=ii/segCountR*uv.countV;
+						else uvData[uind]=ii/(segCountR-1)*uv.countV;
 						uind++;
 					
 				}
@@ -288,6 +288,37 @@
 		public function circleGetVertex(pp:Object,percRot:Number,ind:Number){
 			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2;
 			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2;
+		}
+		function easePerc(perc):Number{
+			return Math.cos(perc*Math.PI)*-0.5+0.5;
+		}
+		public function heartGetVertex(pp:Object,percRot:Number,ind:Number){
+			var pc=easePerc((percRot%90)/90);
+			switch(Math.floor(percRot/90)){
+				case 0:
+				pp.x=pc*2;
+				pp.y=Math.sqrt(1-(pp.x-1)*(pp.x-1));
+				break;
+				case 1:
+				pp.x=2-pc*2;
+				pp.y=-3*Math.sqrt(1-Math.sqrt(pp.x)/Math.sqrt(2));
+				break;
+				case 2:
+				pp.x=-pc*2;
+				pp.y=-3*Math.sqrt(1-Math.sqrt(-pp.x)/Math.sqrt(2));
+				break;
+
+				case 3:
+				pp.x=-2+pc*2;
+				pp.y=Math.sqrt(1-(-pp.x-1)*(-pp.x-1));
+				break;
+				case 4:
+				pp.x=0;
+				pp.y=0;
+				break;
+			}
+			pp.x*=box.width/4;
+			pp.y=(pp.y+1)*box.height/4;
 		}
 		public function starGetVertex(pp:Object,percRot:Number,ind:Number){
 			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2*((ind%2)?1:starParams.innerPerc);

@@ -39,7 +39,8 @@ package vjyourself4.three
 		public var circleParams:Object={};
 		public var planeParams:Object={};
 		public var sinParams:Object={freqX:1,freqY:1};
-		public var starParams:Object={innerPerc:0.6}
+		public var starParams:Object={innerPerc:0.6};
+		public var heartParams:Object={}
 
 		public var noise:Object={x:0,y:0,z:0};
 	
@@ -165,6 +166,40 @@ package vjyourself4.three
 		public function circleGetVertex(pp:Object,percRot:Number,ind:Number){
 			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2;
 			pp.y=Math.cos(Math.PI*2*percRot/360)*box.height/2;
+		}
+		function logPerc(perc,mid=0.2):Number{
+			return perc<0.5?perc*2*mid:mid+(perc-0.5)*2*(1-mid);
+		}
+		function easePerc(perc):Number{
+			return Math.cos(perc*Math.PI)*-0.5+0.5;
+		}
+		public function heartGetVertex(pp:Object,percRot:Number,ind:Number){
+			var pc=easePerc((percRot%90)/90);
+			switch(Math.floor(percRot/90)){
+				case 0:
+				pp.x=pc*2;
+				pp.y=Math.sqrt(1-(pp.x-1)*(pp.x-1));
+				break;
+				case 1:
+				pp.x=2-pc*2;
+				pp.y=-3*Math.sqrt(1-Math.sqrt(pp.x)/Math.sqrt(2));
+				break;
+				case 2:
+				pp.x=-pc*2;
+				pp.y=-3*Math.sqrt(1-Math.sqrt(-pp.x)/Math.sqrt(2));
+				break;
+
+				case 3:
+				pp.x=-2+pc*2;
+				pp.y=Math.sqrt(1-(-pp.x-1)*(-pp.x-1));
+				break;
+				case 4:
+				pp.x=0;
+				pp.y=0;
+				break;
+			}
+			pp.x*=box.width/4;
+			pp.y=(pp.y+1)*box.height/4;
 		}
 		public function starGetVertex(pp:Object,percRot:Number,ind:Number){
 			pp.x=Math.sin(Math.PI*2*percRot/360)*box.width/2*((ind%2)?1:starParams.innerPerc);

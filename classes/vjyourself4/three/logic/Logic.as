@@ -10,6 +10,7 @@
 		public function Logic(){
 			LogicStartHigh;
 			LogicCirco;
+			LogicShake;
 		}
 		public function init(){
 			prgs=[];

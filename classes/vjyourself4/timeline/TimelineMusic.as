@@ -25,10 +25,20 @@
 		var state:String="";
 		var pre:Number=0;
 		var ppos:Number=0;
+
+		var path_length:Number;
+		var path_speed:Number;
 		
 		public function TimelineMusic(){}
-		
+		var initSeq=-1;
 		public function init(){
+			initSeq=0;
+		}
+		public function init1(){
+			
+			path_length=ns.mid.cs.GP.ctrlPath.beforeMe;
+			path_speed=ns.mid.cs.GP.inputVJY.speedMin;
+
 			//global pre
 			if(params.pre!=null) pre=params.pre;
 			input=ns.input;
@@ -41,6 +51,10 @@
 				if(ff.time!=null) ff.time=timeStrToSec(ff.time)*1000-pre;
 				else if(ff.beat!=null) ff.time=music.meta.struct.beatToTime(ff.beat)-pre;
 				if(ff.pre!=null) ff.time-=ff.pre;
+				if(ff.path_synch!=null){
+					var pr=(path_length-ff.path_synch.pixelShift)/(path_speed*60)*1000;
+					ff.time-=pr;
+				}
 			}
 
 			frames.sortOn("time",Array.NUMERIC);
@@ -55,7 +69,10 @@
 		}
 
 		public function onEF(e=null){
-			
+			if(initSeq<3){
+				initSeq++;
+				if(initSeq==3) init1();
+			}
 			if(state=="run"){
 				var pos=music.playback.sndCh.position;
 				if(ppos<pos){

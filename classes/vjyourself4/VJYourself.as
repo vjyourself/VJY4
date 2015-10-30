@@ -22,13 +22,13 @@
 	
 	public class VJYourself extends MovieClip{
 		public var _meta:Object={name:"App"};
-		var medium:String=""; // Browser / App / Game 
-		var urlLocal:String="";
-		var urlCloud:String="";
-		var gameType:String="";
-		var online:Boolean=false;
-		var project:String="";
-		var startFile:String;
+
+		//Init
+		var medium:String="";
+		var cloud1:Object={online:false,path:""};
+		var cloud2:Object={online:false,path:""};
+	
+		var startFile:String="";
 		
 		var loadJson:LoadJson;
 		var loadInit:LoadJson;
@@ -60,6 +60,7 @@
 			GamepadCombo;
 			Gamepad;
 			Grammar;
+			CtrlMIDI;
 			CommandList;
 			CtrlKey;
 			BindRouter;
@@ -175,17 +176,16 @@
 		function initOnComplete(e){
 			initObj = loadInit.trans.data;
 			
-			medium=initObj.init.global.medium;
-			online=initObj.init.global.online;
-//			gameType=initObj.init.game;
+			medium=initObj.init.medium;
+			cloud1.online=initObj.init.cloud1.online;
+			cloud1.path=cloud1.online?initObj.init.cloud1.online_path:initObj.init.cloud1.offline_path;
+			cloud2.online=initObj.init.cloud2.online;
+			cloud2.path=cloud2.online?initObj.init.cloud2.online_path:initObj.init.cloud2.offline_path;
+			startFile=initObj.init.start_file;
+
+			log(1,"online: cloud1:"+cloud1.online+" cloud2:"+cloud2.online);
+			log(1,"medium: "+medium+" start:"+startFile);
 			
-			//urlLocal=initObj.init.global.world;
-			//urlCloud=initObj.init.urlCloud;
-			startFile=initObj.init.start;
-			
-			log(1,"online: "+online+" medium: "+medium+" start:"+startFile);
-			
-			//load project
 			loadProject();
 		}
 		
@@ -200,9 +200,8 @@
 			loadJson._debug=sys.debug;
 			loadJson.debug2=true;
 			loadJson.debug4=false;
-			loadJson.online=online;
-			loadJson.globals=initObj.init.global;
-			//loadJson.globals.root=loadJson.globals.cloud;
+			loadJson.online=cloud1.online;
+			loadJson.globals={medium:medium,cloud1:cloud1.path,cloud2:cloud2.path,player:""};
 			loadJson.events.addEventListener(Event.COMPLETE,projectOnComplete,0,0,1);
 			loadJson.start(startFile);
 		}
@@ -210,8 +209,8 @@
 		//Activate SYS
 		function projectOnComplete(e){
 			projObj=loadJson.trans.data;
-			projObj.sys.cloud.baseURL=loadJson.globals.cloud;
-			projObj.sys.cloud.src=online?"online":"local";
+			projObj.sys.cloud.cloud1=cloud1;
+			projObj.sys.cloud.cloud2=cloud2;
 			sys.proj=projObj.proj;
 
 			log(1,"Starting SYS");

@@ -14,12 +14,26 @@
 		public var type:String="Line";
 		public var length:Number=0;
 		public var alpha:Number=0;
+		public var alpha0:Number=0;
+		public var alpha1:Number=0;
 		public var radius:Number=0;
 		public var depth:Number=1000;
-		
+		var zTwist:Object={alpha:0,alpha0:0,alpha1:0};
+
+		var Line_ZigZag_width:Number=0;
+		var Line_ZigZag_height:Number=0;
 		function PathSegment(p:Object){
 			
-			
+			if(p.zTwist!=null){
+				zTwist.alpha0=p.zTwist.alpha0;
+				zTwist.alpha1=p.zTwist.alpha1;
+				zTwist.alpha=p.zTwist.alpha1-p.zTwist.alpha0;
+				locRotZ=zTwist.alpha;
+			}else{
+				zTwist.alpha0=0;
+				zTwist.alpha1=0;
+				zTwist.alpha=0;
+			}
 			type=p.type;
 			length=p.length;
 			switch(type){
@@ -27,7 +41,20 @@
 				case "Line":
 				locPos = new Vector3D(0,0,length);
 				break;
-				
+				case "Line_ZigZag":
+				locPos = new Vector3D(0,0,length);
+				Line_ZigZag_width=p.width;
+				Line_ZigZag_height=p.height;
+				break;
+
+/*
+				case "LinearTurn":
+				alpha0=p.alpha0;
+				alpha1=p.alpha1;
+				alpha=alpha1-alpha0;
+				locPos = new Vector3D(0,0,length);
+				break;
+*/				
 				case "CurveXZ":
 				alpha=p.alpha;
 				radius=length/alpha*180/Math.PI;
@@ -47,6 +74,23 @@
 				alpha=p.alpha;
 				radius=length/alpha*180/Math.PI;
 				locPos = new Vector3D(0,(Math.sin((270+alpha)/180*Math.PI)+1)*radius,Math.sin(alpha/180*Math.PI)*radius);
+				locRotX=-alpha;
+				break;
+
+				case "SpiralYZ":
+				alpha=p.alpha;
+				radius=length/alpha*180/Math.PI;
+				depth=p.depth;
+				locPos = new Vector3D(depth,(Math.sin((270+alpha)/180*Math.PI)+1)*radius,Math.sin(alpha/180*Math.PI)*radius);
+				locRotX=-alpha;
+				break;
+
+
+				case "SpiralXY":
+				alpha=p.alpha;
+				radius=length/alpha*180/Math.PI;
+				depth=p.depth;
+				locPos = new Vector3D((Math.sin((270+alpha)/180*Math.PI)+1)*radius,Math.sin(alpha/180*Math.PI)*radius,depth);
 				locRotX=-alpha;
 				break;
 			}
@@ -85,7 +129,16 @@
 				case "Line":
 				retPos= new Vector3D(0,0,length*perc);
 				break;
-				
+				case "Line_ZigZag":
+				retPos= new Vector3D(Math.sin(perc*Math.PI*2*3)*Line_ZigZag_width,Math.sin(perc*Math.PI*2*3)*Line_ZigZag_height,length*perc);
+				break;
+				/*
+				case "LinearTurn":
+				retPos= new Vector3D(0,0,length*perc);
+		
+				//retPos= new Vector3D(Math.random()*10,Math.random()*10,length*perc);
+				break;
+				*/
 				case "CurveXZ":
 				retPos = new Vector3D( (Math.sin((270+alpha*perc)/180*Math.PI)+1)*radius,0,Math.sin(alpha*perc/180*Math.PI)*radius);
 				break;
@@ -96,6 +149,14 @@
 
 				case "CurveYZ":
 				retPos = new Vector3D( 0,(Math.sin((270+alpha*perc)/180*Math.PI)+1)*radius,Math.sin(alpha*perc/180*Math.PI)*radius);
+				break;
+
+				case "SpiralYZ":
+				retPos = new Vector3D( depth*perc,(Math.sin((270+alpha*perc)/180*Math.PI)+1)*radius,Math.sin(alpha*perc/180*Math.PI)*radius);
+				break;
+
+				case "SpiralXY":
+				retPos = new Vector3D( (Math.sin((270+alpha*perc)/180*Math.PI)+1)*radius,Math.sin(alpha*perc/180*Math.PI)*radius,depth*perc);
 				break;
 			}
 			return retPos
@@ -109,10 +170,17 @@
 		
 		function getLocRot(perc:Number):Object{
 			var retRot:Object={x:0,y:0,z:0};
+			retRot.z=zTwist.alpha0+zTwist.alpha*perc;
 			switch(type){
 				case "Line":
 				break;
-				
+				case "Line_ZigZag":
+				break;
+
+				/*case "LinearTurn":
+				retRot.z=alpha0+alpha*perc;
+				break;
+				*/
 				case "CurveXZ":
 				retRot.y=alpha*perc;
 				break;
@@ -120,9 +188,17 @@
 				case "SpiralXZ":
 				retRot.y=alpha*perc;
 				break;
-				
+
 				case "CurveYZ":
 				retRot.x=-alpha*perc;
+				break;
+
+				case "SpiralYZ":
+				retRot.x=-alpha*perc;
+				break;
+
+				case "SpiralXY":
+				retRot.z=alpha*perc;
 				break;
 			}
 			return retRot

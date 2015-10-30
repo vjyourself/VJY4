@@ -15,6 +15,7 @@
 		//segments
 		public var curveLength:Number=200;
 		public var continuePath:Function;
+		public var initPath:Function;
 		public var segments:Array=[];
 		public var pSeg0:Number=0;
 		public var pSeg1:Number=0;	
@@ -159,7 +160,13 @@
 		/*********** GENERATE SEGMENTS ***********************************************/
 		public function setParams(o:Object){
 			if(o==null) o={};
-			if(o.type!="") continuePath=this["path"+o.type];
+			if(o.type!=""){
+				continuePath=this["path"+o.type];
+				if(this.hasOwnProperty("init"+o.type)){
+					initPath=this["init"+o.type];
+					initPath();
+				}
+			}
 			if(o.ll!=null) curveLength=o.ll;
 		}
 
@@ -189,7 +196,12 @@
 			Spiral
 			Break
 		*/
-		
+		var zTwist:Object={alpha:0};
+		function addZTwist(aa):Object{
+			var o={alpha0:zTwist.alpha,alpha1:zTwist.alpha+aa};
+			zTwist.alpha=0;
+			return o;
+		}
 		public function pathRandom(){
 				if(Math.random()<=0.75){
 					addSegment(new PathSegment({type:"Line",length:curveLength}));
@@ -226,24 +238,94 @@
 				}
 		}
 
+	
+		public function pathLinearTurn(){
+			switch(0){
+				case 0:
+				addSegment(new PathSegment({type:"Line",zTwist:addZTwist(90),length:curveLength*16}));
+				break;
+				case 1:
+				addSegment(new PathSegment({type:"Line",zTwist:addZTwist(-90),length:curveLength*16}));
+				break;
+				case 2:
+				addSegment(new PathSegment({type:"Line",length:curveLength*4}));
+				break;
+			}
+		}
+		public function initLinearTurn(){
+		}
+		public function pathSpiralSoft(){
+			addSegment(new PathSegment({type:"SpiralXY",alpha:360,length:curveLength*16,depth:2400}));
+			/*
+				switch(Math.floor(Math.random()*4)){
+					case 0:addSegment(new PathSegment({type:"SpiralXY",alpha:30,length:curveLength*8,depth:1200}));break;
+					case 1:addSegment(new PathSegment({type:"SpiralXY",alpha:-30,length:curveLength*8,depth:1200}));break;
+					case 2:addSegment(new PathSegment({type:"Line",length:curveLength*4}));break;
+					case 3:addSegment(new PathSegment({type:"Line",length:curveLength*4}));break;
+				}*/
+					/*
+					case 0:addSegment(new PathSegment({type:"SpiralXZ",alpha:360,length:curveLength*8,depth:1200}));break;
+					case 1:addSegment(new PathSegment({type:"SpiralXZ",alpha:-360,length:curveLength*8,depth:1200}));break;
+					case 2:addSegment(new PathSegment({type:"SpiralXZ",alpha:360,length:curveLength*12,depth:1000}));break;
+					default:addSegment(new PathSegment({type:"SpiralXZ",alpha:-360,length:curveLength*12,depth:1000}));break;
+					//default:addSegment(new PathSegment({type:"SpiralXZ",alpha:-180,length:curveLength*6}));break;
+					//case 2:addSegment(new PathSegment({type:"CurveYZ",alpha:90,length:curveLength}));break;
+					//case 3:addSegment(new PathSegment({type:"CurveYZ",alpha:-90,length:curveLength}));break;
+				}*/
+		}
+
 		public function pathRandomSoftCurves(){
+			var zTwist={alpha0:0,alpha1:0};
 				if(Math.random()<=0.6){
-					addSegment(new PathSegment({type:"Line",length:curveLength}));
+					addSegment(new PathSegment({type:"Line",length:curveLength,zTwist:zTwist}));
 				}else switch(Math.floor(Math.random()*8)){
-					case 0:addSegment(new PathSegment({type:"CurveXZ",alpha:30,length:curveLength*6}));break;
-					case 1:addSegment(new PathSegment({type:"CurveXZ",alpha:-30,length:curveLength*6}));break;
-					case 2:addSegment(new PathSegment({type:"CurveYZ",alpha:30,length:curveLength*6}));break;
-					case 3:addSegment(new PathSegment({type:"CurveYZ",alpha:-30,length:curveLength*6}));break;
-					case 4:addSegment(new PathSegment({type:"CurveXZ",alpha:60,length:curveLength*6}));break;
-					case 5:addSegment(new PathSegment({type:"CurveXZ",alpha:-60,length:curveLength*6}));break;
-					case 6:addSegment(new PathSegment({type:"CurveYZ",alpha:60,length:curveLength*6}));break;
-					case 7:addSegment(new PathSegment({type:"CurveYZ",alpha:-60,length:curveLength*6}));break;
-				}
-				addSegment(new PathSegment({type:"Line",length:curveLength}));
+					case 0:addSegment(new PathSegment({type:"CurveXZ",alpha:30,length:curveLength*6,zTwist:zTwist}));break;
+					case 1:addSegment(new PathSegment({type:"CurveXZ",alpha:-30,length:curveLength*6,zTwist:zTwist}));break;
+					case 2:addSegment(new PathSegment({type:"CurveYZ",alpha:30,length:curveLength*6,zTwist:zTwist}));break;
+					case 3:addSegment(new PathSegment({type:"CurveYZ",alpha:-30,length:curveLength*6,zTwist:zTwist}));break;
+					case 4:addSegment(new PathSegment({type:"CurveXZ",alpha:60,length:curveLength*6,zTwist:zTwist}));break;
+					case 5:addSegment(new PathSegment({type:"CurveXZ",alpha:-60,length:curveLength*6,zTwist:zTwist}));break;
+					case 6:addSegment(new PathSegment({type:"CurveYZ",alpha:60,length:curveLength*6,zTwist:zTwist}));break;
+					case 7:addSegment(new PathSegment({type:"CurveYZ",alpha:-60,length:curveLength*6,zTwist:zTwist}));break;
+						}
+				addSegment(new PathSegment({type:"Line",length:curveLength,zTwist:zTwist}));
 				//trace("Add Segment:"+length);
+		}
+		
+		public function pathComplex(){
+			var zTwist={alpha0:0,alpha1:(Math.random()*2-1)*100};
+			if(Math.random()<=0.6){
+				switch(Math.floor(Math.random()*9)){
+					case 0:addSegment(new PathSegment({type:"CurveXZ",alpha:30,length:curveLength*6,zTwist:zTwist}));break;
+					case 1:addSegment(new PathSegment({type:"CurveXZ",alpha:-30,length:curveLength*6,zTwist:zTwist}));break;
+					case 2:addSegment(new PathSegment({type:"CurveYZ",alpha:30,length:curveLength*6,zTwist:zTwist}));break;
+					case 3:addSegment(new PathSegment({type:"CurveYZ",alpha:-30,length:curveLength*6,zTwist:zTwist}));break;
+					case 4:addSegment(new PathSegment({type:"CurveXZ",alpha:60,length:curveLength*6,zTwist:zTwist}));break;
+					case 5:addSegment(new PathSegment({type:"CurveXZ",alpha:-60,length:curveLength*6,zTwist:zTwist}));break;
+					case 6:addSegment(new PathSegment({type:"CurveYZ",alpha:60,length:curveLength*6,zTwist:zTwist}));break;
+					case 7:addSegment(new PathSegment({type:"CurveYZ",alpha:-60,length:curveLength*6,zTwist:zTwist}));break;
+					case 8:addSegment(new PathSegment({type:"Line",length:curveLength,zTwist:zTwist}));
+				}
+			}else{
+				switch(Math.floor(Math.random()*8)){
+					case 0:addSegment(new PathSegment({type:"Line",length:curveLength*3,zTwist:{alpha0:0,alpha1:360}}));break;
+					case 1:addSegment(new PathSegment({type:"Line",length:curveLength*3,zTwist:{alpha0:0,alpha1:360}}));break;
+					case 2:addSegment(new PathSegment({type:"SpiralXZ",alpha:360,length:curveLength*12,depth:1000}));break;
+					case 3:addSegment(new PathSegment({type:"SpiralXZ",alpha:-360,length:curveLength*12,depth:1000}));break;
+					//case 4:addSegment(new PathSegment({type:"SpiralXZ",alpha:180,length:curveLength*10,depth:1000}));break;
+					//case 5:addSegment(new PathSegment({type:"SpiralXZ",alpha:-180,length:curveLength*10,depth:1000}));break;
+					case 4:addSegment(new PathSegment({type:"SpiralYZ",alpha:360,length:curveLength*12,depth:1000}));break;
+					case 5:addSegment(new PathSegment({type:"SpiralYZ",alpha:360,length:curveLength*12,depth:-1000}));break;
+					case 6:addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*6}));break;
+					case 7:addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:60,length:curveLength*6}));break;
+				}
+			}
+			//	addSegment(new PathSegment({type:"Line",length:curveLength,zTwist:zTwist}));
+				
 			
 		
 		}
+
 		public function pathNice(){
 				if(Math.random()<=0.6){
 					addSegment(new PathSegment({type:"Line",length:curveLength}));
@@ -286,6 +368,14 @@
 		
 		public function pathStraight(){
 				addSegment(new PathSegment({type:"Line",length:curveLength}));
+		}
+
+
+		public function pathTest(){
+					addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:60,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:60,length:curveLength*3}));
 		}
 	}
 }

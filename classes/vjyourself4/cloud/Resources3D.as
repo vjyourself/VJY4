@@ -255,8 +255,10 @@
 		public function createR_BmpD(p:Object){
 			//var n=p.bmpD;
 			//var cn=n;if(p.pre!=null) cn=p.pre+p.bmpD;
-			var blend="NORMAL";if(p.blend!=null) blend=p.blend;
+			var blend="NORMAL";
 			if(globalBlend!="DEF") blend=globalBlend;
+			if(p.blend!=null) blend=p.blend;
+			
 			
 			//var c:Class = getDefinitionByName(cn) as Class;
 			//var oBmpD = new c();
@@ -280,8 +282,9 @@
 		public function createR_Sprite(p:Object){
 			var n=p.sp;
 			var nc=p.sp;
-			var blend="NORMAL";if(p.blend!=null) blend=p.blend;
+			var blend="NORMAL";
 			if(globalBlend!="DEF") blend=globalBlend;
+			if(p.blend!=null) blend=p.blend;
 			
 			
 			var c:Class = getDefinitionByName("Tex"+nc) as Class;

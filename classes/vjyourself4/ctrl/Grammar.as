@@ -24,6 +24,7 @@
 		var vary_obj:Object;
 
 		public var commButtons:Object;
+		var active:Object={anal:true,trig:true};
 
 		public var map:Object;
 		public var state:String="";
@@ -35,7 +36,7 @@
 		
 		public function init(){
 			if(params.mode!=null) mode=params.mode;
-	
+			if(params.active!=null) active=params.active;
 			if(params.bind!=null){
 				if(params.bind.vary!=null) vary_path=params.bind.vary; 
 				if(params.bind.anal!=null) anal_path=params.bind.anal;	
@@ -68,7 +69,8 @@
 			this[prop+"_obj"]=Eval.evalPath(ns,val);
 		}
 		public function onTrig(e:DynamicEvent){
-			vary_obj.next(e.data.ind);
+			if(active.trig) vary_obj.next(e.data.ind);
+			
 			//switch(e.data.ind){
 		//		case 0:
 	//		}
@@ -91,6 +93,8 @@
 		public function onEF(e){
 			//trace("SDFSFSDFSDFSDF");
 			//trace(mode);
+			
+			if(active.anal){
 			switch(mode){
 				case "SinglePlayer":
 				gamepad.onEF(e);
@@ -103,7 +107,7 @@
 			
 				break;
 			}
-
+		}
 		}
 
 		public function dispose(){

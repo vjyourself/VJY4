@@ -1,0 +1,16 @@
+{
+	"name":"Hippie",
+	"_id":"ObjectId",
+	"imageSequence":{
+		"elem":[
+			{"name":"idSQL","url":"sdasd","_id":"asdadadasdas"}
+		],
+		"sequence":[
+			{"n":"AfroMask","e":["sdfsfsdfsdfsdf","sdfsfsdfsfsdf",]}
+		]
+	},
+
+	"colorSequence":{
+		
+	}
+}

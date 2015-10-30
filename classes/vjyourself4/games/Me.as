@@ -128,6 +128,7 @@
 		}
 		public function onEF(e=null){
 			
+			
 			//meState.tfX.text=""+me.pos.x;
 			//meState.tfY.text=""+me.pos.y;
 			//meState.tfZ.text=""+me.pos.z;

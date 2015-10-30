@@ -82,6 +82,7 @@
 			//ns.path=path;
 			//ctrlPath
 			ctrlPath= new CtrlPath();
+			if(params.ctrlPath!=null) for(var i in params.ctrlPath) ctrlPath[i]=params.ctrlPath[i];
 			ctrlPath._debug=_debug;
 			ctrlPath.path=path;
 			ctrlPath.me=ns.me;

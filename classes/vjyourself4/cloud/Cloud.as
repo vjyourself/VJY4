@@ -43,12 +43,11 @@ package vjyourself4.cloud{
 		
 		public var events:EventDispatcher;
 		public var ready=false;
-		public var urlRnd:Boolean=false;
 		
 		///////new
 		public var context:LoaderContext;
-		public var baseURL:String="cloud/";
-
+		var cloud1:Object={online:false,path:"cloud/"};
+		var cloud2:Object={online:false,path:"cloud2/"};
 		/*
 		packages:
 		-url : file to load
@@ -57,6 +56,7 @@ package vjyourself4.cloud{
 		-cont : swf container if loaded
 		*/
 		// url -> src -> data
+
 		public var packages:Array=[];
 		var pInit:Object;
 		public var packagesNS:Object={};
@@ -66,8 +66,6 @@ package vjyourself4.cloud{
 		var imagesLoader:Loader;
 		var imagesInd:Number=0;
 		
-		public var res:Object;
-		public var resSrc:String=""; // online - local
 		// GLOBAL DB
 		public var DB:DBHandler;
 		
@@ -128,8 +126,8 @@ package vjyourself4.cloud{
 			log(1,"init");
 			pInit=p;
 			packagesInd=-1;
-			if(p.baseURL!=null)baseURL=p.baseURL;
-			
+			if(p.cloud1!=null)cloud1=p.cloud1;
+			if(p.cloud2!=null)cloud2=p.cloud2;
 			//DB - General DB
 			DB = new DBHandler();
 			DB.cloud = this;
@@ -146,7 +144,7 @@ package vjyourself4.cloud{
 			//TEXTURES / THEMES / GEOM - 3D Resources
 			R3D = new Resources3D();
 			R3D.music=music;
-			R3D.baseURL=baseURL;
+			R3D.baseURL=cloud1.path;
 			R3D.events.addEventListener(Event.COMPLETE,R3DProcessComplete,0,0,1);
 			if(pInit.R3D!=null) for(var i in pInit.R3D) R3D[i]=pInit.R3D[i];
 			R3D.init();
@@ -198,14 +196,25 @@ package vjyourself4.cloud{
 			imagesLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,imagesLoaderComplete,0,0,1);
 			log(1,"collect resources..."); 
 			
+			/*****************************************************************************************
+			  CLOUD 2 Packages (cloud.load2)
+			*****************************************************************************************/
+			if(p.load2!=null) for(var i=0;i<p.load2.length;i++){
+				packages.push({url:p.load2[i],cloud:2});
+			}
+
+			/*****************************************************************************************
+			  CLOUD 1 Packages (cloud.load1)
+			*****************************************************************************************/
+			packages.push({src:{"includes":p.load1}});
 			
 			/***************************************************************************************
-			    Resources -> files
+			  CLOUD 1 Resources -> Packages
 			****************************************************************************************/
-			if(p.resources==null) p.resources={textures:{themes:[]},spaces:[],colors:[],lights:[],filters:[],scenes:[]};
-			res=p.resources;
-			resSrc=p.src;
-			if(resSrc=="online") urlRnd=true;
+			if(p.res1==null) p.res1={textures:{themes:[]},spaces:[],colors:[],lights:[],filters:[],scenes:[]};
+			var res=p.res1;
+			
+			//CREATE RES LISTINGS
 			//Not in DB at all :: skyboxes
 			if(res.skyboxes!=null) for(var i=0;i<res.skyboxes.length;i++)skyboxes.push({name:res.skyboxes[i]});
 			if(res.paths!=null) for(var i=0;i<res.paths.length;i++) paths.push({name:res.paths[i]});
@@ -214,36 +223,19 @@ package vjyourself4.cloud{
 			if(res.lights!=null) for(var i=0;i<res.lights.length;i++)lights.push({name:res.lights[i]});
 			if(res.filters!=null) for(var i=0;i<res.filters.length;i++)filters.push({name:res.filters[i]});
 			if(res.blends!=null) for(var i=0;i<res.blends.length;i++)blends.push({name:res.blends[i]});
-			var fff = getPackageFiles(p.resources);
-			for(var i=0;i<fff.length;i++)p.all.includes.push(fff[i]);
+	
+			//Push Packages
+			packages.push({src:{"includes":getPackageFiles(res)}});
 			
 
 			/*****************************************************************************************
-				START TO PROCESS PACKAGES
+			  START PROCESSING PACKAGES
 			*******************************************************************************************/
 			log(1,"load packages");
-			//Process files
-			if(p.all!=null){
-				packages.push({src:p.all});
-				packagesStartNext();
-			}else{
-				if(p.packages!=null){
-					for(var i=0;i<p.packages.length;i++){
-						if(p.packages[i].data!=null){
-							packages.push({data:p.packages[i].data});
-						}
-					
-						if(p.packages[i].url!=null){
-							packages.push({url:p.packages[i].url});
-						}
-					}
-					packagesStartNext();
-				}else{
-					packages_COMPLETE();
-				}
-			}
+			packagesStartNext();
 		}
 		
+		// RESOURCES -> PACKAGES converter
 		public function getPackageFiles(res){
 			var fff=[];
 			var list;
@@ -256,16 +248,18 @@ package vjyourself4.cloud{
 					var grpE={name:i,e:[]};
 					list=grp[i];
 					for(var ii=0;ii<list.length;ii++){
-						grpE.e.push({name:"Prg"+list[ii]});
-						spaces.push({name:"Prg"+list[ii],prg:"Prg"+list[ii]});
+						var nnss=list[ii].split("/");
+						var n=nnss[nnss.length-1];
+						grpE.e.push({name:n});
+						spaces.push({name:n,prg:n});
 						//spacesMap.push(RPrg.cont.programs.path["Prg"+list[ii]]);
-						if(resSrc=="online"){
+						if(cloud1.online){
 							//fff.push("spaces/export.php?name="+list[ii]);
-							fff.push("programs/path/Prg"+list[ii]+".json");
-							spacesP.push("programs/path/Prg"+list[ii]+".json");
+							fff.push("programs/path/"+list[ii]+".json");
+							spacesP.push("programs/path/"+list[ii]+".json");
 						}else{
-							fff.push("programs/path/Prg"+list[ii]+".json");
-							spacesP.push("programs/path/Prg"+list[ii]+".json");
+							fff.push("programs/path/"+list[ii]+".json");
+							spacesP.push("programs/path/"+list[ii]+".json");
 						}
 					}
 					spacesG.push(grpE);
@@ -278,7 +272,7 @@ package vjyourself4.cloud{
 			if(res.textures.themes!=null){
 			list=res.textures.themes;
 			for(var i=0;i<list.length;i++){
-				if(resSrc=="online"){
+				if(cloud1.online){
 					fff.push("images/textures.php?tag="+escape(list[i]));
 					fff.push("images/themes.php?tag="+escape(list[i]));
 				}else{
@@ -292,7 +286,7 @@ package vjyourself4.cloud{
 			if(res.textures.queries!=null){
 			list=res.textures.queries;
 			for(var i=0;i<list.length;i++){
-				if(resSrc=="online"){
+				if(cloud1.online){
 					fff.push("images/texNcyc.php?q="+JSON.stringify(list[i]));
 				}else{
 					fff.push("images/texNcyc_"+list[i].name+".json");
@@ -305,7 +299,7 @@ package vjyourself4.cloud{
 			//Colors
 			if(res.colors!=null){
 				if(res.colors.length>0){
-					if(resSrc=="online"){
+					if(cloud1.online){
 						fff.push("colors/export.php?q=all");
 					}else{
 						fff.push("colors/colors.json");
@@ -316,7 +310,7 @@ package vjyourself4.cloud{
 			//Lights
 			if(res.lights!=null){
 				if(res.lights.length>0){
-					if(resSrc=="online"){
+					if(cloud1.online){
 						fff.push("lights/lights.json");
 						fff.push("lights/presets.json");
 					}else{
@@ -329,7 +323,7 @@ package vjyourself4.cloud{
 			//Filters
 			if(res.filters!=null){
 				if(res.filters.length>0){
-					if(resSrc=="online"){
+					if(cloud1.online){
 						fff.push("filters/filters.json");
 						//fff.push("lights/presets.json");
 					}else{
@@ -343,7 +337,7 @@ package vjyourself4.cloud{
 			if(res.scenes!=null){
 			list=res.scenes;
 			for(var i=0;i<list.length;i++){
-				if(resSrc=="online"){
+				if(cloud1.online){
 					fff.push("scenes/"+list[i]+".json?rnd="+Math.random());
 				}else{
 					fff.push("scenes/"+list[i]+".json");
@@ -355,7 +349,7 @@ package vjyourself4.cloud{
 			if(res.timelines!=null){
 			list=res.timelines;
 			for(var i=0;i<list.length;i++){
-				if(resSrc=="online"){
+				if(cloud1.online){
 					fff.push("timelines/timelines_"+list[i]+".json?rnd="+Math.random());
 				}else{
 					fff.push("timelines/timelines_"+list[i]+".json");
@@ -378,13 +372,16 @@ package vjyourself4.cloud{
 		function packagesStartNext(){
 			packagesInd++;
 			if(packagesInd<packages.length){
+				// cloud1 or cloud2 ?
+				if(packages[packagesInd].cloud==null) packages[packagesInd].cloud=1;
+
 				//URL or DATA
 				//log(2,"*****************************************************************************"); 
 				if(packages[packagesInd].url!=null){
-					log(2,"load "+packages[packagesInd].url); 
-					var bURL=baseURL;//if(packages[packagesInd].cloud2)bURL=baseURL2;
-					var url=bURL+packages[packagesInd].url;
-					if(urlRnd) url+=((url.indexOf("?")<0)?"?":"&")+"rnd="+Math.random();
+					log(2,"load "+packages[packagesInd].url);
+					var cm=this["cloud"+packages[packagesInd].cloud];
+					var url=cm.path+packages[packagesInd].url;
+					if(cm.online) url+=((url.indexOf("?")<0)?"?":"&")+"rnd="+Math.random();
 					urlLoader.load(new URLRequest(url));
 				}else{
 					if(packages[packagesInd].src!=null){
@@ -443,7 +440,7 @@ package vjyourself4.cloud{
 		function processPackage(){
 			//cont needed
 			if(packages[packagesInd].data.cont!=null){
-				contLoader.load(new URLRequest(baseURL+packages[packagesInd].data.cont),context);
+				contLoader.load(new URLRequest(cloud1.path+packages[packagesInd].data.cont),context);
 			}else{
 				if(packages[packagesInd].data.images!=null){
 					imagesStart();
@@ -495,11 +492,27 @@ package vjyourself4.cloud{
 			if(imagesInd==packages[packagesInd].data.data.length){
 				imagesComplete();
 			}else{
-				log(2,"Load "+packages[packagesInd].data.data.length+"/"+(imagesInd+1)+" : "+packages[packagesInd].data.data[imagesInd].file);
-				var bURL=baseURL;//if(packages[packagesInd].data.cloud2)bURL=baseURL2;
-				imagesLoader.load(new URLRequest(bURL+packages[packagesInd].data.images+packages[packagesInd].data.data[imagesInd].file));
+				var imgobj=packages[packagesInd].data.data[imagesInd];
+				var cm=this["cloud"+packages[packagesInd].cloud];
+				
+				//Build URL
+				var url="";
+				if(cm.online){
+					if(imgobj.url!=null) url=imgobj.url;
+					else url=imgobj.file;
+				}else{
+					url=imgobj.file;
+				}
+				if(url.indexOf("http")<0){
+					url=cm.path+packages[packagesInd].data.images+url;
+				}
+
+				//Load Image
+				log(2,"Load "+packages[packagesInd].data.data.length+"/"+(imagesInd+1)+" : "+url);
+				imagesLoader.load(new URLRequest(url));
 			}
 		}
+
 		function imagesLoaderComplete(e){
 			//var bmpD = new BitmapData(imagesLoader.content.width,imagesLoader.content.height,true,0);
 			//bmpD.draw(imagesLoader.content);
@@ -538,7 +551,15 @@ package vjyourself4.cloud{
 				case "R3D":ready=R3D.processData(packages[packagesInd].data.path,packages[packagesInd].data.data);break;
 				case "C3D":C3D.add(packages[packagesInd].data.data);ready=true;break;
 				
-				case "CCol":CCol.add(packages[packagesInd].data.data);ready=true;break;
+				case "CCol":
+					CCol.add(packages[packagesInd].data.data);
+					//add to list?
+					if( packages[packagesInd].data.list){
+						var cc=packages[packagesInd].data.data;
+						for(var i in cc) colors.push({name:i});
+					}
+					ready=true;
+				break;
 				case "RLights":RLights.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
 				case "RFilters":RFilters.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
 
@@ -568,6 +589,7 @@ package vjyourself4.cloud{
 				}
 				
 				//Colors
+				// IF res.colors has only "*" .. obsolete
 				if((colors.length>0)&&(colors[0].name=="*")){
 					colors=[];
 					for(var i in CCol.NS){
@@ -579,6 +601,8 @@ package vjyourself4.cloud{
 						}
 					}
 				}
+
+		
 
 				//Lights
 				if((lights.length>0)&&(lights[0].name=="*")){
@@ -677,6 +701,7 @@ package vjyourself4.cloud{
 				cont.ImageSequence={l:themes,e:C3D.NS,m:C3D}
 				cont.spaceG={l:spacesG,e:spaces};
 				cont.space={l:spaces,e:RPrg.NS.cont.programs.path};
+				cont.path={l:paths};
 				
 				//first init
 				log(1,"COMPLETE");

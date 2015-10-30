@@ -19,9 +19,13 @@
 		}
 		public function onEF(e=null){
 		//	var scale=logic.input.ctrlsA[ctrl];
+			
 			aa+=0.1*speed;
 			logic.obj.obj3D.x=Math.sin(aa)*radius+x;
 			logic.obj.obj3D.y=Math.cos(aa)*radius+y;
+			
+			//logic.obj.obj3D.x=x+(Math.random()*2-1)*10;
+			//logic.obj.obj3D.y=y+(Math.random()*2-1)*10;
 				
 		}
 	}

@@ -313,9 +313,11 @@
 					logic.musicmeta=musicmeta;
 					logic.obj=obj;
 					logic.code=code.logic;
-					logic.init();
+				//	logic.init();
 					obj.logicActive=true;
 					obj.logic=logic;
+			}else{
+				obj.logicActive=false;
 			}
 		}
 	}

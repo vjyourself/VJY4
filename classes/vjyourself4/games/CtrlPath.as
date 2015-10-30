@@ -118,6 +118,7 @@
 			
 			//move pMe
 			pMe+=speed;
+			trace(pMe+" "+speed);
 			
 			//calculate CAMERA
 			var mePos:Vector3D;

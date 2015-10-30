@@ -4,6 +4,7 @@
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.geom.ColorTransform;
+	import flash.geom.Matrix3D;
 	import flash.filters.BlurFilter;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -13,7 +14,9 @@
 	import flash.utils.getDefinitionByName;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
-	
+	 import away3d.cameras.Camera3D;
+ import away3d.containers.Scene3D;
+ import away3d.containers.View3D;
 	
 	import away3d.containers.ObjectContainer3D;
 	import away3d.entities.Mesh;
@@ -50,11 +53,12 @@
 	import away3d.core.pick.PickingColliderType;
 	import away3d.filters.RadialBlurFilter3D;
 	
-	
+	import 	away3d.cameras.lenses.*;
 //	import vjyourself2.src.SrcInput;
 	import vjyourself4.patt.WaveFollow;
 	import vjyourself4.media.Music;
 	import vjyourself4.cloud.Cloud;
+	import vjyourself4.three.*;
 //	import vjyourself2.post.PostService;
 	
 	//import vjyourself4.games.ways.GameWaysDynamic;
@@ -84,6 +88,10 @@
 		
 		public var vis:flash.display.Sprite;
 		public var view:View3D;
+		public var view2:View3D;
+		var cam:Camera3D;
+		var cam2:Camera3D;
+		var lens:LensBase;;
 		
 		public var params:Object;
 		public var sys:SystemServices;
@@ -101,7 +109,10 @@
 		
 		var awayStats:AwayStats;
 		
-		
+		var Split3D:Boolean=false;
+		var mode_split:Object;
+		public var lens_fov:Number=60;
+
 		public function Game4(){
 		}
 		
@@ -113,9 +124,39 @@
 			log(1,"Init");
 			//set up 3D view
 			sys.screen.events.addEventListener(Event.RESIZE,onResize,0,0,1);
+			if(sys.screen.In3D.mode=="split"){
+				Split3D=true;
+				mode_split=sys.screen.In3D.mode_split;
+			}
 			sys.enterframe.events.addEventListener(Event.ENTER_FRAME,onEF,0,0,1);
-			vis = new flash.display.Sprite();			
-			view = new View3D();
+			vis = new flash.display.Sprite();
+
+			var scene = new Scene3D();
+			if(Split3D){
+				var lensP:PerspectiveScaleLens = new PerspectiveScaleLens(lens_fov);
+				if(mode_split.split=="horizontal"){
+					lensP.scaleX=0.5;
+					lensP.scaleY=1;
+				}else{
+					lensP.scaleX=1;
+					lensP.scaleY=0.5;
+				}
+				lens=lensP;
+				cam = new Camera3D(lens);
+				cam2 = new Camera3D(lens);
+			}else{
+				lens = new PerspectiveLens(lens_fov)	
+				cam = new Camera3D(lens);
+			}
+			/*cam.lens.matrix.appendScale(0.5,1,1);
+			cam.lens = new FreeMatrixLens();
+			cam.lens.matrix = new Matrix3D();
+			cam.lens.updateMatrix();
+			cam.lens.matrix.appendScale(0.5,1,1);
+			cam.lens.aspectRatio=2;
+			*/
+
+			view = new View3D(scene,cam);
 			view.backgroundColor = ColorType.toNumber(params.backgroundColor);
 			view.antiAlias = 4;
 			view.width = dimX;
@@ -125,8 +166,40 @@
 			view.camera.y=0;
 			view.camera.z=0;
 			view.camera.rotationX=0;
-			
 			vis.addChild(view);
+
+			if(Split3D){
+			view2 = new View3D(scene,cam2);
+			view2.backgroundColor = ColorType.toNumber(params.backgroundColor);
+			view2.antiAlias = 4;
+			view2.width = dimX;
+			view2.height = dimY;
+			view2.camera.lens.far=40000;
+			view2.camera.x=0;
+			view2.camera.y=0;
+			view2.camera.z=0;
+			view2.camera.rotationX=0;
+			vis.addChild(view2);
+			if(mode_split.split=="horizontal"){
+				view.width=dimX/2;
+				view.x=0;
+				view2.width=dimX/2;
+				view2.x=dimX/2;
+			}else{
+				view.height=dimY/2;
+				view.y=0;
+				view2.height=dimY/2;
+				view2.y=dimY/2;
+			}
+			}
+
+			/*
+			//Tried to scale view without lens, but doesn't work
+			view.camera.scaleY=0.5;
+			view.scaleY=0.5;
+			view.x=100;
+			*/
+
 			vis.addEventListener(Event.ADDED_TO_STAGE,onStage);
 			sys.screen.addView(view);
 			ns.view=view;
@@ -211,13 +284,44 @@
 		}
 		public function onEF(e){
 			for(var i=0;i<modulesEF.length;i++)modulesEF[i].onEF(e);
+			lens["fieldOfView"]=lens_fov;
 			view.render();
+			
+			if(Split3D){
+				var t:Matrix3D = cam.transform.clone();
+				//var sss=t.transformVector(new Vector3D(100,0,0));
+				t.appendTranslation(mode_split.eyeDistance,0,0);
+				cam2.transform=t;
+				view2.render();
+			}
 			
 		}
 	
 		public function onResize(e=null){
-			view.width = vis.stage.stageWidth;
-			view.height = vis.stage.stageHeight;
+			dimX = vis.stage.stageWidth;
+			dimY = vis.stage.stageHeight;
+
+			if(Split3D){
+				if(mode_split.split=="horizontal"){
+					view.width=dimX/2;
+					view.height=dimY;
+					view.x=0;
+					view2.width=dimX/2;
+					view2.height=dimY;
+					view2.x=dimX/2;
+				}else{
+					view.height=dimY/2;
+					view.width=dimX;
+					view.y=0;
+					view2.height=dimY/2;
+					view2.width=dimX;
+					view2.y=dimY/2;
+				}
+			}else{
+				view.width=dimX;
+				view.height=dimY;
+			}
+
 			for(var i=0;i<modulesResize.length;i++)modulesResize[i].onResize(e);
 		}
 		

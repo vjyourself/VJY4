@@ -4,13 +4,10 @@
 	import flash.events.MouseEvent;
 	import vjyourself4.dson.TransJson;
 	import vjyourself4.dson.Eval;
+	import vjyourself4.VJYBase;
 
-	public class SceneVary{
-		public var _debug:Object;
-		public var _meta:Object={name:"Scene"};
-		public function setDLevels(l1,l2,l3,l4){dLevels=[l1,l2,l3,l4];}
-		var dLevels:Array=[true,true,false,false];
-		function log(level,msg){if(dLevels[level-1])_debug.log(this,level,msg);}
+	public class SceneVary extends VJYBase{
+		
 
 		//var ccloud:Object;
 		//var scene:SceneManager;
@@ -40,8 +37,8 @@
 				for(var i in channels) channels[i].obj=null;
 				channels=[];
 				for(var i=0;i<p.channels.length;i++){
-					var ch={};
 					var chm=p.channels[i];
+					var ch={n:chm.n};
 					if((chm.link!=null)&&(chm.link)){
 						ch.act="link";
 						ch.ch=chm.ch;
@@ -64,14 +61,15 @@
 						//NESTED e,i,v e2,i2,v2
 						if(chm.nested!=null){
 							ch.nested=true;
+							ch.n2=chm.n2;
 							if(chm.vals is String){
 								vals=[];
 								var cv=ns._sys.cloud.cont[chm.vals].l;
 								for(var vi=0;vi<cv.length;vi++){
 									var vvv =[];
 									var cvv=cv[vi].e;
-									for(var vii=0;vii<cvv.length;vii++) vvv.push(cvv[vii].name.substring(3));
-									vals.push(vvv);
+									for(var vii=0;vii<cvv.length;vii++) vvv.push(cvv[vii].name);
+									vals.push({e:vvv,n:cv[vi].name});
 								}
 							}else{
 								vals=chm.vals;
@@ -193,10 +191,11 @@
 			}else return ch.v
 		}
 		public function next(ind:Number,lev:Number=0){
-			trace("NEXT",ind,lev,channels.length);
+			
+		//	trace("NEXT",ind,lev,channels.length);
 			if(ind<channels.length){
 				var ch=channels[ind];
-				trace("act",ch.act);
+				//trace("act",ch.act);
 				switch(ch.act){
 					case "link":
 					next(ch.ch,ch.lev);
@@ -205,7 +204,7 @@
 					if((ch.nested)&&(lev>0)){
 						ch.i2=(ch.i2+1)%ch.e2.length;
 						ch.v2=ch.e2[ch.i2];
-						ch.e=ch.v2;
+						ch.e=ch.v2.e;
 						ch.i=0;
 					}else{
 						ch.i=(ch.i+1)%ch.e.length;
@@ -213,14 +212,17 @@
 					ch.v=ch.e[ch.i];
 					//var p={};
 					//p[ch.prop]=ch.v;
-					trace("VARY");
-					trace(ch.e);
-					trace(ch.v);
-					trace(ch.prop,ch.v);
+					//trace("VARY");
+					//trace(ch.e);
+					//trace(ch.v);
+					//trace(ch.prop,ch.v);
+					if((!ch.nested)||(lev==0)) log(6,ch.n+" : "+ch.v);
+					else log(6,ch.n2+" : "+ch.v2.n);
 					ch.obj.compParams.setParam(ch.prop,ch.v);
 					break;
 					case "func":
 					ch.obj[ch.func]();
+					log(6,ch.n+" : Next");
 					break;
 				}
 			}

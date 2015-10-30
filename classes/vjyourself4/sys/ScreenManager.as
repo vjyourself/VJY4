@@ -52,6 +52,7 @@
 		public var browser:Boolean=false;
 		public var stats:Boolean=false;
 		public var fps:Number=60;
+		public var In3D:Object={mode:"none"};
 		
 		//vars
 		public var events:EventDispatcher;
