@@ -14,7 +14,7 @@
 		public var path;
 		public var ctrlPath;
 		public var context:Object;
-		public var inputVJY:Object;
+		public var ctrlMovement:Object;
 		public var lengthPos:Number=0;
 		public var viewPos:Number=0;
 		

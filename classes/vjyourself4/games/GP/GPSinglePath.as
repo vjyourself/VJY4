@@ -1,5 +1,5 @@
 ﻿package vjyourself4.games.GP{
-	import vjyourself4.input.InputVJYourself;
+	import vjyourself4.ctrl.CtrlMovement;
 	import vjyourself4.sys.SystemServices;
 	import away3d.cameras.Camera3D;
 	import away3d.containers.ObjectContainer3D;
@@ -33,7 +33,7 @@
 		
 		public var cont3D:ObjectContainer3D;
 
-		public var inputVJY:InputVJYourself;
+		public var ctrlMovement:CtrlMovement;
 		public var path:Path;
 		public var ctrlPath:CtrlPath;
 		public var synthPath:SynthPath2;
@@ -50,13 +50,13 @@
 		
 		public function init(){
 			//VJ input
-			inputVJY=new InputVJYourself();
-			inputVJY.ns=ns;
-			inputVJY.input=ns._glob.sys.input;
-			if(params.ctrl!=null) for(var i in params.ctrl) inputVJY[i]=params.ctrl[i];
-			inputVJY.init();
-			ns.inputVJY=inputVJY;
-			
+			ctrlMovement=new CtrlMovement();
+			ctrlMovement.ns=ns;
+			ctrlMovement.io=ns._sys.io;
+			if(params.ctrl!=null) for(var i in params.ctrl) ctrlMovement[i]=params.ctrl[i];
+			ctrlMovement.init();
+			ns.ctrlMovement=ctrlMovement;
+			ns.inputVJY=ctrlMovement;
 			assemblerObj3D = new AssemblerObj3D();
 			assemblerObj3D.cloud = ns._sys.cloud as Cloud;
 			assemblerObj3D.musicmeta = ns._sys.music.meta;
@@ -86,7 +86,7 @@
 			ctrlPath._debug=_debug;
 			ctrlPath.path=path;
 			ctrlPath.me=ns.me;
-			ctrlPath.inputVJY=inputVJY;
+			ctrlPath.ctrlMovement=ctrlMovement;
 			
 			//set up path parameters - not supported yet
 			var pathParams={type:"Random",ll:300};
@@ -105,7 +105,7 @@
 			synthPath.cont=cont3D;
 			synthPath.path=path;
 			synthPath.ctrlPath=ctrlPath;
-			synthPath.inputVJY=ns.inputVJY;
+			synthPath.ctrlMovement=ns.ctrlMovement;
 			synthPath.context=ns.context;
 			synthPath.me=ns.me;
 			synthPath.ns=ns;
@@ -180,7 +180,7 @@
 				origoResetCC=0;
 				sceneToOrigo();
 			}
-			inputVJY.onEF(e);
+			ctrlMovement.onEF(e);
 			ctrlPath.onEF(e);
 			synthPath.onEF(e);
 
@@ -198,10 +198,10 @@
 
 		public function dispose(){
 			
-			inputVJY.dispose();
-			inputVJY.ns=null
-			inputVJY.input=null;
-			delete(ns.inputVJY);
+			ctrlMovement.dispose();
+			ctrlMovement.ns=null
+			ctrlMovement.io=null;
+			delete(ns.ctrlMovement);
 			
 			assemblerObj3D=null;
 
@@ -216,13 +216,13 @@
 			ctrlPath.dispose();
 			ctrlPath.path=null;
 			ctrlPath.me=null;
-			ctrlPath.inputVJY=null;
+			ctrlPath.ctrlMovement=null;
 			
 			synthPath.dispose();
 			synthPath.cont=null;
 			synthPath.path=null;
 			synthPath.ctrlPath=null;
-			synthPath.inputVJY=null;
+			synthPath.ctrlMovement=null;
 			synthPath.context=null;
 			synthPath.me=null;
 			synthPath.ns=null;

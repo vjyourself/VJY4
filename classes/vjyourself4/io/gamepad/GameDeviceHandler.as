@@ -1,4 +1,4 @@
-﻿package vjyourself4.input
+﻿package vjyourself4.io.gamepad
 {
 	import flash.events.EventDispatcher;
 	import flash.ui.GameInputDevice;

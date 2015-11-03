@@ -113,7 +113,11 @@
 				}
 			}
 		}
-		
+		var blendAdd:Boolean=false;
+		public function toggleBlendAdd(){
+			blendAdd=!blendAdd;
+			applyBlendMode(blendAdd?"ADD":"NORMAL");
+		}
 		public function applyBlendMode(mode){
 			////trace("APPLY BLEND> "+mode);
 			for(var i in cont.mat){

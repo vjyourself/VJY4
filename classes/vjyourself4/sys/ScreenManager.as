@@ -72,7 +72,6 @@
 		public var landing:Object;
 		
 		public var saveImage:Object;
-		public var input;
 		public var gui;
 		function ScreenManager(){
 			events= new EventDispatcher();
@@ -128,13 +127,7 @@
 				fssource=bool;
 			}
 		}
-		public function setInput(inp){
-			input=inp;
-			if((input.gamepad_enabled)&&(screenshot.gamepad!="")) input.gamepadManager.events.addEventListener("Gamepad0_"+screenshot.gamepad,saveScreenShot,0,0,1);
-			if((screenshot.click)) input.stage.addEventListener(MouseEvent.CLICK,saveScreenShot,0,0,1);
-			if((input.gamepad_enabled)&&(quit.gamepad!="")) input.gamepadManager.events.addEventListener("Gamepad0_"+quit.gamepad,quitApp,0,0,1);
-			if((quit.click)) input.stage.addEventListener(MouseEvent.CLICK,quitApp,0,0,1);
-		}
+		
 		public function addView(v){view=v;}
 		public function quitApp(e=null){
 			fscommand("quit");

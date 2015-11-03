@@ -20,7 +20,7 @@
 	import flash.system.Capabilities;
 	
 	import vjyourself4.sys.EnterFrame;
-	import vjyourself4.input.InputManager;
+	import vjyourself4.io.IOManager;
 	import vjyourself4.media.Music;
 	import vjyourself4.sys.MetaStream;
 	import vjyourself4.cloud.Cloud;
@@ -49,11 +49,9 @@
 		public var enterframe:EnterFrame;
 		
 		public var screen:ScreenManager;
-		public var input:InputManager;
+		public var io:IOManager;
 		public var music:Music;
-		public var midi:MidiInput;
 		public var cloud:Object;
-		public var arduino:Arduino;
 		
 		public var video:Video;
 	//	public var factory:FactoryVisual;
@@ -160,17 +158,12 @@
 				
 			
 				//input
-				log(1,"Input");
-				input = new InputManager();
-				var inputInitObj ={}; if(params.input!=null) inputInitObj = params.input;
-				input.wDimX=screen.wDimX;
-				input.wDimY=screen.wDimY;
-				input.stage=stage;
-				input._debug=debug;
-				input.screen=screen;
-				input.sys=this;
-				input.init(inputInitObj);
-				screen.setInput(input);
+				log(1,"I/O");
+				io = new IOManager();
+				io.params=params.io;
+				io._debug=debug;
+				io.sys=this;
+				io.init();
 				
 				//music
 				log(1,"Music");
@@ -178,13 +171,6 @@
 				var musicInitObj ={}; if(params.music!=null) musicInitObj = params.music;
 				music.mstream=debug;
 				music.init(musicInitObj);
-				
-				//midi
-				midi = new MidiInput();
-				if(params.midi!=null){
-					midi.params=params.midi;
-					midi.init();
-				}
 				
 				video = new Video();
 				init2b();
@@ -221,12 +207,6 @@
 		function init3(){
 			log(1,"READY");
 			
-			if(params.arduino!=null){
-				arduino = new Arduino();
-				arduino.input=input;
-				arduino.mstream=debug;
-				arduino.init(params.arduino);
-			}
 			//mstream.enabled=false;
 			//if(screen.terminalEnabled) screen.visTerminal.visible=false;
 			ready=true;
@@ -243,10 +223,9 @@
 		
 		public function onEF(e:Object){
 			if(screen!=null) screen.onEF();
-			if(input!=null) input.onEF(e);
+			if(io!=null) io.onEF(e);
 			if(music!=null) music.onEF();
 			if(cloud!=null) cloud.onEF(e);
-			if(arduino!=null) arduino.onEF(e);
 		}
 		
 		public function dispose(){

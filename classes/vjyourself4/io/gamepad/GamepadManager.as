@@ -1,13 +1,17 @@
-﻿package vjyourself4.input
+﻿package vjyourself4.io.gamepad
 {
 	import flash.events.EventDispatcher;
 	import flash.ui.GameInput;
 	import flash.events.GameInputEvent;
 	import flash.ui.GameInputDevice;
 	import flash.ui.GameInputControl;
-	
-	public class GameInputManager
+
+	import vjyourself4.VJYBase;
+	import vjyourself4.io.IOManager;
+
+	public class GamepadManager extends VJYBase
 	{
+		public var io:IOManager;
 		public var events:EventDispatcher= new EventDispatcher();
 		public var platform:String=""; //Mac
 		public var defGamepadType:String="XBOX";
@@ -19,16 +23,16 @@
 		public var num:int=0;
 		
 		var gi:GameInput;
-		public var log:Function;
+		
 		public var singleMerge:Boolean=false;
 	
-		public function GameInputManager():void
+		public function GamepadManager():void
 		{
 		
 		}
 		
 		public function init(){
-			if(log==null) log=logTrace;
+
 			devices=[];
 			states=[];
 			
@@ -38,7 +42,7 @@
 				states[i].events=events;
 				states[i].ind=i;
 			}	
-			log(">>> GAME INPUT <<< "+GameInput.numDevices);
+			log(1,">>> GAME INPUT <<< "+GameInput.numDevices);
 			
 			for(var i=0;i<GameInput.numDevices;i++) addDevice(GameInput.getDeviceAt(i));
 			gi = new GameInput();
@@ -47,15 +51,11 @@
 			num=devices.length;
 		}
 		
-		function logTrace(txt){
-
-			//trace("GameInput> "+txt);
-		}
 		function onAdded(e:GameInputEvent){
-			log("ADD gamepad");
+			log(2,"ADD gamepad");
 			addDevice(e.device);
-			log("- ind: "+(devices.length-1));
-			log("- num: "+devices.length);
+			log(2,"- ind: "+(devices.length-1));
+			log(2,"- num: "+devices.length);
 			num=devices.length;
 		}
 		
@@ -78,22 +78,22 @@
 		}
 
 		function onRemoved(e:GameInputEvent){
-			log("REMOVED");
+			log(2,"REMOVED");
 			var d=e.device;
 			var ind=-1;
 			for(var i=0;i<devices.length;i++) if(d==devices[i].device) ind=i;
-			log("IND "+ind);
+			log(2,"IND "+ind);
 			if(ind>-1){
 				deviceInd[devices[ind].ind]={empty:true};
 				devices.splice(ind,1);
 			}
-			log("dev num:"+devices.length);
+			log(2,"dev num:"+devices.length);
 			num=devices.length;
 		}
 			
 		
 		public function onEF(e=null){
-			//log(">>> GAME INPUT <<< "+GameInput.numDevices);
+			//log(2,">>> GAME INPUT <<< "+GameInput.numDevices);
 			//calculate devices
 			for(var i=0;i<devices.length;i++) devices[i].handler.onEF();
 			

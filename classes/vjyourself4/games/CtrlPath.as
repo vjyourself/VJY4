@@ -37,7 +37,7 @@
 	import vjyourself4.patt.WaveFollow;
 	import vjyourself4.three.*;
 
-	import vjyourself4.input.InputVJYourself;
+	import vjyourself4.ctrl.CtrlMovement;
 	
 	
 	public class CtrlPath{
@@ -49,7 +49,7 @@
 		
 		//in
 		public var me:Me;
-		public var inputVJY:InputVJYourself;
+		public var ctrlMovement:CtrlMovement;
 		public var path:Path;
 		public var onEnd:Function; //callback
 		
@@ -111,10 +111,10 @@
 		public function onEF(e=null){
 
 			//INPUT
-			speed=inputVJY.speed;
-			cameraRotX=inputVJY.cameraRotX;
-			cameraRotY=inputVJY.cameraRotY;
-			cameraRotZ=inputVJY.cameraRotZ;
+			speed=ctrlMovement.speed;
+			cameraRotX=ctrlMovement.cameraRotX;
+			cameraRotY=ctrlMovement.cameraRotY;
+			cameraRotZ=ctrlMovement.cameraRotZ;
 			
 			//move pMe
 			pMe+=speed;

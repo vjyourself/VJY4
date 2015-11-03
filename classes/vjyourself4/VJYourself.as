@@ -64,6 +64,7 @@
 			CommandList;
 			CtrlKey;
 			BindRouter;
+			CtrlCameraMode;
 
 			//COMP SCENE
 			ContextLocal;

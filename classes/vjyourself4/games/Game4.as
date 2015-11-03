@@ -54,25 +54,19 @@
 	import away3d.filters.RadialBlurFilter3D;
 	
 	import 	away3d.cameras.lenses.*;
-//	import vjyourself2.src.SrcInput;
+
 	import vjyourself4.patt.WaveFollow;
 	import vjyourself4.media.Music;
 	import vjyourself4.cloud.Cloud;
 	import vjyourself4.three.*;
-//	import vjyourself2.post.PostService;
-	
-	//import vjyourself4.games.ways.GameWaysDynamic;
+
 	import vjyourself4.sys.MetaStream;
 	import com.adobe.serialization.json.JSONEncoder;
-	import vjyourself4.input.InputVJYourself;
+	
 	import vjyourself4.sys.SystemServices;
-	//import vjyourself4.games.CtrlSpaceThemes;
-	//import vjyourself4.games.CtrlSpaceThemes2;
-	//import vjyourself4.games.GPMultiPath;
+
 	import vjyourself4.dson.ColorType;
-	//import vjyourself4.games.GP.*;
 	import vjyourself4.three.assembler.AssemblerObj3D;
-	//import vjyourself4.CallProxy;
 	import away3d.debug.AwayStats;
 	
 	public class Game4{
@@ -117,8 +111,7 @@
 		}
 		
 		public function init(p:Object=null){
-			ns={cloud:sys.cloud,input:sys.input,screen:sys.screen,console:sys.console,sys:sys};
-			ns._glob=ns;
+			ns={cloud:sys.cloud,io:sys.io,input:sys.io,screen:sys.screen,console:sys.console,sys:sys};
 			ns._sys=sys;
 			ns.game=this;
 			log(1,"Init");

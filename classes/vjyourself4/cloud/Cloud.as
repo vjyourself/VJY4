@@ -199,8 +199,10 @@ package vjyourself4.cloud{
 			/*****************************************************************************************
 			  CLOUD 2 Packages (cloud.load2)
 			*****************************************************************************************/
+		
 			if(p.load2!=null) for(var i=0;i<p.load2.length;i++){
-				packages.push({url:p.load2[i],cloud:2});
+				if(cloud2.online) packages.push({url:p.load2[i],cloud:2});
+				else packages.push({url:p.load2[i].split("/").join("_")+".json",cloud:2});
 			}
 
 			/*****************************************************************************************
@@ -378,14 +380,14 @@ package vjyourself4.cloud{
 				//URL or DATA
 				//log(2,"*****************************************************************************"); 
 				if(packages[packagesInd].url!=null){
-					log(2,"load "+packages[packagesInd].url);
+					log(2,"load "+packages[packagesInd].url+" cloud"+packages[packagesInd].cloud);
 					var cm=this["cloud"+packages[packagesInd].cloud];
 					var url=cm.path+packages[packagesInd].url;
 					if(cm.online) url+=((url.indexOf("?")<0)?"?":"&")+"rnd="+Math.random();
 					urlLoader.load(new URLRequest(url));
 				}else{
 					if(packages[packagesInd].src!=null){
-						log(2,"load data ( "+packages[packagesInd].src+" )"); 
+						log(2,"load data ( "+packages[packagesInd].src+" )"+" cloud"+packages[packagesInd].cloud); 
 						processPackageSource();
 					}
 				}
@@ -393,9 +395,9 @@ package vjyourself4.cloud{
 				packages_COMPLETE();
 			}
 		}
-		public function addPackage(pp){
-			log(4,"include package DATA: "+pp);
-			this.packages.push({src:pp});
+		public function addPackage(src,cloudInd=1){
+			log(4,"include package DATA: "+src);
+			this.packages.push({src:src,cloud:cloudInd});
 		}
 		function urlLoader_COMPLETE(e){
 			log(4,"package DATA loaded");
@@ -423,7 +425,7 @@ package vjyourself4.cloud{
 				//if multi data
 				if(src.data is Array){
 					pack.data=src.data[0];
-					for(var i=1;i<src.data.length;i++) addPackage({data:src.data[i]});
+					for(var i=1;i<src.data.length;i++) addPackage({data:src.data[i]},pack.cloud);
 				} else pack.data=src.data;
 				if(pack.path!=null) pack.data.path=pack.path;
 				log(4,"data name: "+pack.data.name);
@@ -497,6 +499,7 @@ package vjyourself4.cloud{
 				
 				//Build URL
 				var url="";
+				if(packages[packagesInd].data.images=="[url]") packages[packagesInd].data.images="";
 				if(cm.online){
 					if(imgobj.url!=null) url=imgobj.url;
 					else url=imgobj.file;
@@ -520,7 +523,10 @@ package vjyourself4.cloud{
 			var bmpD=bmp.bitmapData;
 			packages[packagesInd].data.data[imagesInd].bmpD=bmpD;
 			packages[packagesInd].data.data[imagesInd].transparent=false;
-			var filename:String=packages[packagesInd].data.data[imagesInd].file;
+			var filename:String="";
+			if(packages[packagesInd].data.data[imagesInd].url!=null) filename=packages[packagesInd].data.data[imagesInd].url;
+			if(packages[packagesInd].data.data[imagesInd].file!=null) filename=packages[packagesInd].data.data[imagesInd].file;
+			
 			
 			if(filename.substr(-3)=="png") packages[packagesInd].data.data[imagesInd].transparent=true;
 			if(packages[packagesInd].data.data[imagesInd].name==null){

@@ -1,4 +1,4 @@
-﻿package vjyourself4.input{
+﻿package vjyourself4.io{
 	
 	import flash.events.MouseEvent;
 	import flash.events.EventDispatcher;
@@ -21,11 +21,8 @@
 
 	//import vjyourself2.src.GamepadNorthCode;
 	
-	public class InputManager{
-		public var _debug:Object;
-		public var _meta:Object={name:"Input"};
-		public var debug4:Boolean=false;
-		function log(level,msg){_debug.log(this,level,msg);}
+	public class KbmManager{
+		
 
 		public var sys:Object;
 		public var screen:ScreenManager;
@@ -78,7 +75,7 @@
 		public var win:DisplayObject;
 		public var events = new EventDispatcher();
 		
-		function InputManager(){
+		function IOManager(){
 			keys={Left:false,Right:false,Up:false,Down:false};
 			for(var i=65;i<=90;i++) keys[String.fromCharCode(i)]=false;
 			}

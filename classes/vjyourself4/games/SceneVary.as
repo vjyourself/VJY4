@@ -190,24 +190,35 @@
 				}
 			}else return ch.v
 		}
+		public function prev(ind:Number,lev:Number=0){
+			setIndex(ind,"prev",lev);
+		}
 		public function next(ind:Number,lev:Number=0){
-			
-		//	trace("NEXT",ind,lev,channels.length);
+			setIndex(ind,"next",lev);
+		}
+		public function setIndex(ind:Number,iii,lev:Number=0){
 			if(ind<channels.length){
 				var ch=channels[ind];
-				//trace("act",ch.act);
 				switch(ch.act){
 					case "link":
-					next(ch.ch,ch.lev);
+					setIndex(ch.ch,iii,ch.lev);
 					break;
 					case "prop":
 					if((ch.nested)&&(lev>0)){
-						ch.i2=(ch.i2+1)%ch.e2.length;
+						switch(iii){
+							case "next":ch.i2=(ch.i2+1)%ch.e2.length;break;
+							case "prev":ch.i2=(ch.i2-1+ch.e2.length)%ch.e2.length;break;
+							default:ch.i2=(iii+ch.e2.length)%ch.e2.length;
+						}
 						ch.v2=ch.e2[ch.i2];
 						ch.e=ch.v2.e;
 						ch.i=0;
 					}else{
-						ch.i=(ch.i+1)%ch.e.length;
+						switch(iii){
+							case "next":ch.i=(ch.i+1)%ch.e.length;break;
+							case "prev":ch.i=(ch.i-1+ch.e.length)%ch.e.length;break;
+							default:ch.i=(iii+ch.e.length)%ch.e.length;
+						}
 					}
 					ch.v=ch.e[ch.i];
 					//var p={};

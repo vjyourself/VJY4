@@ -20,7 +20,7 @@
 		public var cont:ObjectContainer3D;
 		public var global:Object;
 		public var contextHandler:Object;
-		public var inputVJY:Object;
+		public var ctrlMovement:Object;
 		
 		public var prgObj:Object;
 		public var prgPos:Object;
@@ -286,7 +286,7 @@
 			cont=null;
 			global=null;
 			contextHandler=null;
-			inputVJY=null;
+			ctrlMovement=null;
 			dsonPrg=null;
 		
 			state="Finished";

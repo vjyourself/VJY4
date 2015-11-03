@@ -25,7 +25,7 @@
 		
 		public function init(){
 			map=params.map;
-			ns.sys.input.stage.addEventListener(KeyboardEvent.KEY_DOWN,onKey,0,0,1);
+			ns.sys.io.stage.addEventListener(KeyboardEvent.KEY_DOWN,onKey,0,0,1);
 		}
 		
 		

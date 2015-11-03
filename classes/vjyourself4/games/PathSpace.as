@@ -43,7 +43,7 @@
 	//import vjyourself4.games.ways.streams.*;
 	//import vjyourself4.games.ways.programs.*;
 	import vjyourself4.streams.*;
-	import vjyourself4.input.InputVJYourself;
+	import vjyourself4.ctrl.CtrlMovement;
 	import vjyourself4.three.assembler.AssemblerObj3D;
 	import vjyourself4.cloud.Resources3D;
 	import vjyourself4.cloud.Cloud;
@@ -61,7 +61,7 @@
 		public var path:Path;
 		public var ctrlPath:CtrlPath;
 		public var context:Object;
-		public var inputVJY;
+		public var ctrlMovement;
 		public var me:Me;
 		public var ns:Object;
 		
@@ -142,7 +142,7 @@
 				
 			}
 			for(var ii in mStrm) if((ii!="cn")&&(ii!="active")) strm[ii]=mStrm[ii];
-			strm.inputVJY=inputVJY;
+			strm.ctrlMovement=ctrlMovement;
 			strm.lengthPos=lengthPos;
 			strm.assemblerObj3D=assemblerObj3D;
 			strm.path=path;
@@ -236,7 +236,7 @@
 			cloud=null;
 			path=null;
 			context=null;
-			inputVJY=null;
+			ctrlMovement=null;
 			cont=null;
 			state="disposed";
 		}

@@ -43,7 +43,7 @@
 			}
 			setBind("vary",vary_path);
 			setBind("anal",anal_path);
-			if(ns.sys.input.gamepad_enabled){
+			if(ns.sys.io.gamepad.enabled){
 			switch(mode){
 				case "SinglePlayer":
 				gamepad = new GamepadSingle();

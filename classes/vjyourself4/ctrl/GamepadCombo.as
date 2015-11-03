@@ -14,7 +14,7 @@
 
 		public var ns:Object;
 		public var params:Object;
-		public var input;
+		public var io;
 	
 		public var commButtons:Object;
 
@@ -35,8 +35,8 @@
 			combos=params.combos;
 			comboInd=-1;
 			selectMap("std");
-			input=ns._glob.input;
-			if(input.gamepad_enabled) input.gamepadManager.events.addEventListener("GamepadButton",gamepadButton,0,0,1);
+			io=ns._sys.io;
+			if(io.gamepad.enabled) io.gamepadManager.events.addEventListener("GamepadButton",gamepadButton,0,0,1);
 		}
 		
 		function setMode(i){
@@ -68,16 +68,16 @@
 
 		public function onEF(e){
 			//check combo hold
-			if(input.gamepad_enabled){
-				var ss=input.gamepadManager.getState(0);
+			if(io.gamepad.enabled){
+				var ss=io.gamepad.manager.getState(0);
 				if(state=="std") for(var i=0;i<combos.length;i++){if(ss[combos[i].key]){comboInd=i;selectMap(combos[i].map);break;}}
 				else if(!ss[combos[comboInd].key]){comboInd=-1;selectMap("std");}
 			}
 		}
 
 		public function dispose(){
-			if(input.gamepad_enabled) input.gamepadManager.events.removeEventListener("GamepadButton",gamepadButton);
-			input=null;
+			if(io.gamepad.enabled) io.gamepad.manager.events.removeEventListener("GamepadButton",gamepadButton);
+			io=null;
 		}
 		
 	}

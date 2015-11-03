@@ -19,7 +19,7 @@
 		public var assemblerObj3D:AssemblerObj3D;
 		public var global:Object;
 		public var contextHandler:Object;
-		public var inputVJY:Object;
+		public var ctrlMovement:Object;
 		
 		public var viewPos:Number=0;
 		
@@ -256,7 +256,7 @@
 			assemblerObj3D=null;
 			global=null;
 			contextHandler=null;
-			inputVJY=null;
+			ctrlMovement=null;
 			state="Finished";
 		}
 	}

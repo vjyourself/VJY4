@@ -22,9 +22,9 @@
 		public function CtrlMIDI(){}
 		
 		public function init(){
-			active=ns.sys.midi.active;
+			active=ns.sys.io.midi.enabled;
 			if(active){
-				midi=ns.sys.midi;
+				midi=ns.io.midi.manager;
 			}
 		}
 		
