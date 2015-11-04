@@ -36,7 +36,7 @@
 			comboInd=-1;
 			selectMap("std");
 			io=ns._sys.io;
-			if(io.gamepad.enabled) io.gamepadManager.events.addEventListener("GamepadButton",gamepadButton,0,0,1);
+			if(io.gamepad.enabled) io.gamepad.manager.events.addEventListener("GamepadButton",gamepadButton,0,0,1);
 		}
 		
 		function setMode(i){
@@ -51,14 +51,14 @@
 		public function gamepadButton(e:DynamicEvent){
 			var butt=e.data.button;
 			trace("BUTT> "+butt);
-			if(butt=="Start"){
+			/*if(butt=="Start"){
 				setMode((modeInd+1)%modes.length);
-			}else{
+			}else{*/
 				var comm;
 				if(commButtons[butt]!=null) comm=commButtons[butt].command;
 				else if(maps["std"][butt]!=null) comm=maps["std"][butt].command;
 				if(comm!=null) execComm(comm);
-			}
+			//}
 		}
 		
 		function execComm(comm){

@@ -27,6 +27,7 @@
 			drX:0,drY:0
 		}
 
+		public var active:Boolean = false;
 		public var events = new EventDispatcher();
 		
 		function TouchManager(){
@@ -49,15 +50,18 @@
 		}
 		
 		function onZoom(e:TransformGestureEvent){
+			active=true;
 			events.dispatchEvent(e);
 		}
 		
 		function onRotate(e:TransformGestureEvent){
+			active=true;
 			events.dispatchEvent(e);
 		}
 		
 		//no start above border GUI (e.g. Space Exp sliders&buttons)
 		function onMouseDown(e){
+			active=true;
 			if((io.win.mouseY<io.wDimY-io.wLimBottom)&&(io.win.mouseY>io.wLimTop)&&
 				(io.win.mouseX<io.wDimX-io.wLimRight)&&(io.win.mouseX>io.wLimLeft))
 			{
@@ -72,6 +76,7 @@
 		}
 		
 		function onMouseUp(e){
+			active=true;
 			drag.active=false;
 		}
 		
@@ -82,6 +87,7 @@
 		
 		public function onEF(e){
 			if(drag.active){
+				active=true;
 				drag.dX=io.win.mouseX-drag.x0;
 				drag.dY=io.win.mouseY-drag.y0;
 			}

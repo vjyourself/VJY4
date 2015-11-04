@@ -29,26 +29,26 @@
 		public function init(d:GameInputDevice){
 			if(log==null) log=logTrace;
 			device=d;
-			log("-name: "+device.name);
-			log("-id: "+device.id+" numCtrl: "+device.numControls);
-			log("-platform: "+platform);
+			log(2,"-name: "+device.name);
+			log(2,"-id: "+device.id+" numCtrl: "+device.numControls);
+			log(2,"-platform: "+platform);
 			var name=device.name.toLowerCase();
 			//type=defGamepadType[platform];
 			type="XBOX";
 			if(name.indexOf("ouya")>=0) type="OUYA";
 			if(name.indexOf("nvidia")>=0) type="NVIDIA";
-			log("-type: "+type);
+			log(2,"-type: "+type);
 			//collect controllers
 			map = GameDeviceHandler["map_"+platform+"_"+type];
 			calibr = GameDeviceHandler["calibr_"+platform+"_"+type];
 			for(var i=0;i<device.numControls;i++){
 				var c=device.getControlAt(i);
-				//log("C> "+c.id);
+				//log(2,"C> "+c.id);
 				for(var ii in map){
-					//log(" ? "+map[ii]);
+					//log(2," ? "+map[ii]);
 					if(c.id==map[ii]){
 						cs[ii]=c;
-						//log("Found "+ii+" : "+c);
+						//log(2,"Found "+ii+" : "+c);
 					}
 				}
 				
@@ -59,7 +59,7 @@
 			}
 			active=true;
 		}
-		function logTrace(txt){log("GameInputManager> "+txt);}
+		function logTrace(txt){log(2,"GameInputManager> "+txt);}
 		public function onEF(e=null){
 			if(active){
 

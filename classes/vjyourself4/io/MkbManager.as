@@ -32,6 +32,7 @@
 			drX:0,drY:0
 		}
 		
+		public var active:Boolean=false;
 		public var events = new EventDispatcher();
 		
 		function MkbManager(){
@@ -54,6 +55,7 @@
 				mouse.y0=io.win.mouseY;
 			}
 			mouse.onstage=true;
+			active=true;
 		}
 		
 		function onMouseLeave(e){
@@ -75,11 +77,13 @@
 				drag.drY=0;
 				events.dispatchEvent(new Event("CLICK"));
 			}
+			active=true;
 		}
 		
 		function onMouseUp(e){
 			mouse.butt=false;
 			drag.active=false;
+			active=true;
 		}
 		
 		function updateMouseR(){
@@ -101,6 +105,7 @@
 				keys[String.fromCharCode(e.charCode).toLowerCase()]=true;
 				break;
 			}
+			active=true;
 		};
 
 		function onKeyUp(e:KeyboardEvent){
@@ -113,7 +118,7 @@
 				keys[String.fromCharCode(e.charCode).toLowerCase()]=false;
 				break;
 			}
-		
+			active=true;
 		}
 
 		public function onEF(e){

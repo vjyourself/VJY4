@@ -26,7 +26,7 @@
 		public function GamepadMulti(){}
 		
 		public function init(){
-		var gamepadManager=ns._glob.input.gamepadManager;
+		var gamepadManager=ns._sys.io.gamepad.manager;
 			gamepadManager.singleMerge=false;
 			
 			for(var i=0;i<2;i++){

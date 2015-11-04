@@ -50,7 +50,7 @@
 		public function GamepadPlayer(){}
 		
 		public function init(){
-			gamepadManager=ns._glob.input.gamepadManager;
+			gamepadManager=ns._sys.io.gamepad.manager;
 			for(var i in params) this[i]=params[i];
 
 			trigPage_pp=trigNum/trigPage_num;

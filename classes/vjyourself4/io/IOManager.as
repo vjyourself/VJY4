@@ -26,12 +26,12 @@
 		
 
 		//Interfaces
-		public var auto:Object={enabled:false};
-		public var mkb:Object={enabled:false};
-		public var touch:Object={enabled:false};
-		public var gamepad:Object={enabled:false};
-		public var midi:Object={enabled:false};
-		public var arduino:Object={enabled:false};
+		public var auto:Object={enabled:false,active:false};
+		public var mkb:Object={enabled:false,active:false};
+		public var touch:Object={enabled:false,active:false};
+		public var gamepad:Object={enabled:false,active:false};
+		public var midi:Object={enabled:false,active:false};
+		public var arduino:Object={enabled:false,active:false};
 
 		//screen for mouse / touch
 		public var stage:Stage;
@@ -55,6 +55,13 @@
 		public function init(){
 			log(1,"Init IO Managers");
 			for(var i in params) this[i]=params[i];
+			auto.active=false;
+			mkb.active=false;
+			touch.active=false;
+			gamepad.active=false;
+			midi.active=false;
+			arduino.active=false;
+
 			stage=sys.screen.stage;
 			win=stage;
 			sys.screen.events.addEventListener(Event.RESIZE,onResize,0,0,1);
@@ -84,14 +91,20 @@
 				gamepad.manager = new GamepadManager();
 				gamepad.manager.io=this;
 				gamepad.manager._debug=_debug;
+				gamepad.manager.platform=sys.platform;
 				gamepad.manager.init();
 				log(1,"Gamepad Enabled");
-			}/*
+			}
 			//midi
 			if(midi.enabled){
-				midi.manager = new MIDIManager();
+				midi.manager = new MidiManager();
+				midi.manager.io=this;
+				midi.manager._debug=_debug;
+				midi.manager.params=midi;
+				midi.manager.init();
 				log(1,"MIDI Enabled");
 			}
+			/*
 			//arduino
 			if(arduino.enabled){
 				arduino.manager = new ArduinoManager();
@@ -110,8 +123,25 @@
 		public function onEF(e){
 			if(mkb.enabled){
 				mkb.manager.onEF(e);
+				mkb.active=mkb.manager.active;mkb.manager.active=false;
+				if(mkb.active) lastActiveBase="mkb";
 			}
-			if(touch.enabled) touch.manager.onEF(e);
+			if(touch.enabled){	
+				touch.manager.onEF(e);
+				touch.active=touch.manager.active;touch.manager.active=false;
+				if(touch.active) lastActiveBase="touch";
+			}
+			if(gamepad.enabled){
+				gamepad.manager.onEF(e);
+				gamepad.active=gamepad.manager.active;gamepad.manager.active=false;
+				if(gamepad.active) lastActiveBase="gamepad";
+			}
+			if(midi.enabled){
+				midi.manager.onEF(e);
+				//gamepad.active=gamepad.manager.active;gamepad.manager.active=false;
+				//if(gamepad.active) lastActiveBase="gamepad";
+			}
+			//trace("MKB "+mkb.active+"Gamepad "+gamepad.active);
 			/*
 			if((!auto)){
 				active_timeoutCC++;

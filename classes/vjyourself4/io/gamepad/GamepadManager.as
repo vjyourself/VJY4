@@ -19,12 +19,19 @@
 
 		//to keep a device original ind, after previous devices get removed ...
 		var deviceInd:Array=[{empty:false,merged:true},{empty:true},{empty:true},{empty:true},{empty:true}];
+		
+		/*
+			0: merged 1. & 2. gamepad
+			1. 2. 3. 4 : actual gamepad states
+		*/
+		
 		var states:Array;
 		public var num:int=0;
 		
 		var gi:GameInput;
 		
 		public var singleMerge:Boolean=false;
+		public var active:Boolean=false;
 	
 		public function GamepadManager():void
 		{
@@ -95,14 +102,17 @@
 		public function onEF(e=null){
 			//log(2,">>> GAME INPUT <<< "+GameInput.numDevices);
 			//calculate devices
-			for(var i=0;i<devices.length;i++) devices[i].handler.onEF();
+			for(var i=0;i<devices.length;i++){
+				devices[i].handler.onEF();
+			}
 			
 			//feed in state OBJ
 			
 			//merge into 0 ind
 			if(devices.length==1) states[0].setState(devices[0].handler.state);
 			if(devices.length==2) states[0].setState(GamepadState.merge(devices[0].handler.state,devices[1].handler.state));
-			
+			active = states[0].changed;
+
 			//more inds 1-2-3-4
 			for(var i=1;i<deviceInd.length;i++)if(!deviceInd[i].empty) states[i].setState(deviceInd[i].handler.state);
 			

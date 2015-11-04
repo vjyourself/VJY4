@@ -4,36 +4,81 @@
 	import flash.events.MouseEvent;
 	import vjyourself4.dson.Eval;
 	import vjyourself4.DynamicEvent;
+	import vjyourself4.VJYBase;
 	
-	public class CtrlMIDI{
-		public var _debug:Object;
-		public var _meta:Object={name:"CtrlMIDI"};
-		public function setDLevels(l1,l2,l3,l4){dLevels=[l1,l2,l3,l4];}
-		var dLevels:Array=[true,true,false,false];
-		function log(level,msg){if(dLevels[level-1])_debug.log(this,level,msg);}
+	public class CtrlMIDI extends VJYBase{
 		
 		public var ns:Object;
 		public var params:Object;
-		public var input;
+		//public var input;
 		var midi;
-		var active:Boolean=false;
-	
+		var enabled:Boolean=false;
+		var device:Object;
 		
 		public function CtrlMIDI(){}
 		
 		public function init(){
-			active=ns.sys.io.midi.enabled;
-			if(active){
+			enabled=ns.sys.io.midi.enabled;
+			if(enabled){
 				midi=ns.io.midi.manager;
+				device=midi.params.device;
+				midi.events.addEventListener("NOTE",onNote,0,0,1);
+
+				for(var i=0;i<device.digi.length;i++){
+					var dd=device.digi[i];
+					if(dd.t=="index") {
+						dd.i=0;
+						for(var ii=0;ii<dd.e.length;ii++) midi.setLight(dd.e[ii],0);
+					}
+				}
 			}
 		}
 		
-		
-		public function onEF(e=null){
-			if(active){
-			for(var i=0;i<4;i++) ns.scene.anal.setInput(i,midi.cc[params.anal[i]]);
-			ns.game.lens_fov=0+midi.cc[24]*300;
+		public function onNote(e:DynamicEvent){
+			if(e.data.val==1){
+				log(1,"NOTE "+e.data.pitch);
+				for(var i=0;i<device.digi.length;i++){
+					var dd=device.digi[i];
+					if(dd.t=="index") for(var ii=0;ii<dd.e.length;ii++) if(dd.e[ii]==e.data.pitch){
+						//switch off perv
+						midi.setLight(dd.e[dd.i],0);
+						dd.i=ii;
+						midi.setLight(dd.e[dd.i],dd.col);
+						execCommInd(dd.command,ii);
+					}
+					if(dd.t=="trig") if(dd.e==e.data.pitch) {
+						midi.setLight(dd.e,dd.col);
+						execComm(dd.command);
+					}
+				}
+			}else{
+				for(var i=0;i<device.digi.length;i++){
+					var dd=device.digi[i];
+					if(dd.t=="trig") if(dd.e==e.data.pitch) {
+						midi.setLight(dd.e,0);
+					}
+				}
 			}
+		}
+		function execCommInd(comm,i){
+			log(1,"EXEC"+comm+" i:"+i);
+			var tar=Eval.evalString(ns,comm[0]);
+			var para=[];for(var ii=0;ii<comm[2].length;ii++) para.push(comm[2][ii]); para.push(i);
+			tar[comm[1]].apply(tar,para);
+		}
+		function execComm(comm){
+			log(1,"EXEC"+comm);
+			var tar=Eval.evalString(ns,comm[0]);
+			var para=comm[2];
+			tar[comm[1]].apply(tar,para);
+		}
+		public function onEF(e=null){
+			/*
+			if(enabled){
+				for(var i=0;i<4;i++) ns.scene.anal.setInput(i,midi.cc[params.anal[i]]);
+				ns.game.lens_fov=0+midi.cc[24]*300;
+			}
+			*/
 		}	
 		
 	
