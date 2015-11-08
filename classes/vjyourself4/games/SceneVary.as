@@ -183,7 +183,7 @@
 			if(ch.val_type!=null){
 				var e=ns._sys.cloud.cont[ch.val_type].e;
 				if(ch.val_type=="space"){
-					return e["Prg"+ch.v].n;
+					return e[ch.v].n;
 				}else{
 					var el=e[ch.v];
 					return el[0].n;

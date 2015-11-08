@@ -174,8 +174,8 @@
 			overlayCtrls.wDimY=wDimY;
 			overlayCtrls.onResize();
 
-			sys.input.wLimTop=overlayCtrls.wLimTop;
-			sys.input.wLimBottom=overlayCtrls.wLimBottom;
+			sys.io.wLimTop=overlayCtrls.wLimTop;
+			sys.io.wLimBottom=overlayCtrls.wLimBottom;
 		}
 
 		public function openNextScene(){
