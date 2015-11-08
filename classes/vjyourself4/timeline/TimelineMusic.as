@@ -37,7 +37,7 @@
 		public function init1(){
 			
 			path_length=ns.mid.cs.GP.ctrlPath.beforeMe;
-			path_speed=ns.mid.cs.GP.inputVJY.speedMin;
+			path_speed=ns.mid.cs.GP.ctrlMovement.speedMin;
 
 			//global pre
 			if(params.pre!=null) pre=params.pre;

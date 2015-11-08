@@ -53,7 +53,7 @@
 			ctrlMovement=new CtrlMovement();
 			ctrlMovement.ns=ns;
 			ctrlMovement.io=ns._sys.io;
-			if(params.ctrl!=null) for(var i in params.ctrl) ctrlMovement[i]=params.ctrl[i];
+			if(params.ctrlMovement!=null) for(var i in params.ctrlMovement) ctrlMovement[i]=params.ctrlMovement[i];
 			ctrlMovement.init();
 			ns.ctrlMovement=ctrlMovement;
 			ns.inputVJY=ctrlMovement;
