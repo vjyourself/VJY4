@@ -55,12 +55,14 @@
 	
 			tfStruct = new TextField();
 			tfStruct.width=500;
+			tfStruct.x=100;
 			tfStruct.defaultTextFormat = tf;
 			vis.addChild(tfStruct);
 
 			tfSection = new TextField();
 			tfSection.width=500;
 			tfSection.y=30;
+			tfSection.x=100;
 			tfSection.defaultTextFormat = tf;
 			vis.addChild(tfSection);
 
@@ -90,8 +92,8 @@
 		}
 		
 		public function onEF(e:DynamicEvent){
-			tfStruct.text=rhythm.absBeatCount+" : "+(struct.structInd+1)+" . "+(struct.beatInd+1);
-			tfSection.text=struct.struct[struct.structInd].n+" : "+struct.struct[struct.structInd].s;
+			tfStruct.text=(struct.structInd+1)+" . "+(struct.beatInd+1);
+			tfSection.text=struct.struct[struct.structInd].n;
 			//STRUCT
 				var chh=channels[0];
 				if(chh.val!=struct.beatInd){

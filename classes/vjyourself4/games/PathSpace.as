@@ -51,6 +51,7 @@
 	import vjyourself4.games.CtrlPath;
 	import vjyourself4.IdSet;
 	import vjyourself4.ctrl.BindSpace;
+	import vjyourself4.DynamicEvent;
 	
 	
 	public class PathSpace{
@@ -96,7 +97,7 @@
 			anal.pathSpace=this;
 			anal.init();
 			state="empty";
-			onEF();
+			//onEF();
 		}
 
 		public function startSpace(prg,lp=null){
@@ -242,15 +243,17 @@
 		}
 		
 		
-		public function onEF(e=null){
+		public function onEF(e:DynamicEvent){
 			//timeline.onEF(e);
 			for(var i=0;i<streams.list.length;i++){
 				streams.list[i].onEF(e);
+				if(streams.list[i].lengthPos>lengthPos)lengthPos=streams.list[i].lengthPos;
 				if(streams.list[i].state=="Finished"){
 					destroyStream(i);
 					i--;
 				}
 			}
+			//trace(path.p1+" : "+lengthPos);
 		}
 
 		

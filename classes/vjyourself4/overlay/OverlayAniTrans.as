@@ -18,12 +18,16 @@
 		public var wDimY:Number=540;
 		public var ns:Object;
 		public var params:Object;
-		var rhythm;
-		var tackCounter:Number;
+		//var rhythm;
+		//var tackCounter:Number;
 		
+		public var deltaControl:Boolean=true;
+
 		var aniCN:String;
 		var aniWidth:Number;
 		var aniHeight:Number;
+		var aniFrame:Number;
+		var aniTime:Number;
 
 		public var vis:Sprite;
 		var ani:MovieClip;
@@ -51,8 +55,8 @@
 		}
 		
 		public function init(){
-			rhythm = ns._sys.music.meta.rhythm;
-			tackCounter=rhythm.counter[1];
+		//	rhythm = ns._sys.music.meta.rhythm;
+		//	tackCounter=rhythm.counter[1];
 			
 			if(params.def!=null) for(var i in params.def) def[i]=params.def[i];
 			vis = new Sprite();
@@ -105,6 +109,11 @@
 					ani.scaleY=wDimY/540;
 					ani.e.addChild(ccc);
 					vis.addChild(ani);
+					if(deltaControl){
+						ani.stop();
+						aniFrame=1;
+						aniTime=0;
+					}
 				}
 				aniOn=true;
 			}
@@ -115,7 +124,22 @@
 		}
 		
 		public function onEF(e:DynamicEvent){
-			
+			trace("DELTA "+e.data.mul);
+			if(deltaControl){
+				if(aniOn){
+					aniTime+=e.data.delta;
+					aniFrame=Math.floor(aniTime/(1000/60))+1;
+					if(aniFrame>=ani.totalFrames){
+						aniFrame=ani.totalFrames;
+						aniOn=false;
+						ani.stop();
+						vis.removeChild(ani);
+					}else{
+						ani.gotoAndStop(aniFrame);
+					}
+
+				}
+			}
 		}
 		
 		public function onResize(e){

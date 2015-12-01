@@ -21,13 +21,13 @@
 		public function init(){
 			tack=params.tack;
 			start=params.start;
-			preShift=tack*0.2;
+			preShift=0;//tack*0.2;
 			counter=[0,0,0,0];
 			chA=[];
-			for(var i=0;i<3;i++){
+			for(var i=0;i<=3;i++){
 				var ch= new TrigChannel();
-				ch.width=tack;
-				if(i==0) ch.width=tack*0.6;
+				//ch.width=tack;
+				ch.width=tack*2;
 				ch.form="sin";
 				chA.push(ch);
 			}
@@ -55,9 +55,11 @@
 				v=Math.floor((val-start+preShift)/tack);
 				if(v!=tackCounterPre){
 					//and we're on the last tack in beat .... TRIG TRIGGER TRIGG !
+					chA[v%4].trig();
+					/*if()
 					if(counter[1]==1) chA[0].trig();
 					if(counter[2]==3) chA[1].trig();
-					if(counter[3]==15) chA[2].trig();
+					if(counter[3]==15) chA[2].trig();*/
 				}
 				tackCounterPre=v;
 				  
@@ -65,6 +67,7 @@
 			chA[0].onEF({delta:delta});
 			chA[1].onEF({delta:delta});
 			chA[2].onEF({delta:delta});
+			chA[3].onEF({delta:delta});
 		}
 		
 	}

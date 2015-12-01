@@ -14,26 +14,44 @@
 		var midi;
 		var enabled:Boolean=false;
 		var device:Object;
+		var litBackground:Boolean=false;
+		var selectedColor:int=1;
 		
 		public function CtrlMIDI(){}
 		
 		public function init(){
 			enabled=ns.sys.io.midi.enabled;
 			if(enabled){
+				ns.globalVary.events.addEventListener("CHANGED",onVaryChange,0,0,1);
 				midi=ns.io.midi.manager;
 				device=midi.params.device;
 				midi.events.addEventListener("NOTE",onNote,0,0,1);
-
+				litBackground=midi.params.device.litBackground;
+				selectedColor=midi.params.device.selectedColor;
 				for(var i=0;i<device.digi.length;i++){
 					var dd=device.digi[i];
 					if(dd.t=="index") {
 						dd.i=0;
-						for(var ii=0;ii<dd.e.length;ii++) midi.setLight(dd.e[ii],0);
+						for(var ii=0;ii<dd.e.length;ii++) midi.setLight(dd.e[ii],litBackground?dd.col:0);
 					}
 				}
 			}
 		}
 		
+		public function onVaryChange(d:DynamicEvent){
+			var varyCh=d.data.ch;
+			var varyInd=d.data.ind;
+			for(var i=0;i<device.digi.length;i++){
+					var dd=device.digi[i];
+					if(dd.t=="index") {
+						if((dd.command[0]=="globalVary")&&(dd.command[2][0]==varyCh)){
+							midi.setLight(dd.e[dd.i],litBackground?dd.col:0);
+							dd.i=varyInd;
+							midi.setLight(dd.e[dd.i],selectedColor);
+						}
+					}
+				}
+		}
 		public function onNote(e:DynamicEvent){
 			if(e.data.val==1){
 				log(1,"NOTE "+e.data.pitch);
@@ -41,9 +59,6 @@
 					var dd=device.digi[i];
 					if(dd.t=="index") for(var ii=0;ii<dd.e.length;ii++) if(dd.e[ii]==e.data.pitch){
 						//switch off perv
-						midi.setLight(dd.e[dd.i],0);
-						dd.i=ii;
-						midi.setLight(dd.e[dd.i],dd.col);
 						execCommInd(dd.command,ii);
 					}
 					if(dd.t=="trig") if(dd.e==e.data.pitch) {

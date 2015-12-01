@@ -9,6 +9,7 @@
 	import vjyourself4.dson.TransVar;
 	//import vjyourself4.prgs.PRG;
 	import vjyourself4.streams.logic.*;
+	import vjyourself4.DynamicEvent;
 	
 	public class StreamObjs{
 		public var type:String="Objs";
@@ -92,7 +93,7 @@
 		}
 		
 		
-		public function onEF(e:Object=null){
+		public function onEF(e:DynamicEvent){
 			transVar.update();
 			//ADD NEXT
 			if((path.p1>=lengthPos+gap)&&(state=="Running")){
@@ -115,8 +116,13 @@
 				transM.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
 				obj.obj3D.transform = transM;
 				cont.addChild(obj.obj3D);
-				if(obj.logicActive) obj.logic.init();
-
+				//obj.logic.coordTrans= new Matrix3D();
+				if(obj.logicActive){
+						obj.logic.coordTrans.append(pathRot);
+						obj.logic.coordTrans.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
+						obj.logic.init();
+				}
+				
 				parity=(parity+1)%2;
 				var el={
 					logic:{},
@@ -186,7 +192,7 @@
 					}
 				//}
 					
-				if(el.obj.logicActive) el.obj.logic.onEF();
+				if(el.obj.logicActive) el.obj.logic.onEF(e);
 
 				if(el.rot_bool) el.obj3D.rotationY+=el.rot+trans.rot;
 				if(trans.rot!=0) el.obj3D.rotationY+=trans.rot;
@@ -254,7 +260,7 @@
 					i--;
 				}
 			}
-			for(var i=0;i<logicList.length;i++) logicList[i].onEF();
+			for(var i=0;i<logicList.length;i++) logicList[i].onEF(e);
 
 			if( (state=="Decomposing") && (elems.length==0))state="Finished";
 		}

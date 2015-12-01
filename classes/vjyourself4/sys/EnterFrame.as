@@ -47,6 +47,7 @@
 			var ev=new DynamicEvent(Event.ENTER_FRAME);
 			ev.delta=dt;
 			ev.mul=dt/(1000/60);
+			ev.data={delta:dt,mul:dt/(1000/60)};
 			//trace(ev.delta+" "+ev.mul);
 			events.dispatchEvent(ev);
 			}

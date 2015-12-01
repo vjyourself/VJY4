@@ -312,13 +312,22 @@
 		
 		/********************** MUSIC MATERIALS *********************************************/
 		var musicColors:Array=[
-			{n:"MusicColor1",col0:0x6633aa,col1:0xffffff,alpha:1},
-			{n:"MusicColor2",col0:0xaa0066,col1:0xffffff,alpha:1},
-			{n:"MusicColor3",col0:0x993399,col1:0xffffff,alpha:1},
-			{n:"MCBW50",col0:0x000000,col1:0xbbbbbb,alpha:1},
-			{n:"MCBW100",col0:0x000000,col1:0xffffff,alpha:1},
-			{n:"MCBWADD",col0:0x000000,col1:0xffffff,alpha:1,blend:"ADD"},
-			{n:"MusicColorBlack",col0:0x000000,col1:0xffffff,alpha:1}
+			{n:"MusicColor1",synch:"peak",col0:0x6633aa,col1:0xffffff,alpha:1},
+			{n:"MusicColor2",synch:"peak",col0:0xaa0066,col1:0xffffff,alpha:1},
+			{n:"MusicColor3",synch:"peak",col0:0x993399,col1:0xffffff,alpha:1},
+			{n:"MCBW50",synch:"peak",col0:0x000000,col1:0xbbbbbb,alpha:1},
+			{n:"MCBW100",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
+			{n:"MCBWADD",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1,blend:"ADD"},
+			{n:"MusicColorBlack",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
+			{n:"Beat1","synch":"beat","ind":0,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat2","synch":"beat","ind":1,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat3","synch":"beat","ind":2,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat4","synch":"beat","ind":3,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat1A","synch":"beat","ind":0,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat2A","synch":"beat","ind":1,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat3A","synch":"beat","ind":2,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat4A","synch":"beat","ind":3,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+
 			//{n:"mc1ma",col0:0x6633aa,col1:0xffffff,alpha:0.7},
 			//{n:"mc2ma",col0:0xaa0066,col1:0xffffff,alpha:0.7},
 			//{n:"mc3ma",col0:0x993399,col1:0xffffff,alpha:0.7}
@@ -337,7 +346,7 @@
 				mc.colorScale = new ColorScale();
 				mc.colorScale.colors=[mc.col0,mc.col1];
 				mc.mat = new ColorMaterial(mc.col0);
-				mc.mat.alpha=mc.alpha;
+				if(mc.alpha!=null) mc.mat.alpha=mc.alpha;
 				if(mc.blend!=null) mc.mat.blendMode=BlendMode[mc.blend];
 				//mc.mat.lightPicker = R.lightPicker;
 				cont.mat[mc.n]=mc.mat;
@@ -394,8 +403,18 @@
 			if(musicMaterials){
 			for(var i=0;i<musicColors.length;i++){
 				var mc=musicColors[i];
-				mc.col = mc.colorScale.getColor(music.meta.peak);
-				mc.mat.color=mc.col;
+				switch(mc.synch){
+					case "peak":
+					mc.col = mc.colorScale.getColor(music.meta.peak);
+					mc.mat.color=mc.col;
+					break;
+					case "beat":
+					mc.col = mc.colorScale.getColor(music.meta.rhythm.chA[mc.ind].val);
+					mc.mat.alpha=mc.alpha0+(mc.alpha1-mc.alpha0)*music.meta.rhythm.chA[mc.ind].val; //0.3+music.meta.rhythm.chA[mc.ind].val*0.7; //mc.colorScale.getColor(music.meta.rhythm.chA[mc.ind].val);
+					mc.mat.color=mc.col;
+					
+					break;
+				}
 			}
 			////trace("PEKA:"+music.meta.peak);
 			//MUSIC WAVE

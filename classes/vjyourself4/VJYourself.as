@@ -26,7 +26,7 @@
 		//Init
 		var medium:String="";
 		var cloud1:Object={online:false,path:""};
-		var cloud2:Object={online:false,path:""};
+		var cloud:Object={online:false,path:""};
 	
 		var startFile:String="";
 		
@@ -45,6 +45,9 @@
 		var back:Sprite;
 		var backWidth:Number=0;
 		var backHeight:Number=0;
+		var back2:Sprite;
+		var back2Width:Number=0;
+		var back2Height:Number=0;
 		var params:Object;
 		
 		function VJYourself(){
@@ -132,11 +135,19 @@
 			addChild(vis);
 
 			if(params.back!=null){
-				var backC:Class= getDefinitionByName("VJYBack") as Class;
+				var backC:Class= getDefinitionByName(params.back.cn) as Class;
 				back = new backC();
 				vis.addChild(back);
 				backWidth=params.back.width;
 				backHeight=params.back.height;
+			}
+			if(params.back2!=null){
+				var back2C:Class= getDefinitionByName(params.back2.cn) as Class;
+				back2 = new back2C();
+				vis.addChild(back2);
+				back2Width=params.back2.width;
+				back2Height=params.back2.height;
+				back2.visible=false;
 			}
 			resizeBack(stage.stageWidth,stage.stageHeight);
 
@@ -180,11 +191,11 @@
 			medium=initObj.init.medium;
 			cloud1.online=initObj.init.cloud1.online;
 			cloud1.path=cloud1.online?initObj.init.cloud1.online_path:initObj.init.cloud1.offline_path;
-			cloud2.online=initObj.init.cloud2.online;
-			cloud2.path=cloud2.online?initObj.init.cloud2.online_path:initObj.init.cloud2.offline_path;
-			startFile=initObj.init.start_file;
+			cloud.online=initObj.init.cloud.online;
+			cloud.path=cloud.online?initObj.init.cloud.online_path:initObj.init.cloud.offline_path;
+			startFile=initObj.init.startFile;
 
-			log(1,"online: cloud1:"+cloud1.online+" cloud2:"+cloud2.online);
+			log(1,"online: cloud1:"+cloud1.online+" cloud:"+cloud.online);
 			log(1,"medium: "+medium+" start:"+startFile);
 			
 			loadProject();
@@ -202,7 +213,7 @@
 			loadJson.debug2=true;
 			loadJson.debug4=false;
 			loadJson.online=cloud1.online;
-			loadJson.globals={medium:medium,cloud1:cloud1.path,cloud2:cloud2.path,player:""};
+			loadJson.globals={medium:medium,cloud1:cloud1.path,cloud:cloud.path,player:""};
 			loadJson.events.addEventListener(Event.COMPLETE,projectOnComplete,0,0,1);
 			loadJson.start(startFile);
 		}
@@ -211,7 +222,7 @@
 		function projectOnComplete(e){
 			projObj=loadJson.trans.data;
 			projObj.sys.cloud.cloud1=cloud1;
-			projObj.sys.cloud.cloud2=cloud2;
+			projObj.sys.cloud.cloud2=cloud;
 			sys.proj=projObj.proj;
 
 			log(1,"Starting SYS");
@@ -232,6 +243,7 @@
 				back.visible=false;
 				vis.removeChild(back);
 				back=null;
+				if(back2!=null) back2.visible=true;
 			}
 		}
 		function startGame(){
@@ -259,6 +271,13 @@
 				var ss=Math.max(dimX/backWidth,dimY/backHeight);
 				back.scaleX=ss;
 				back.scaleY=ss;
+			}
+			if(back2!=null){
+				var ss=dimY/back2Height;
+				back2.scaleX=ss;
+				back2.scaleY=ss;
+				back2.x=dimX/2;
+				back2.y=dimY/2;	
 			}
 		}
 		public function onResize(e=null){

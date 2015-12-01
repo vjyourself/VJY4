@@ -65,6 +65,7 @@
 			stage=sys.screen.stage;
 			win=stage;
 			sys.screen.events.addEventListener(Event.RESIZE,onResize,0,0,1);
+			onResize();
 
 			//auto
 			if(auto.enabled){
@@ -113,7 +114,7 @@
 			
 		}
 		
-		public function onResize(e){
+		public function onResize(e=null){
 			wDimX=sys.screen.wDimX;
 			wDimY=sys.screen.wDimY;
 			//if(mkb.enabled) mkb.manager.onResize(e);

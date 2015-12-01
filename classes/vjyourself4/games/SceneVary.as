@@ -5,6 +5,8 @@
 	import vjyourself4.dson.TransJson;
 	import vjyourself4.dson.Eval;
 	import vjyourself4.VJYBase;
+	import flash.events.EventDispatcher;
+	import vjyourself4.DynamicEvent;
 
 	public class SceneVary extends VJYBase{
 		
@@ -15,7 +17,7 @@
 		public var ns:Object;
 		public var params:Object;
 		public var autoEvalObjPath:Boolean=true;
-		
+		public var events:EventDispatcher = new EventDispatcher();
 		var channels:Array;
 		
 		/*
@@ -196,19 +198,19 @@
 		public function next(ind:Number,lev:Number=0){
 			setIndex(ind,"next",lev);
 		}
-		public function setIndex(ind:Number,iii,lev:Number=0){
+		public function setIndex(ind:Number,iii,lev:Number=0,startCh:Number=0){
 			if(ind<channels.length){
 				var ch=channels[ind];
 				switch(ch.act){
 					case "link":
-					setIndex(ch.ch,iii,ch.lev);
+					setIndex(ch.ch,iii,ch.lev,ind);
 					break;
 					case "prop":
 					if((ch.nested)&&(lev>0)){
 						switch(iii){
 							case "next":ch.i2=(ch.i2+1)%ch.e2.length;break;
 							case "prev":ch.i2=(ch.i2-1+ch.e2.length)%ch.e2.length;break;
-							default:ch.i2=(iii+ch.e2.length)%ch.e2.length;
+							default:if((iii>=0)&&(iii<ch.e2.length)) ch.i2=iii;
 						}
 						ch.v2=ch.e2[ch.i2];
 						ch.e=ch.v2.e;
@@ -217,7 +219,7 @@
 						switch(iii){
 							case "next":ch.i=(ch.i+1)%ch.e.length;break;
 							case "prev":ch.i=(ch.i-1+ch.e.length)%ch.e.length;break;
-							default:ch.i=(iii+ch.e.length)%ch.e.length;
+							default:if((iii>=0)&&(iii<ch.e.length)) ch.i=iii;
 						}
 					}
 					ch.v=ch.e[ch.i];
@@ -227,8 +229,13 @@
 					//trace(ch.e);
 					//trace(ch.v);
 					//trace(ch.prop,ch.v);
-					if((!ch.nested)||(lev==0)) log(6,ch.n+" : "+ch.v);
-					else log(6,ch.n2+" : "+ch.v2.n);
+					if((!ch.nested)||(lev==0)){
+						log(6,ch.n+" : "+ch.v);
+						events.dispatchEvent(new DynamicEvent("CHANGED",{ch:ind,ind:ch.i}));
+					}else{
+						log(6,ch.n2+" : "+ch.v2.n);
+						events.dispatchEvent(new DynamicEvent("CHANGED",{ch:startCh,ind:ch.i2}));
+					}
 					ch.obj.compParams.setParam(ch.prop,ch.v);
 					break;
 					case "func":
@@ -236,6 +243,7 @@
 					log(6,ch.n+" : Next");
 					break;
 				}
+				
 			}
 		}
 		/*

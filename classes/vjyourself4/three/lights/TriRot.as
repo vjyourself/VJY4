@@ -53,6 +53,12 @@
 			dl.castsShadows = false;
 			elems.c={l:dl};
 			lights.push(dl);
+
+			dl = new DirectionalLight();
+			dl.direction=new Vector3D(0, 0, 1);
+			dl.castsShadows = false;
+			elems.d={l:dl};
+			lights.push(dl);
 			
 			setPreset("Norm");
 		}
@@ -77,11 +83,13 @@
 		public function updateColors(){
 			var l;var p;var col;var ii=0;
 			for(var i in elems){
-				l=elems[i].l;var p=preset[i];
-				col=ns.context.getNext({type:"color",stream:stream,params:{ind:ii}});
-				l.color=ColorTrans.mix(p.color_val,col,p.color/100);//trace("DirColor>"+l.color);
-				l.ambientColor=ColorTrans.mix(p.ambientColor_val,col,p.ambientColor/100);//trace("DirColorAmb>"+l.ambientColor);
-				ii++;
+				if(i!="d"){
+					l=elems[i].l;var p=preset[i];
+					col=ns.context.getNext({type:"color",stream:stream,params:{ind:ii}});
+					l.color=ColorTrans.mix(p.color_val,col,p.color/100);//trace("DirColor>"+l.color);
+					l.ambientColor=ColorTrans.mix(p.ambientColor_val,col,p.ambientColor/100);//trace("DirColorAmb>"+l.ambientColor);
+					ii++;
+				}
 			}
 			
 		}
@@ -91,6 +99,8 @@
 			elems.a.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha),Math.cos(alpha),0));
 			elems.b.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha+Math.PI*2/3),Math.cos(alpha+Math.PI*2/3),0));
 			elems.c.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha+Math.PI*2/3*2),Math.cos(alpha+Math.PI*2/3*2),0));
+			elems.d.l.direction=ns.me.rot.transformVector(new Vector3D(0,0,1));
+		
 		}
 	}
 }

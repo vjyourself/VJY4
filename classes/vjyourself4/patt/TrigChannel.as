@@ -13,14 +13,16 @@
 		public function trig(){
 			trigOn=true;
 			cc=0;
-
+			val=1;
 		}
 		public function onEF(p){
 			var delta=p.delta;
 			if(trigOn){
 				cc+=delta;
 				var perc=cc/width; if(perc>1)perc=1;
-				val=Math.sin(Math.PI*perc);
+				if(perc<0.2) val=perc*5;
+				else if(perc<0.5) val=1;
+					else val=Math.sin(Math.PI*perc);
 				if(cc>=width) trigOn=false;
 			}
 		}

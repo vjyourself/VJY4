@@ -197,12 +197,12 @@ package vjyourself4.cloud{
 			log(1,"collect resources..."); 
 			
 			/*****************************************************************************************
-			  CLOUD 2 Packages (cloud.load2)
+			  CLOUD 2 Packages (cloud.world4)
 			*****************************************************************************************/
 		
-			if(p.load2!=null) for(var i=0;i<p.load2.length;i++){
-				if(cloud2.online) packages.push({url:p.load2[i],cloud:2});
-				else packages.push({url:p.load2[i].split("/").join("_")+".json",cloud:2});
+			if(p.world4!=null) for(var i=0;i<p.world4.length;i++) if(p.world4[i].active){
+				if(cloud2.online) packages.push({url:"export/world4/"+p.world4[i].n,cloud:2});
+				else packages.push({url:p.world4[i].n+".json",cloud:2});
 			}
 
 			/*****************************************************************************************

@@ -5,6 +5,7 @@
 		public var enabled=true;
 		public function WinConsoleLong(){
 			addEventListener(MouseEvent.CLICK,onClick,0,0,1);
+			if(hasOwnProperty("tfSide")) this["tfSide"].visible=false;
 		}
 		public function onClick(e){
 			//visible=!visible

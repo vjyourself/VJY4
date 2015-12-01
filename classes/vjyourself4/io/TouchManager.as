@@ -62,6 +62,9 @@
 		//no start above border GUI (e.g. Space Exp sliders&buttons)
 		function onMouseDown(e){
 			active=true;
+			//trace("DIM Y:"+(io.wDimY));
+			//trace("LIM Y:"+(io.wLimBottom));
+			//trace("MOU Y:"+io.win.mouseY);
 			if((io.win.mouseY<io.wDimY-io.wLimBottom)&&(io.win.mouseY>io.wLimTop)&&
 				(io.win.mouseX<io.wDimX-io.wLimRight)&&(io.win.mouseX>io.wLimLeft))
 			{

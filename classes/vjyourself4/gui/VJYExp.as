@@ -1,5 +1,6 @@
 ﻿package vjyourself4.gui{
 	import flash.display.Sprite;
+	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import vjyourself4.sys.WinConsoleLong;
@@ -23,7 +24,10 @@
 		public var wDimY:Number;
 	
 	
-		var winLanding:Sprite;
+		var landingWin:MovieClip;
+		var landingShade:Sprite;
+
+		var aniLogo:Sprite;
 		var scenes:Array;
 		var buttMenu;
 		var buttHelp;
@@ -38,7 +42,7 @@
 		var sys:Object;
 		//public var guiMsg:GUIMsg;
 		/*
-		var winLanding:WinAppLanding;
+		var landingWin:WinAppLanding;
 		var boxControl:BoxControl;
 		var boxArtist:BoxArtist;
 		var artists:Array;
@@ -75,15 +79,23 @@
 			
 			if(ns.sys.screen.landing){
 				overlayCtrls.visible=false;
-				var cWinLanding:Class = getDefinitionByName("WinLanding") as Class;
+				var cLandingWin:Class = getDefinitionByName("LandingWin") as Class;
+				var cLandingShade:Class = getDefinitionByName("LandingShade") as Class;
+				
 				var cMenuItem = getDefinitionByName("MenuItem") as Class;
 				var cButtMenu = getDefinitionByName("ButtCircMenu") as Class;
 				var cButtHelp = getDefinitionByName("ButtCircHelp") as Class;
 				var cButtScreenShot = getDefinitionByName("ButtCircScreenShot") as Class;
 				var cButtReset = getDefinitionByName("ButtCircReset") as Class;
-			winLanding = new cWinLanding();
-			addChild(winLanding);
-			winLanding["mid"].visible=false;
+			
+			landingShade = new cLandingShade();
+			addChild(landingShade);
+			landingWin = new cLandingWin();
+			addChild(landingWin);
+			landingWin.stop();
+
+			landingWin["buttLogo"].addEventListener(MouseEvent.CLICK,onLogo,0,0,1);
+
 			//add menus
 			scenes=sys.cloud.scenes;
 			for(var i=0;i<scenes.length;i++){
@@ -93,11 +105,13 @@
 				mm.img.addChild(img);
 				mm.tf.text=sys.cloud.RScenes.NS[scenes[i].name].name;
 
-				mm.x=45+(i%3)*145-280;
-				mm.y=305+(Math.floor(i/3))*145-280;
+				mm.x=(i%3)*148;
+				mm.y=(Math.floor(i/3))*150-2;
+				mm.scaleX=0.89;
+				mm.scaleY=0.89;
 				mm.butt.addEventListener(MouseEvent.CLICK,onMenuItem,0,0,1);
 				mm.name=i;
-				winLanding["mid"].addChild(mm);
+				landingWin["menus"].addChild(mm);
 			}
 
 			buttMenu = new cButtMenu();
@@ -142,33 +156,26 @@
 			
 			buttMenu.x=15;
 			buttMenu.y=15;
-			buttHelp.x=wDimX-15-buttHelp.width;
+			buttHelp.x=wDimX-15-45*sButtMenu;
 			buttHelp.y=15;
 			buttScreenShot.x=15;
 			buttScreenShot.y=wDimY-15-buttScreenShot.height;
-			buttReset.x=wDimX-15-buttReset.width;
-			buttReset.y=wDimY-15-buttReset.height;
+			buttReset.x=wDimX-15-45*sButtMenu;
+			buttReset.y=wDimY-15-45*sButtMenu;
 			
-			winLanding.x=0;
-			winLanding.y=0;
-			//mid
-			var sMid:Number=wDimY/768;
-			winLanding["mid"].scaleX=sMid;
-			winLanding["mid"].scaleY=sMid;
-			winLanding["mid"].x=wDimX/2;
-			winLanding["mid"].y=wDimY/2;
 			
-			winLanding["shade"].width=wDimX;
-			winLanding["shade"].height=wDimY/24;
-			winLanding["shade"].x=0;
-			winLanding["shade"].y=wDimY*(1-1/24)/2;
-		//	winLanding["shade"].visible=false;
-
-			winLanding["shade2"].width=wDimX/24;
-			winLanding["shade2"].height=wDimY;
-			winLanding["shade2"].x=wDimX*(1-1/24)/2;
-			winLanding["shade2"].y=0;
-			winLanding["shade2"].visible=false;
+			//Logo -> Win
+			var ss=wDimY/640; //Math.max(wDimY/640,wDimX/640);
+			landingWin.scaleX=ss;
+			landingWin.scaleY=ss;
+			landingWin.x=wDimX/2;
+			landingWin.y=wDimY/2;
+			
+			landingShade.width=wDimX;
+			landingShade.height=0; //wDimY/24;
+			landingShade.x=0;
+			landingShade.y=wDimY*(1-1/24)/2;
+		//	landingShade.visible=false;
 			
 			overlayCtrls.wDimX=wDimX;
 			overlayCtrls.wDimY=wDimY;
@@ -190,7 +197,7 @@
 		function openScene(ind){
 			sceneInd=(ind%scenes.length);
 			ns.scene.setScene(scenes[sceneInd].name,{"rebuild":true,"sceneFlags":true});
-			winLanding.visible=false;
+			landingWin.visible=false;
 			buttMenu.visible=true;
 			buttHelp.visible=true;
 			buttScreenShot.visible=true;
@@ -201,7 +208,7 @@
 		function onMenu(e){
 			overlayCtrls.visible=false;
 			buttMenu.visible=false;
-			winLanding.visible=true;
+			landingWin.visible=true;
 			buttHelp.visible=false;
 			buttScreenShot.visible=false;
 			buttReset.visible=false;
@@ -224,106 +231,65 @@
 			cameraRoll.addBitmapData(bmpD);
 			bmpD.dispose();
 		}
+		function onLogo(e){
+			navigateToURL(new URLRequest("http://vjyourself.com"));
+		}
 		
 		public function onEF(e=null){
-		//	winLanding["shade"].visible=false;
+		//	landingShade.visible=false;
 			if(state=="start"){
 				overlayCtrls.onEF();
 				if(aniInit_run){
 					switch(aniInit_state){
 						case 0:
 						aniInit_cc++;
-						var p=aniInit_cc/10;
+						var p=aniInit_cc/6;
 						if(p>=1){
 							aniInit_state=1;
 							aniInit_cc=0;
+							landingWin.play();
 						}
-						winLanding["shade"].width=wDimX;
-						winLanding["shade"].height=wDimY;
-						winLanding["shade"].x=0;
-						winLanding["shade"].y=0;
+						landingShade.width=wDimX;
+						landingShade.height=wDimY;
+						landingShade.x=0;
+						landingShade.y=wDimY/2;
 						break;
 
 						case 1:
 						aniInit_cc++;
-						var p=aniInit_cc/200;
+						var p=aniInit_cc/90;
+						if(p>=1){
+							aniInit_state=2;
+							aniInit_cc=0;
+						}
+						landingShade.width=wDimX;
+						landingShade.height=wDimY;
+						landingShade.x=0;
+						landingShade.y=wDimY/2;
+						break;
+
+						case 2:
+						aniInit_cc++;
+						var p=aniInit_cc/60;//1-Math.cos(aniInit_cc/120*Math.PI/2);
 						if(p>=1){
 							p=1;aniInit_run=false;
-							winLanding["mid"].visible=true;
+							//landingWin["menus"].visible=true;
+							landingShade.visible=false;
 						}
-						var h=(1/24+(23/24)*(1-p));
-						winLanding["shade"].width=wDimX;
-						winLanding["shade"].height=wDimY*h;
-						winLanding["shade"].x=0;
-						winLanding["shade"].y=wDimY*(1-h)/2;
+						var h=1-p;
+						landingShade.alpha=h;
+						/*
+						landingShade.width=wDimX;
+						landingShade.height=wDimY*h;
+						landingShade.x=0;
+						landingShade.y=wDimY/2;*/
 						break;
 					}
 				}
-				/*
-				ns.scene.anal.setInput(0,overlayCtrls.A0);
-				ns.scene.anal.setInput(1,overlayCtrls.A1);
-				ns.scene.anal.setInput(2,overlayCtrls.A2);
-				//trace("!!",overlayCtrls.A3);
-				ns.scene.anal.setInput(3,overlayCtrls.A3);
-				*/
-				//game.ns.inputVJY.ctrlsA[0]=overlayCtrls.A0;
-				//game.ns.inputVJY.ctrlsA[1]=overlayCtrls.A1;
-				//game.ns.inputVJY.ctrlsA[2]=overlayCtrls.A2;
-				//game.ns.inputVJY.ctrlsA[3]=overlayCtrls.A3;
+				
 			}
-			/*
-			if(state=="game"){
-			boxControl.tfSpeed.text=""+Math.round(game.inputVJY.speed/game.inputVJY.speedMax*100);
-			boxControl.tfRotate.text=""+Math.round(game.inputVJY.cameraRotZ);
-			}
-			*/
-		}
-		/*
-		function onStart(e:MouseEvent){
-			setState("game");
-			winLanding.visible=false;
-			shade.visible=false;
-			boxArtist.visible=true;
-			boxControl.visible=true;
-			var ind=e.target.parent.name;
-			var th=artists[ind].n;
-			boxArtist.tfArtist.text=artists[ind].name;
-			sys.cloud.C3D.NS["multiA"]=sys.cloud.C3D.NS[th];
-			sys.cloud.C3D.NS["multiB"]=sys.cloud.C3D.NS[th];
-			game.gameWays.destroyPRGs();
-			game.gameWays.startPRG(game.gameWays.currPrgName);
-		}
-		function onMenu(e){
-			setState("menu");
-			boxControl.visible=false;
-			winLanding.visible=true;
-			shade.visible=true;
-			boxArtist.visible=false;
 			
 		}
-		function setState(s){
-			state=s;
-			switch(state){
-				case "menu":
-				game.inputVJY.speedMin=0.1;
-				game.inputVJY.speed=0.1;
-				game.inputVJY.cameraRotXMax=30;
-				game.inputVJY.cameraRotYMax=30;
-				break;
-				case "game":
-				game.inputVJY.speedMin=1;
-				game.inputVJY.speed=1;
-				game.inputVJY.cameraRotXMax=60;
-				game.inputVJY.cameraRotYMax=60;
-				break;
-			}
-		}
-		function onSubmit(e){
-			navigateToURL(new URLRequest("http://www.openartapp.com/"),"_blank");
-		}
-		function onFullScreen(e){
-			sys.screen.toggleFullscreen();
-		};
-		*/
+		
 	}
 }

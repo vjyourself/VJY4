@@ -13,7 +13,8 @@
 		public var io:IOManager;
 		public var ns:Object;
 		public var speedMax:Number=10;
-		public var speedMin:Number=1;
+		public var speedDef:Number=1;
+		public var speedMin:Number=0;
 		public var cameraRotXMax:Number=180;
 		public var cameraRotYMax:Number=180;
 		
@@ -41,7 +42,7 @@
 
 		public function init(){
 			activeInterface = io.lastActiveBase;
-			sA=speedMin;
+			sA=speedDef;
 			if(io.touch.enabled){
 				io.touch.manager.events.addEventListener(TransformGestureEvent.GESTURE_ZOOM,onZoom,0,0,1);
 				io.touch.manager.events.addEventListener(TransformGestureEvent.GESTURE_ROTATE,onRotate,0,0,1);
@@ -78,9 +79,9 @@
 						sA-=0.02;
 						if(sA<0) sA=0;
 					}else{
-						if(sA<speedMin) sA+=0.01;
+						if(sA<speedDef) sA+=0.01;
 					}
-					if(sA>speedMin) sA-=0.02;
+					if(sA>speedDef) sA-=0.02;
 					if(sA>speedMax) sA=speedMax;
 					if(io.mkb.manager.keys.Right) cameraRotZ+=1;
 					if(io.mkb.manager.keys.Left) cameraRotZ-=1;
@@ -104,7 +105,8 @@
 						WFRotX.setVal(0);
 						WFRotY.setVal(0);
 					}
-					if(sA>speedMin) sA=speedMin+(sA-speedMin)*0.98;
+					if(sA>speedDef) sA=speedDef+(sA-speedDef)*0.98;
+					if(sA<speedDef) sA=speedDef+(sA-speedDef)*0.98;
 				break;
 
 				//move by Gamepad
@@ -122,8 +124,8 @@
 					WFRotY.setVal(-s0.RightStick.y);
 						
 					var val=s0.LeftStick.y;
-					if(val>=0) sA=speedMin+val*(speedMax-speedMin);
-					else sA=speedMin+val*speedMin;
+					if(val>=0) sA=speedDef+val*(speedMax-speedDef);
+					else sA=speedDef+val*(speedDef-speedMin);
 				break;
 					
 				default:

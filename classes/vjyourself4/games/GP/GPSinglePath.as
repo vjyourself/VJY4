@@ -18,6 +18,7 @@
 	
 	import vjyourself4.games.*;
 	import vjyourself4.ctrl.BindAnalPipe;
+	import vjyourself4.DynamicEvent;
 
 	public class GPSinglePath{
 		public var _debug:Object;
@@ -173,7 +174,7 @@
 				synthPath.start({prgN:p.space});
 			}else synthPath.start({prgN:currSpace});
 		}
-		public function onEF(e){
+		public function onEF(e:DynamicEvent){
 			//RESET
 			origoResetCC++;
 			if(origoResetCC>=origoResetDelay){

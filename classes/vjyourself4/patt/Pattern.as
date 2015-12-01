@@ -77,7 +77,9 @@
 		}
 		
 		public function trigRefresh(){
+			//trace(">TRIG>");
 			events.dispatchEvent(new Event(Event.CHANGE));
+			//trace(">>>>>>");
 		}
 		public function getNext(p=null){
 			progressRepeat=delay*delayMul;
@@ -96,7 +98,7 @@
 					case "random":ret=elems[Math.floor(Math.random()*elems.length)];break;	
 				}
 			}
-			//trace("Pattern.getNext ("+type+")> ",ret);
+		//	trace("Pattern.getNext ("+type+")> ",ret);
 			return ret;
 		}
 	}

@@ -51,6 +51,7 @@
 	import vjyourself4.games.CtrlPath;
 	import vjyourself4.IdSet;
 	import vjyourself4.ctrl.*;
+	import vjyourself4.DynamicEvent;
 	
 	
 	public class SynthPath2{
@@ -90,6 +91,9 @@
 		//START A NEW PathSpace
 		//p:{n:"name",prgN:"program name"}
 		public function start(p:Object){
+			var lp=path.p0;
+			if(spaces.length>0) lp=spaces[spaces.length-1].space.lengthPos;
+
 			var e={};spaces.push(e);
 			e.prgN=p.prgN;
 			e.n=p.prgN;if(p.n!=null) e.n=p.n;
@@ -103,8 +107,7 @@
 			e.space.ns=ns;
 			e.space.cont=cont;
 			e.space.init();
-			var lp=path.p0;
-			if(spaces.length>1)lp=path.p1;
+			
 			e.space.startSpace(ns._sys.cloud.RPrg.cont.programs.path[p.prgN],lp);
 			anal.tars.push(e.space.anal);
 		}
@@ -123,7 +126,7 @@
 			}
 		}
 
-		public function onEF(e=null){
+		public function onEF(e:DynamicEvent){
 			for(var i=0;i<spaces.length;i++) {
 				spaces[i].space.onEF(e);
 				//if a space totally run out::

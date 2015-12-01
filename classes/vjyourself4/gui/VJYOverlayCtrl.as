@@ -266,13 +266,13 @@
 			overlayHelp.labelSS.scaleX=sButt;
 			overlayHelp.labelSS.scaleY=sButt;
 			overlayHelp.labelSS.x=15+45*sButt/2;
-			overlayHelp.labelSS.y=wDimY-overlayHelp.labelSS.height/2-30-45*sButt;
+			overlayHelp.labelSS.y=wDimY-overlayHelp.labelSS.height/2-30-50*sButt;
 			
 			
 			overlayHelp.labelReset.scaleX=sButt;
 			overlayHelp.labelReset.scaleY=sButt;
 			overlayHelp.labelReset.x=wDimX-15-45*sButt/2;
-			overlayHelp.labelReset.y=wDimY-overlayHelp.labelReset.height/2-30-45*sButt;
+			overlayHelp.labelReset.y=wDimY-overlayHelp.labelReset.height/2-30-50*sButt;
 
 		}
 
