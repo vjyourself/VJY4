@@ -68,6 +68,8 @@
 			CtrlKey;
 			BindRouter;
 			CtrlCameraMode;
+			SpaceProgress;
+			AnyRouter;
 
 			//COMP SCENE
 			ContextLocal;
@@ -82,8 +84,9 @@
 			OverlayAniSeq;
 			OverlayAniTrans;
 			OverlayVideo;
-			OverlayMusicTest;
+			OverlayMusicMeta;
 			OverlayConsole;
+			OverlayMask;
 
 			GPSinglePath;
 			
@@ -203,7 +206,7 @@
 		
 		//Load File INIT
 		function loadProject(){
-			
+			trace("sdfsdf");
 			//urlpre="";
 			log(1,"Loading project.json");
 

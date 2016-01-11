@@ -81,10 +81,22 @@
 		//var streamsVisibleStart:Number=0;
 
 		public var anal:BindSpace;
+		var variables:Object = {
+			MM_Wave:false,
+			MM_Peak:false,
+			MM_Beat:false,
+			MM_Timeline:false
+		}
 		
 		function PathSpace(){}
 		
 		public function init(){
+			var mmvar=ns._sys.music.meta.variables;
+			variables.MM_Wave = mmvar.Wave;
+			variables.MM_Peak = mmvar.Peak;
+			variables.MM_Beat = mmvar.Beat;
+			variables.MM_Timeline = mmvar.Timeline;
+
 			if(context==null)context={};
 			streams = new IdSet();
 			//timeline = new TimelineSpaces();
@@ -109,7 +121,15 @@
 			if(lp!=null) lengthPos=lp;
 			else lengthPos=path.p0;
 			//currSpacePRG=prg;
-			for(var i in prg.streams) startStream(prg.streams[i]);
+			for(var i in prg.streams){
+				var okay=true;
+				if(prg.streams[i].condition!=null){
+					var condi=prg.streams[i].condition;
+					for(var ii in condi) okay=okay && (variables[condi[ii].n]==condi[ii].v);
+					trace("Condition: "+okay);
+				}
+				if(okay) startStream(prg.streams[i]);
+			}
 			if(prg.bind!=null) anal.setBind(prg.bind);
 			else anal.setBind(anal.defBind);
 		}
@@ -135,14 +155,15 @@
 			//var mStrm=prgCode.streams[i];
 			var strm;
 			switch(mStrm.cn){
-				case "StreamObjs":strm= new StreamObjs();break;
+				case "StreamObjs":strm= new StreamObjs();strm.mmMixer=ns._glob.sys.music.meta.mixer;break;
 				case "StreamMIDI":strm= new StreamMIDI();strm.sys=ns._sys;break;
 				case "StreamPipe":strm= new StreamPipe();strm.musicMeta=ns._glob.sys.music.meta;break;
 				case "StreamShiftBox":strm= new StreamShiftBox();strm.me=me;break;
 				case "StreamStatic":strm= new StreamStatic();strm.me=me;break;
 				
 			}
-			for(var ii in mStrm) if((ii!="cn")&&(ii!="active")) strm[ii]=mStrm[ii];
+			for(var ii in mStrm) if((ii!="cn")&&(ii!="active")&&(ii!="condition")) strm[ii]=mStrm[ii];
+			
 			strm.ctrlMovement=ctrlMovement;
 			strm.lengthPos=lengthPos;
 			strm.assemblerObj3D=assemblerObj3D;

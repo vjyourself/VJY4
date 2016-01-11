@@ -1,9 +1,12 @@
 ﻿package vjyourself4.media{
 	import flash.utils.ByteArray;
 	public class MusicMeta{
+		public var enabled:Boolean=true;
+		public var _debug:Object;
 		public var BPM=0;
 		public var defBPM=120;
 		public var fps=24;
+		public var stage;
 		
 		public var meter=4
 		public var LFO=0;
@@ -13,9 +16,9 @@
 		public var waveDataDamped:Array; 
 		public var waveData:Array;
 		
-		public var wave_gain:Number=0.3;
+		public var wave_gain:Number=1;
 
-		public var peak_gain:Number=0.8;
+		public var peak_gain:Number=1;
 
 		public var damping_mul=0.8;
 		public var damping_gain=1;
@@ -26,9 +29,20 @@
 		public var waveDataCrop=0; //0: full rawBuffer is scaled down to waveDataLength
 		public var peak=0;
 
-		public var rhythm:MetaRhythm;
-		public var struct:MetaStruct;
-		
+		public var beat:MetaBeat;
+		public var timeline:MetaTimeline;
+
+		//backward compatibility links
+		public var rhythm:MetaBeat;
+		public var struct:MetaTimeline;
+		public var mixer:MusicMetaMixer;
+
+		public var variables:Object = {
+			Wave:false,
+			Peak:false,
+			Beat:false,
+			Timeline:false
+		}
 		public function MusicMeta(){
 			waveData = new Array();
 			waveDataDamped = new Array();
@@ -40,14 +54,30 @@
 		}
 		
 		public function init(p:Object=null){
-			rhythm = new MetaRhythm();
-			struct = new MetaStruct();
-			struct.rhythm=rhythm;
+			beat = new MetaBeat();
+			beat.stage=stage;
+			timeline = new MetaTimeline();
+			timeline.beat=beat;
+
+			mixer = new MusicMetaMixer();
+			mixer.wave = this;
+			mixer.beat = beat;
+			mixer._debug=_debug;
+
+			//backward links
+			struct=timeline;
+			rhythm=beat;
+
 			if(p!=null){
 				for(var i in p){
 					switch(i){
-						case "rhythm":rhythm.params=p[i];break;
-						case "struct":struct.params=p[i];break;
+						case "beat":beat.params=p[i];break;
+						case "timeline":timeline.params=p[i];break;
+						case "mixer":mixer.params=p[i];break;
+						case "wave":
+							for(var ii in p[i]) this[ii]=p[i][ii];
+						break;
+
 						default:
 						this[i]=p[i];
 						}
@@ -63,15 +93,22 @@
 				}
 				*/
 			}
-			rhythm.init();
-			struct.init();
+			beat.init();
+			timeline.init();
+			mixer.init();
+			if(enabled) {variables.Wave=true;variables.Peak=true; }
+			if(beat.enabled) {variables.Beat=true; variables.Peak=true; }
+			if(timeline.enabled) {variables.Timeline=true; }
 		}
 
 		public function setPosition(val){
-			rhythm.setPosition(val);
-			struct.update();
+			beat.setPosition(val);
+			timeline.update();
 		}
 		
+		public function addWaveGain(n:Number){
+			wave_gain+=n;
+		}
 		public function setDamping(p:Object){
 			if(p.preset!=null){
 				switch(p.preset){
@@ -115,6 +152,7 @@
 				waveDataDamped[i]=( pval+(val*damping_gain-pval)*damping_mul );
 			}
 			rawWaveData.position=0;
+			peak=peak*peak_gain;if(peak>1) peak=1;
 			//peak/=wave_gain;peak*10;if(peak>1) peak=1;
 			//trace("wave data:"+waveData);
 		}
@@ -140,6 +178,11 @@
 			rawWaveData.position=0;
 			peak=peak*peak_gain;if(peak>1) peak=1;
 			//trace("wave data:"+waveData);
+		}
+
+		public function onEF(){
+			beat.onEF();
+			mixer.onEF();
 		}
 	}
 }

@@ -80,7 +80,7 @@
 				break;
 				case MessageStatus.NOTE_ON: 
 					//setLight(msg.pitch,1);
-					//trace("NOTE_ON "+"channel=" + msg.channel + " pitch=" + msg.pitch);
+					trace("NOTE_ON "+"channel=" + msg.channel + " pitch=" + msg.pitch);
 					
 					//trace("NOTE_ON"+"channel=" + msg.channel + " note=" + msg.note + " octave=" + msg.octave + " velocity=" + msg.velocity);
 					events.dispatchEvent(new DynamicEvent("NOTE",{val:1,pitch:msg.pitch,channel:msg.channel,note:msg.note,octave:msg.octave,velocity:msg.velocity}));

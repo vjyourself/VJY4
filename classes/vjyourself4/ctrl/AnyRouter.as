@@ -6,7 +6,7 @@
 	import vjyourself4.dson.Eval;
 	import vjyourself4.DynamicEvent;
 	
-	public class CtrlKey{
+	public class AnyRouter{
 		public var _debug:Object;
 		public var _meta:Object={name:"Scene"};
 		public function setDLevels(l1,l2,l3,l4){dLevels=[l1,l2,l3,l4];}
@@ -18,33 +18,45 @@
 		public var input;
 
 
-		public var map:Object;
+		public var mapTrig:Array;
+		public var mapAnal:Array;
 	
 		
-		public function CtrlKey(){}
+		public function AnyRouter(){}
 		
 		public function init(){
-			map=params.map;
-			ns.sys.io.stage.addEventListener(KeyboardEvent.KEY_DOWN,onKey,0,0,1);
+			mapTrig=params.mapTrig;
+			mapAnal=params.mapAnal;
+			
 		}
 		
 		
-		public function onKey(e:KeyboardEvent){
-			var ch=String.fromCharCode(e.charCode);
-			for(var i in map) if(i==ch) execComm(map[i].command);
-			/*
-			var butt=e.data.button;
-			trace("BUTT> "+butt);
-			if(butt=="Start"){
-				setMode((modeInd+1)%modes.length);
-			}else{
-				var comm;
-				if(commButtons[butt]!=null) comm=commButtons[butt].command;
-				else if(maps["std"][butt]!=null) comm=maps["std"][butt].command;
-				if(comm!=null) execComm(comm);
-			}*/
+		
+		public function trig(ind:Number){
+			if(ind<mapTrig.length){
+				var m=mapTrig[ind];
+				switch (m.t){
+					case "command": execComm(m.command);break;
+					case "anal": break;
+					case "trig": break;
+				}
+			}
 		}
 		
+		public function setInput(ch,val){
+			if(ch<mapAnal.length){
+				var m=mapAnal[ch];
+				switch (m.t){
+					case "command": break;
+					case "anal": 
+						var tar=Eval.evalString(ns,m.tar.obj);
+						tar.setInput(m.tar.ch,val);
+						break;
+					case "trig": break;
+				}
+			}
+		}
+
 		function execComm(comm){
 			var tar=Eval.evalString(ns,comm[0]);
 			tar[comm[1]].apply(tar,comm[2]);

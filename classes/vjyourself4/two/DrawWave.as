@@ -44,7 +44,7 @@
 			vis=canvas;
 			if(curveCircle_radius==0){
 				var ll=wDimY;if(wDimX<wDimY) ll=wDimX;
-				curveCircle_radius=ll/3;
+				curveCircle_radius=ll/4;
 			}
 		}
 		public function onEF(e=null){if(waveData!=null) draw(waveData);}
@@ -122,8 +122,8 @@
 				p.y=wDimY/2*y;
 				break;
 				case "circle":
-				p.x=Math.sin(x*Math.PI*2)*curveCircle_radius*(1+y/2);
-				p.y=Math.cos(x*Math.PI*2)*curveCircle_radius*(1+y/2);
+				p.x=Math.sin(x*Math.PI*2)*curveCircle_radius*(1+y*2);
+				p.y=Math.cos(x*Math.PI*2)*curveCircle_radius*(1+y*2);
 				break;
 			}
 			return p;

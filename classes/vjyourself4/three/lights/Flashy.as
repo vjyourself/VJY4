@@ -8,6 +8,8 @@
 	import flash.geom.Vector3D;
 	import flash.events.MouseEvent;
 	import vjyourself4.patt.colors.ColorTrans;
+	import vjyourself4.media.MetaBeat;
+	import vjyourself4.media.MusicMetaMixer;
 
 	public class Flashy{
 		
@@ -17,6 +19,8 @@
 		public var path;
 		public var me;
 		public var cont:Scene3D;
+		var beat:MetaBeat;
+		var mixer:MusicMetaMixer;
 
 		public var stream:String;
 		public var params:Object;
@@ -32,18 +36,25 @@
 		
 		
 		public function init(){
-			
+			beat = ns.ns._sys.music.meta.beat;
+			mixer = ns.ns._sys.music.meta.mixer;
 			elems=[];
 			lights=[];
 			
 			for(var i=0;i<4;i++){
 				var pl = new PointLight();
 				pl.castsShadows = false;
-				pl.fallOff=200;
+				pl.fallOff=300;
 				elems.push({l:pl});
 				lights.push(pl);
 			}
 			
+			// update position
+			elems[0].perc=0.05;
+			elems[1].perc=0.15;
+			elems[2].perc=0.25;
+			elems[3].perc=0.35;
+
 			setPreset("Norm");
 		}
 
@@ -72,10 +83,22 @@
 			}
 		}
 		var colorShift:int=0;
+		var  strenghInd:int=0;
+
+		// Slow / Norm / Fast
+		var beatChs:Array=[0,2,2,2];
 		public function onEF(e=null){
-			alpha++;
 			var setStrength:Boolean=false;
-			if(alpha>preset.delay){
+
+			var update:Boolean=false;
+			if(beat.enabled){
+				update=beat.beatFractions[beatChs[mixer.litInd]].beatFrame;
+			}else{
+				alpha++;
+				update=alpha>preset.delay;
+			}
+
+			if(update){
 				alpha=0;
 				setStrength=true;
 				if(preset.shift>0){
@@ -84,19 +107,20 @@
 				}
 					
 			}
-			// update position
-			elems[0].perc=0.10;
-					elems[1].perc=0.20;
-					elems[2].perc=0.30;
-					elems[3].perc=0.40;
-					for(var i=0;i<elems.length;i++){
-						var ll=elems[i];
-						var pos=ns.path.getPos((ns.path.p1-ns.path.p0)*ll.perc+ns.path.p0);
-						ll.l.x=pos.x;
-						ll.l.y=pos.y;
-						ll.l.z=pos.z;
-						if((setStrength)&&(preset.strength=="random")) ll.l.diffuse=Math.random();
-					}
+			
+			if(setStrength) strenghInd++;
+			for(var i=0;i<elems.length;i++){
+				var ll=elems[i];
+				var pos=ns.path.getPos((ns.path.p1-ns.path.p0)*ll.perc+ns.path.p0);
+				ll.l.x=pos.x;
+				ll.l.y=pos.y;
+				ll.l.z=pos.z;
+				if((setStrength)){
+					ll.l.diffuse=(i+ strenghInd)%2;
+					ll.l.specular=ll.l.diffuse;
+					ll.l.ambient=ll.l.diffuse;
+				}
+			}
 		}
 	}
 }

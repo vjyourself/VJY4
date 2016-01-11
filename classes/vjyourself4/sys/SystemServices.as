@@ -170,6 +170,8 @@
 				music = new Music();
 				var musicInitObj ={}; if(params.music!=null) musicInitObj = params.music;
 				music.mstream=debug;
+				music._debug=debug;
+				music.stage=screen.stage;
 				music.init(musicInitObj);
 				
 				video = new Video();

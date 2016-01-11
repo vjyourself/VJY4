@@ -7,6 +7,7 @@
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 	
 	import vjyourself4.sys.MetaStream;
 	import vjyourself4.sys.ScreenManager;
@@ -46,6 +47,9 @@
 
 		//last used base input: gamepad / mkb / touch ONLY (midi & arduino not affecting this)
 		public var lastActiveBase:String="";
+
+		//extras
+		public var disableBackButton:Boolean = false;
 
 		public var events = new EventDispatcher();
 		
@@ -112,8 +116,18 @@
 				log(1,"Arduino Enabled");
 			}*/
 			
+			if(disableBackButton){
+				stage.addEventListener(KeyboardEvent.KEY_DOWN,onDisableBackButton,0,0,1);
+			}
 		}
 		
+		public function onDisableBackButton(ke:KeyboardEvent) {
+    		if (ke.keyCode==Keyboard.BACK) {
+        		// Pause the game here.
+        		ke.preventDefault();
+        		ke.stopImmediatePropagation();
+    		}
+		}
 		public function onResize(e=null){
 			wDimX=sys.screen.wDimX;
 			wDimY=sys.screen.wDimY;

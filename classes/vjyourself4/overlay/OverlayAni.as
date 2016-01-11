@@ -17,12 +17,14 @@
 		public var params:Object;
 		
 		var aniCN:String;
+		var aniCNs:Array;
 		var aniWidth:Number;
 		var aniHeight:Number;
 
 		public var vis:Sprite;
 		var ani:MovieClip;
 
+		var anis:Array=[];
 		//auto cc
 		var cc:Number=0;
 		var delay:Number=0;
@@ -34,7 +36,8 @@
 		}
 		
 		public function init(){
-			aniCN=params.aniCN;
+			if(params.aniCNs!=null) aniCNs=params.aniCNs;
+			if(params.aniCN !=null) aniCNs.push(params.aniCN);
 			aniWidth=params.aniWidth;
 			aniHeight=params.aniHeight;
 			if(params.scale!=null) scale=params.scale;
@@ -44,14 +47,21 @@
 				if(params.auto.cc!=null) cc=params.auto.cc;
 			}
 			vis = new Sprite();
-			var c:Class = getDefinitionByName(aniCN) as Class;
-			ani = new c();
-			ani.stop();
-			vis.addChild(ani);
-			
+			for(var i=0;i<aniCNs.length;i++){
+				var c:Class = getDefinitionByName(aniCNs[i]) as Class;
+				var e={};
+				e.ani = new c();
+				e.ani.stop();
+				vis.addChild(e.ani);
+				anis.push(e);
+			}
+			anisInd=0;
 		}
-		
+		var anisInd=0;
 		public function play(){
+			if(ani!=null) ani.gotoAndStop(ani.totalFrames);
+			ani=anis[anisInd].ani;
+			anisInd=(anisInd+1)%anis.length;
 			ani.gotoAndPlay(2);
 			cc=0;
 		}
@@ -69,17 +79,15 @@
 		public function onResize(e){
 			var sX=ns.screen.wDimX/aniWidth;
 			var sY=ns.screen.wDimY/aniHeight;
-			switch(scale){
-				case "stretch":
-				ani.scaleX=sX;
-				ani.scaleY=sY;
-				break;
-				case "fit":
-				default:
+			if(scale=="fit"){
 				var s=(sX<sY)?sX:sY;
-				ani.scaleX=s;
-				ani.scaleY=s;
-				break;
+				sX=s;
+				sY=s;
+			}
+			
+			for(var i in anis){
+				anis[i].ani.scaleX=sX;
+				anis[i].ani.scaleY=sY;
 			}
 			
 		}

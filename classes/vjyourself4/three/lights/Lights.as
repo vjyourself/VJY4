@@ -97,7 +97,9 @@
 			if(effect!=null) effect.updateColors();
 		}
 		public function setMode(name){
-			var ll=ns._sys.cloud.RLights.NS[name];
+			var ll=name.split("_");
+			if(ll.length==1) ll.push("Norm");
+			if(ll.length==3) ll[1]=ll[1]+"_"+ll[2];
 			setLights(ll[0],ll[1]);
 		}
 		public function setLights(eff,effPres){

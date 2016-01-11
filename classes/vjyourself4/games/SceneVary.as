@@ -195,6 +195,7 @@
 		public function prev(ind:Number,lev:Number=0){
 			setIndex(ind,"prev",lev);
 		}
+		public function trig(ind:Number){next(ind);}
 		public function next(ind:Number,lev:Number=0){
 			setIndex(ind,"next",lev);
 		}

@@ -14,9 +14,12 @@
 
 	
 	public class Music{
+		public var _debug:Object;
 		public var _meta:Object={name:"MUSIC"};
 		public var msLevel:Number=1;
 		public var mstream;
+		public var stage; //for MetaBeat
+
 		//var events = new EventDispatcher();
 		public var meta:MusicMeta;
 		public var volume=1;
@@ -55,6 +58,8 @@
 			}
 
 			meta = new MusicMeta();
+			meta._debug=_debug;
+			meta.stage=stage;
 			
 			mstream.log(this,1,"EXTRACT: "+extract);
 			playbackMic = new PlaybackMic();
@@ -100,6 +105,7 @@
 		
 		public function onEF(){
 			if(mode=="Normal") playbackNormal.onEF();
+			meta.onEF();
 		}
 		
 		public function setVolume(v:Number){

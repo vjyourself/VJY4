@@ -20,8 +20,8 @@
 		// COMP type
 		var anal_path:String="scene.anal";
 		var anal_obj:Object;
-		var vary_path:String="sceneVary";
-		var vary_obj:Object;
+		var trig_path:String="sceneVary";
+		var trig_obj:Object;
 
 		public var commButtons:Object;
 		var active:Object={anal:true,trig:true};
@@ -38,10 +38,10 @@
 			if(params.mode!=null) mode=params.mode;
 			if(params.active!=null) active=params.active;
 			if(params.bind!=null){
-				if(params.bind.vary!=null) vary_path=params.bind.vary; 
+				if(params.bind.trig!=null) trig_path=params.bind.trig; 
 				if(params.bind.anal!=null) anal_path=params.bind.anal;	
 			}
-			setBind("vary",vary_path);
+			setBind("trig",trig_path);
 			setBind("anal",anal_path);
 			if(ns.sys.io.gamepad.enabled){
 			switch(mode){
@@ -69,7 +69,7 @@
 			this[prop+"_obj"]=Eval.evalPath(ns,val);
 		}
 		public function onTrig(e:DynamicEvent){
-			if(active.trig) vary_obj.next(e.data.ind);
+			if(active.trig) trig_obj.trig(e.data.ind);
 			
 			//switch(e.data.ind){
 		//		case 0:
@@ -98,12 +98,12 @@
 			switch(mode){
 				case "SinglePlayer":
 				gamepad.onEF(e);
-				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) ns.scene.anal.setInput(i,gamepad.anal[i]);
+				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) anal_obj.setInput(i,gamepad.anal[i]);
 				break;
 
 				case "MultiPlayer":
 				gamepad.onEF(e);
-				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) ns.scene.anal.setInput(i,gamepad.anal[i]);
+				for(var i=0;i<gamepad.anal.length;i++) if(gamepad.anal[i]!=0) anal_obj.setInput(i,gamepad.anal[i]);
 			
 				break;
 			}

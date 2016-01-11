@@ -10,10 +10,12 @@
 	//import vjyourself4.prgs.PRG;
 	import vjyourself4.streams.logic.*;
 	import vjyourself4.DynamicEvent;
+	import vjyourself4.media.MusicMetaMixer;
 	
 	public class StreamObjs{
 		public var type:String="Objs";
 		public var cloud;
+		public var mmMixer:MusicMetaMixer;
 		public var lengthPos:Number=0;
 		public var lengthRun:Number=0;
 		public var elems:Array;
@@ -40,6 +42,7 @@
 		public var calculateFullRot:Boolean=true;
 		
 		var parity:int=0;
+		var parity4:int=0;
 		public var context:Object={texture:"A",color:"A"};
 		public var transVar:TransVar;
 		public var trans:Object={
@@ -124,6 +127,7 @@
 				}
 				
 				parity=(parity+1)%2;
+				parity4=(parity4+1)%4;
 				var el={
 					logic:{},
 					pos:pathPos,
@@ -134,8 +138,10 @@
 					obj:obj,
 					lengthPos:lengthPos,
 					parity:parity,
+					parity4:parity4,
 					catchitAniState:0 // obsolete
 				}
+
 				//caluculate animated params
 				//global overwrite :: OBSOLETE
 				if(rotate){
@@ -178,9 +184,13 @@
 				var el=elems[i];
 
 				// TRANS SCALE
-				var tscale=trans.scale0;
-			 	if(el.parity==1) tscale=trans.scale1;
+				var tscale=trans.scale0; //*(1+mmMixer.A["Sin1"].val*0.3);
+			 	if(el.parity==1) tscale=trans.scale1; //*(1+mmMixer.A["Sin1"].val*0.3);
 			 	tscale*=trans.scale;
+
+			 	tscale*=(1+mmMixer.A["Vary"+(el.parity4+1)].val*0.3);
+			 //	tscale*=(1+mmMixer.A["FullSin2_"+(i%2+1)].val*0.3);
+			
 				//if(tscale!=1){
 					if(tscale<0.05){
 						el.obj3D.visible=false;
@@ -267,7 +277,7 @@
 		
 		public function updateColors(){}
 		public function updateTex(str:String){
-			if((state=="Running")&&(str==context.texture)){
+			if(((state=="Running")||(state=="Decomposing"))&&(str==context.texture)){
 			for(var i=0;i<elems.length;i++){
 				var elm=elems[i];
 				if(elm.obj3D is away3d.entities.Mesh)elm.obj3D.material=cloud.R3D.cont.mat[contextHandler.getNext({type:"texture",stream:str,params:{}})];

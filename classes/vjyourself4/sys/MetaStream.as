@@ -32,33 +32,11 @@
 		}
 		
 		public function logMeta(meta:Object,ch,msg:String){
-			if(enabled){
-					var name:String="?";
-					if(meta.name!=null) name=meta.name;
-					/*else{
-						name=getQualifiedClassName(obj);
-						if(name.lastIndexOf("::")>=0)name=name.substr(name.lastIndexOf("::")+2);
-					}*/
-					events.dispatchEvent(new DynamicEvent("LOG",{n:name,level:ch,msg:msg}));
-					if(ch==6) consoleMini.tf.text=msg;
-					var show:Boolean=true;
-					//if(filter.act) show=rule.getVal(level,name)
-					
-					if(show){
-						var txt=name+"> "+msg;
-						trace(txt);
-						if(console!=null){
-							console.log(txt);
-							if(msg.substr(0,7)=="Resize "){
-								if(console.hasOwnProperty("tfSide")) console["tfSide"].text=msg.substr(7);
-							}
-						}
-						//if(consoleMini!=null) consoleMini.tf.text=txt;
-					}
-			}
+			log({_meta:meta},ch,msg);
 				
 		}
 		public function log(obj:Object,level,msg:String){
+			//trace("LOg "+msg);
 			if(enabled){
 					var name:String="?";
 					if(obj["_meta"]!=null) name=obj._meta.name;
@@ -67,6 +45,7 @@
 						if(name.lastIndexOf("::")>=0)name=name.substr(name.lastIndexOf("::")+2);
 					}
 					events.dispatchEvent(new DynamicEvent("LOG",{n:name,level:level,msg:msg}));
+					if(level==6) consoleMini.tf.text=msg;
 					var show:Boolean=true;
 					if(filter.act) show=rule.getVal(level,name)
 					

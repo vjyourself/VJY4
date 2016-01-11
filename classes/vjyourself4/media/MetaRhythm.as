@@ -13,12 +13,15 @@
 		public var tackCounterPre:Number=0;
 		public var counter:Array;
 		public var chA:Array;
+		public var enabled:Boolean=true;
+		
 		var preShift:Number;
 
 		public function MetaRhythm(){
 			
 		}
 		public function init(){
+			if(params.enabled!=null) enabled=params.enabled;
 			tack=params.tack;
 			start=params.start;
 			preShift=0;//tack*0.2;

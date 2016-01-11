@@ -9,10 +9,12 @@
 	import vjyourself4.dson.DSON;
 	import vjyourself4.dson.TransVar;
 	//import vjyourself4.prgs.PRG;
+	import vjyourself4.media.MetaBeat;
 	
 	public class StreamPipe{
 		public var type:String="Pipe";
 		public var cloud;
+		public var beat:MetaBeat;
 		public var musicMeta;
 		public var path:Path;
 		public var cont:ObjectContainer3D;
@@ -208,7 +210,7 @@
 		
 		//****** UPDATE Context Changes *********************************************************************************
 		public function updateColors(){
-			if(state=="Running"){
+			if((state=="Running")||(state=="Decomposing")){
 			for(var i=0;i<elems.length;i++){
 				var elm=elems[i];
 				if(elm.wf!=null){
@@ -219,7 +221,7 @@
 		}
 
 		public function updateTex(str:String){
-			if((state=="Running")&&(str==context.texture)){
+			if(((state=="Running")||(state=="Decomposing"))&&(str==context.texture)){
 			for(var i=0;i<elems.length;i++){
 				var elm=elems[i];
 				if(elm.mesh!=null){

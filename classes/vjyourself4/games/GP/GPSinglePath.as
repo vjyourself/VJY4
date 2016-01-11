@@ -19,6 +19,8 @@
 	import vjyourself4.games.*;
 	import vjyourself4.ctrl.BindAnalPipe;
 	import vjyourself4.DynamicEvent;
+	import flash.events.EventDispatcher;
+	import flash.events.Event;
 
 	public class GPSinglePath{
 		public var _debug:Object;
@@ -43,6 +45,9 @@
 		
 		var origoResetCC=0;
 		var origoResetDelay=60*10;
+
+		public var state={space:""};
+		public var events:EventDispatcher = new EventDispatcher();
 
 		//var plane:Sprite3D;
 		
@@ -120,7 +125,7 @@
 			synthPath.init();
 			
 			//synthPath.timeline.startMap(ns._glob.cloud.spacesMap);
-			currSpace=params.space;
+			state.space=params.space;
 			synthPath.start({prgN:params.space});
 			
 			anal= new BindAnalPipe();
@@ -135,8 +140,12 @@
 		 just rebuild
 		 	GP.restart({path,space})
 		*/
-		var currSpace:String;
+		
 		public function setParams(p){
+			//synthPath progress params
+		    //	if(p.mixMode!=null) synthPath.mixMode=p.mixMode;
+
+			//do Restart ? 
 			var rstr=true;
 			if(p.restart!=null) rstr=p.restart;
 
@@ -152,14 +161,16 @@
 
 			//start new SpacePrg -> Streams
 			if(p.space!=null){
-				if(!rstr) synthPath.stopGrow("all");
 				synthPath.start({prgN:p.space});
 					//ns._sys.cloud.RPrg.cont.programs.path["Prg"+p.space]);
-				currSpace=p.space;
-			}else if(rstr) synthPath.start({prgN:currSpace});
+				state.space=p.space;
+				events.dispatchEvent(new Event("SPACE_CHANGE"));
+			}else if(rstr) synthPath.start({prgN:state.space});
 				//ns._sys.cloud.RPrg.cont.programs.path["Prg"+currSpace]);
 
 		}
+		
+		
 		public function restart(p){
 			//destroy streams
 			synthPath.destroy("all");
@@ -170,10 +181,11 @@
 			else ctrlPath.startPath();
 			//start new SpacePrg -> Streams
 			if(p.space!=null){
-				currSpace=p.space;
+				state.space=p.space;
 				synthPath.start({prgN:p.space});
-			}else synthPath.start({prgN:currSpace});
+			}else synthPath.start({prgN:state.space});
 		}
+
 		public function onEF(e:DynamicEvent){
 			//RESET
 			origoResetCC++;

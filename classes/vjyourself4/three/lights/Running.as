@@ -8,6 +8,8 @@
 	import flash.geom.Vector3D;
 	import flash.events.MouseEvent;
 	import vjyourself4.patt.colors.ColorTrans;
+	import vjyourself4.media.MetaBeat;
+	import vjyourself4.media.MusicMetaMixer;
 
 	public class Running{
 		
@@ -17,6 +19,8 @@
 		public var path;
 		public var me;
 		public var cont:Scene3D;
+		var beat:MetaBeat;
+		var mixer:MusicMetaMixer;
 
 		public var stream:String;
 		public var params:Object;
@@ -32,21 +36,23 @@
 		
 		
 		public function init(){
-			
+			beat = ns.ns._sys.music.meta.beat;
+			mixer = ns.ns._sys.music.meta.mixer;
+
 			elems=[];
 			lights=[];
 			
 			for(var i=0;i<4;i++){
 				var pl = new PointLight();
 				pl.castsShadows = false;
-				pl.fallOff=200;
+				pl.fallOff=300;
 				elems.push({l:pl});
 				lights.push(pl);
 			}
 			
 			setPreset("Norm");
 		}
-
+		var dir:Number=1;
 		public function setPreset(name){
 			presetName=name;
 			preset=presets[presetName];
@@ -58,6 +64,7 @@
 				l.diffuse=preset.light.diffuse;
 				l.specular=preset.light.specular;
 			}
+			dir=preset.speed/Math.abs(preset.speed);
 			//updateColors
 			updateColors();
 		}
@@ -72,10 +79,18 @@
 			}
 		}
 		
+		// Slow / Norm / Fast / Fast Turbo
+		var beatChs:Array=["Saw16_1","Saw8_1","Saw4_1","Saw1_1"];
 		public function onEF(e=null){
-			alpha+=preset.speed;
-			while(alpha>100) alpha-=100;
-			while(alpha<0) alpha+=100;
+			if(beat.enabled){
+				alpha=100+dir*beat.A[beatChs[mixer.litInd]].val*100;
+			}else{
+				alpha+=preset.speed;
+				while(alpha>100) alpha-=100;
+				while(alpha<0) alpha+=100;
+			}
+			
+			
 					
 			elems[0].perc=((alpha+preset.spots[0])%100)/100;
 			elems[1].perc=((alpha+preset.spots[1])%100)/100;
@@ -83,7 +98,7 @@
 			elems[3].perc=((alpha+preset.spots[3])%100)/100;
 			for(var i=0;i<elems.length;i++){
 						var ll=elems[i];
-						var pos=ns.path.getPos((ns.path.p1-ns.path.p0)*ll.perc+ns.path.p0);
+						var pos=ns.path.getPos((ns.path.p1-ns.path.p0)*preset.pathLength*ll.perc+ns.path.p0);
 						ll.l.x=pos.x;
 						ll.l.y=pos.y;
 						ll.l.z=pos.z;

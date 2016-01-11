@@ -71,6 +71,7 @@
 		public var ctrlMovement;
 		public var me:Me;
 		public var ns:Object;
+		public var mixMode:String = "cut";
 		
 		//self
 		var spaces:Array=[];
@@ -91,6 +92,8 @@
 		//START A NEW PathSpace
 		//p:{n:"name",prgN:"program name"}
 		public function start(p:Object){
+			stopGrow("all");
+
 			var lp=path.p0;
 			if(spaces.length>0) lp=spaces[spaces.length-1].space.lengthPos;
 

@@ -46,8 +46,8 @@ package vjyourself4.cloud{
 		
 		///////new
 		public var context:LoaderContext;
-		var cloud1:Object={online:false,path:"cloud/"};
-		var cloud2:Object={online:false,path:"cloud2/"};
+		var cloud1:Object={online:false,path:"cloud1/"};
+		var cloud2:Object={online:false,path:"cloud/"};
 		/*
 		packages:
 		-url : file to load
@@ -201,6 +201,7 @@ package vjyourself4.cloud{
 			*****************************************************************************************/
 		
 			if(p.world4!=null) for(var i=0;i<p.world4.length;i++) if(p.world4[i].active){
+				cloud2.online=p.world4[i].online;
 				if(cloud2.online) packages.push({url:"export/world4/"+p.world4[i].n,cloud:2});
 				else packages.push({url:p.world4[i].n+".json",cloud:2});
 			}
@@ -222,7 +223,10 @@ package vjyourself4.cloud{
 			if(res.paths!=null) for(var i=0;i<res.paths.length;i++) paths.push({name:res.paths[i]});
 			//No DB filtering yet :: skyboxes / lights / filters
 			if(res.colors!=null) for(var i=0;i<res.colors.length;i++)colors.push({name:res.colors[i]});
-			if(res.lights!=null) for(var i=0;i<res.lights.length;i++)lights.push({name:res.lights[i]});
+			if(res.lights!=null) for(var i=0;i<res.lights.length;i++){
+				lights.push({name:res.lights[i]});
+				RLights.NS[res.lights[i]]=res.lights[i];
+			}
 			if(res.filters!=null) for(var i=0;i<res.filters.length;i++)filters.push({name:res.filters[i]});
 			if(res.blends!=null) for(var i=0;i<res.blends.length;i++)blends.push({name:res.blends[i]});
 	
@@ -313,10 +317,10 @@ package vjyourself4.cloud{
 			if(res.lights!=null){
 				if(res.lights.length>0){
 					if(cloud1.online){
-						fff.push("lights/lights.json");
+						//fff.push("lights/lights.json");
 						fff.push("lights/presets.json");
 					}else{
-						fff.push("lights/lights.json");
+						//fff.push("lights/lights.json");
 						fff.push("lights/presets.json");
 					}
 				}
@@ -360,6 +364,24 @@ package vjyourself4.cloud{
 			}
 
 			return fff;
+		}
+		public function getSpaceName(o):String{
+			return spacesG[o.gI].e[o.eI].name;
+		}
+		public function getSpaceInd(n:String):Object{
+			var o={gN:"",gI:-1,eN:"",eI:-1};
+			
+			for(var gI=0;gI<spacesG.length;gI++){
+				for(var eI=0;eI<spacesG[gI].e.length;eI++){
+					if(spacesG[gI].e[eI].name==n){
+						o.gN=spacesG[gI].name;
+						o.gI=gI;
+						o.eN=spacesG[gI].e[eI].name;
+						o.eI=eI;
+					}
+				}
+			}
+			return o;
 		}
 		public function reload(){
 			init(pInit);
@@ -566,7 +588,7 @@ package vjyourself4.cloud{
 					}
 					ready=true;
 				break;
-				case "RLights":RLights.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
+				//case "RLights":RLights.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
 				case "RFilters":RFilters.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
 
 				case "RScenes":RScenes.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
@@ -611,6 +633,7 @@ package vjyourself4.cloud{
 		
 
 				//Lights
+				/*
 				if((lights.length>0)&&(lights[0].name=="*")){
 					lights=[];
 					for(var i in RLights.NS){
@@ -621,7 +644,7 @@ package vjyourself4.cloud{
 							//trace("Found Lights> "+i);
 						}
 					}
-				}
+				}*/
 
 				//Filters
 				if((filters.length>0)&&(filters[0].name=="*")){

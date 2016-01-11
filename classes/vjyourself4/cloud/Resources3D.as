@@ -94,6 +94,7 @@
 				cont.mat[i].lightPicker = lp;
 				////trace(i+" : "+cont.mat[i]);
 			}
+
 			//Music Color Light Picker
 			if(mclp==true){
 				for(var i=0;i<musicColors.length;i++){
@@ -104,6 +105,10 @@
 			cont.lightPicker=lp;
 			
 		}
+		public function toggleMCLP(){
+			enableMCLightPicker(!mclp);
+		}
+		
 		public function enableMCLightPicker(b:Boolean){
 			mclp=b;
 			if(globalLightPicker!=null){
@@ -113,6 +118,7 @@
 				}
 			}
 		}
+
 		var blendAdd:Boolean=false;
 		public function toggleBlendAdd(){
 			blendAdd=!blendAdd;
@@ -311,30 +317,38 @@
 		}
 		
 		/********************** MUSIC MATERIALS *********************************************/
+		public var waveDrawMode:Number=0;
+		public var waveDrawModeVary:Array=["Line","Cross","Circle"];
+		public function nextWaveDrawMode(){
+			waveDrawMode=(waveDrawMode+1)%waveDrawModeVary.length;
+		}
 		var musicColors:Array=[
+
+			{n:"MusicColorBlack",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
+
 			{n:"MusicColor1",synch:"peak",col0:0x6633aa,col1:0xffffff,alpha:1},
 			{n:"MusicColor2",synch:"peak",col0:0xaa0066,col1:0xffffff,alpha:1},
 			{n:"MusicColor3",synch:"peak",col0:0x993399,col1:0xffffff,alpha:1},
 			{n:"MCBW50",synch:"peak",col0:0x000000,col1:0xbbbbbb,alpha:1},
 			{n:"MCBW100",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
 			{n:"MCBWADD",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1,blend:"ADD"},
-			{n:"MusicColorBlack",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
-			{n:"Beat1","synch":"beat","ind":0,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat2","synch":"beat","ind":1,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat3","synch":"beat","ind":2,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat4","synch":"beat","ind":3,col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat1A","synch":"beat","ind":0,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
-			{n:"Beat2A","synch":"beat","ind":1,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
-			{n:"Beat3A","synch":"beat","ind":2,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
-			{n:"Beat4A","synch":"beat","ind":3,col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			
+			{n:"Beat1","synch":"beat","ind":"ASR4_1",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat2","synch":"beat","ind":"ASR4_2",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat3","synch":"beat","ind":"ASR4_3",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat4","synch":"beat","ind":"ASR4_4",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat1A","synch":"beat","ind":"ASR4_1",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat2A","synch":"beat","ind":"ASR4_2",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat3A","synch":"beat","ind":"ASR4_3",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
+			{n:"Beat4A","synch":"beat","ind":"ASR4_4",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 
 			//{n:"mc1ma",col0:0x6633aa,col1:0xffffff,alpha:0.7},
 			//{n:"mc2ma",col0:0xaa0066,col1:0xffffff,alpha:0.7},
 			//{n:"mc3ma",col0:0x993399,col1:0xffffff,alpha:0.7}
 		];
 		
-		var bmpDWave:BitmapData;
-		var bmpDWave2:BitmapData;
+		public var bmpDWave:BitmapData;
+		public var bmpDWave2:BitmapData;
 		var compDrawWave:DrawWave;
 		var musicWaveTexture:BitmapTexture;
 		var musicWaveTexture2:BitmapTexture;
@@ -361,7 +375,7 @@
 			compDrawWave.doStars=false;
 			compDrawWave.doLine=true;
 			compDrawWave.doFill=false;
-			compDrawWave.fillColor=0xcccccc;
+			compDrawWave.fillColor=0xffffff;
 			compDrawWave.lineColor0=0xffffff;
 			compDrawWave.lineT0=3;
 			compDrawWave.init();
@@ -405,12 +419,13 @@
 				var mc=musicColors[i];
 				switch(mc.synch){
 					case "peak":
-					mc.col = mc.colorScale.getColor(music.meta.peak);
+					//mc.col = mc.colorScale.getColor(music.meta.peak);
+					mc.col = mc.colorScale.getColor(music.meta.mixer.A["peak"].val);
 					mc.mat.color=mc.col;
 					break;
 					case "beat":
-					mc.col = mc.colorScale.getColor(music.meta.rhythm.chA[mc.ind].val);
-					mc.mat.alpha=mc.alpha0+(mc.alpha1-mc.alpha0)*music.meta.rhythm.chA[mc.ind].val; //0.3+music.meta.rhythm.chA[mc.ind].val*0.7; //mc.colorScale.getColor(music.meta.rhythm.chA[mc.ind].val);
+					mc.col = mc.colorScale.getColor(music.meta.beat.A[mc.ind].val);
+					mc.mat.alpha=mc.alpha0+(mc.alpha1-mc.alpha0)*music.meta.beat.A[mc.ind].val; //0.3+music.meta.beat.chA[mc.ind].val*0.7; //mc.colorScale.getColor(music.meta.beat.chA[mc.ind].val);
 					mc.mat.color=mc.col;
 					
 					break;
@@ -418,17 +433,35 @@
 			}
 			////trace("PEKA:"+music.meta.peak);
 			//MUSIC WAVE
-			compDrawWave.lineColor0=0xffffff;
+			switch(waveDrawMode){
+				// Line / Cross
+				case 0:
+				case 1:
+				//compDrawWave.doStars=false;
+				//compDrawWave.doLine=true;
+				//compDrawWave.doFill=false;
+				compDrawWave.baseCurve="line";
+				break;
+				case 2:
+				//compDrawWave.doStars=true;
+				//compDrawWave.doLine=false;
+				//compDrawWave.doFill=false;
+				compDrawWave.baseCurve="circle";
+				break;
+			}
+		
 			compDrawWave.onEF();
 			
+
 			//bmpDWave.fillRect(bmpDWave.rect, 0);
 			bmpDWave.draw(compDrawWave.canvas,mmm1);
-			//bmpDWave.draw(compDrawWave.canvas,mmm2);
+			if(waveDrawMode==1) bmpDWave.draw(compDrawWave.canvas,mmm2);
 			bmpDWave.applyFilter(bmpDWave,bmpDWave.rect,new Point(0,0),new BlurFilter());
 			var cmul=0.8;
 			bmpDWave.colorTransform(bmpDWave.rect,new ColorTransform(cmul,cmul,cmul,1,0,0,0,0));
 			musicWaveTexture.invalidateContent();
 
+			/*
 			if(musicMaterials2){
 				//bmpDWave2.fillRect(bmpDWave2.rect, 0);
 			//bmpDWave2.draw(compDrawWave.canvas,mmm1);
@@ -437,8 +470,9 @@
 			var cmul=0.95;
 			bmpDWave2.colorTransform(bmpDWave2.rect,new ColorTransform(cmul,cmul,cmul,1,0,0,0,0));
 			musicWaveTexture2.invalidateContent();
+			}*/
 			}
-			}
+
 		}
 	}
 }

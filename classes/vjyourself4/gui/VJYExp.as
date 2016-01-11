@@ -185,7 +185,9 @@
 			sys.io.wLimBottom=overlayCtrls.wLimBottom;
 		}
 
-		public function openNextScene(){
+		public var showCtrls:Boolean=true;
+		public function openNextScene(sc:Boolean=true){
+			showCtrls=sc;
 			openScene(sceneInd+1);
 		}
 		function onMenuItem(e:MouseEvent){
@@ -198,12 +200,12 @@
 			sceneInd=(ind%scenes.length);
 			ns.scene.setScene(scenes[sceneInd].name,{"rebuild":true,"sceneFlags":true});
 			landingWin.visible=false;
-			buttMenu.visible=true;
-			buttHelp.visible=true;
-			buttScreenShot.visible=true;
-			buttReset.visible=true;
+			buttMenu.visible=showCtrls;
+			buttHelp.visible=showCtrls;
+			buttScreenShot.visible=showCtrls;
+			buttReset.visible=showCtrls;
 			overlayCtrls.updateScene();
-			overlayCtrls.visible=true;
+			overlayCtrls.visible=showCtrls;
 		}
 		function onMenu(e){
 			overlayCtrls.visible=false;

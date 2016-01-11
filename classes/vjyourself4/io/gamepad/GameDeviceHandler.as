@@ -37,6 +37,8 @@
 			type="XBOX";
 			if(name.indexOf("ouya")>=0) type="OUYA";
 			if(name.indexOf("nvidia")>=0) type="NVIDIA";
+			if(name.indexOf("mad catz")>=0) type="MADCATZ";
+			
 			log(2,"-type: "+type);
 			//collect controllers
 			map = GameDeviceHandler["map_"+platform+"_"+type];
@@ -100,7 +102,7 @@
 			
 			return ret;
 		}
-		// **** Linux (Android) - NVIDIA ****************************************************************
+		// **** Android (Linux) - NVIDIA ****************************************************************
 		public static var map_Linux_NVIDIA = {
 			LeftStick_X:"AXIS_0",
 			LeftStick_Y:"AXIS_1",
@@ -142,6 +144,50 @@
 			DPad:"AXIS"
 			
 		}
+
+		// **** Android (Linux) - MADCATZ ****************************************************************
+		public static var map_Linux_MADCATZ = {
+			LeftStick_X:"AXIS_0",
+			LeftStick_Y:"AXIS_1",
+			RightStick_X:"AXIS_11",
+			RightStick_Y:"AXIS_14",
+			LeftTrigger:"AXIS_23",
+			RightTrigger:"AXIS_22",
+			
+			A:"BUTTON_96",
+			B:"BUTTON_97",
+			X:"BUTTON_99",
+			Y:"BUTTON_100",
+			LB:"BUTTON_102",
+			RB:"BUTTON_103",
+			//LS:"BUTTON_106",
+			//RS:"BUTTON_107",
+			Start:"108",
+			Back:"",
+			/*
+			Up:"BUTTON_19",
+			Down:"BUTTON_20",
+			Left:"BUTTON_21",
+			Right:"BUTTON_22"
+			*/
+			Up:"AXIS_16",
+			Down:"AXIS_16",
+			Left:"AXIS_15",
+			Right:"AXIS_15"
+			
+		}
+		public static var calibr_Linux_MADCATZ ={
+			LeftStick_X:1,
+			LeftStick_Y:-1,
+			RightStick_X:1,
+			RightStick_Y:-1,
+	
+			LeftTrigger:{fullRange:false,a:true},
+			RightTrigger:{fullRange:false,a:true},
+			DPad:"AXIS"
+			
+		}
+		
 		// **** Linux (Android) - OUYA ****************************************************************
 		public static var map_Linux_OUYA = {
 			LeftStick_X:"AXIS_0",

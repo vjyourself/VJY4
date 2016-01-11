@@ -15,8 +15,8 @@
 		public var speedMax:Number=10;
 		public var speedDef:Number=1;
 		public var speedMin:Number=0;
-		public var cameraRotXMax:Number=180;
-		public var cameraRotYMax:Number=180;
+		public var cameraRotXMax:Number=90;
+		public var cameraRotYMax:Number=90;
 		
 		//Output
 		public var speed:Number=0; //actualized by delta time

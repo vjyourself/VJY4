@@ -8,12 +8,17 @@
 	import flash.geom.Vector3D;
 	import flash.events.MouseEvent;
 	import vjyourself4.patt.colors.ColorTrans;
+	import vjyourself4.media.MetaBeat;
+	import vjyourself4.media.MusicMetaMixer;
 
 	public class PointDir{
 		
 		public var ns:Object;
 
 		public var stream:String;
+
+		var beat:MetaBeat;
+		var mixer:MusicMetaMixer;
 		
 		var lights:Array;
 		var elems:Object;
@@ -23,13 +28,15 @@
 		var preset:Object;
 		var colorUp:Number;
 		var colorDown:Number;
-		var rhythm;
+		
 
 		public function PointDir(){}
 		
 		
 		public function init(){
-			rhythm = ns.ns._sys.music.meta.rhythm;
+			beat = ns.ns._sys.music.meta.beat;
+			mixer = ns.ns._sys.music.meta.mixer;
+
 			elems={};
 			lights=[];
 			
@@ -78,22 +85,45 @@
 			colorDown=col;
 			l.color=ColorTrans.mix(p.color_val,col,p.color/100);//trace("PointColor>"+l.color);
 			l.ambientColor=ColorTrans.mix(p.ambientColor_val,col,p.ambientColor/100);//trace("PointColorAmb>"+l.ambientColor);
-		
+			
+			currCol=colorUp;
+			currColInd=0;
 		}
 		
+		var beatChs:Array=[2,1,0,0];
+		var currCol:Number=0;
+		var currColInd:Number=0;
+		var prevBeat;
 		public function onEF(e=null){
-			elems.dir.l.direction=ns.me.rot.transformVector(new Vector3D(0,0,1));
+			elems.dir.l.direction=ns.me.rot.transformVector(new Vector3D(0,0,-1));
 			elems.point.l.x=ns.me.pos.x;
 			elems.point.l.y=ns.me.pos.y;
 			elems.point.l.z=ns.me.pos.z;
 
-			var col=colorUp;
-			if(rhythm!=null) col=(rhythm.counter[1]==0)?colorUp:colorDown;
-				elems.dir.l.color=col;
-				elems.dir.l.ambientColor=col;
-				elems.point.l.color=col;
-				elems.point.l.ambientColor=col;
-			
+			if(beat.enabled){
+				var doStep:Boolean=false;
+				
+				switch(mixer.litInd){
+					case 0:
+						doStep=(prevBeat!=beat.C[1])&&(beat.C[1]==0);
+						prevBeat=beat.C[1];
+					break;
+					case 1:
+						doStep=beat.beatFrame;
+					break;
+					case 3:doStep=beat.beatFractions[2].beatFrame;break;
+					case 2:doStep=beat.beatFractions[1].beatFrame;break;
+				}
+				//doStep=beat.beatFrame;
+				if(doStep){
+					currColInd=(currColInd+1)%2;
+					currCol=(currColInd==0)?colorUp:colorDown;
+					elems.dir.l.color=currCol;
+					elems.dir.l.ambientColor=currCol;
+					elems.point.l.color=currCol;
+					elems.point.l.ambientColor=currCol;
+				}
+			}
 		}
 	}
 }

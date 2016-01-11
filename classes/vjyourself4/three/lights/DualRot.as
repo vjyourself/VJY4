@@ -8,6 +8,8 @@
 	import flash.geom.Vector3D;
 	import flash.events.MouseEvent;
 	import vjyourself4.patt.colors.ColorTrans;
+	import vjyourself4.media.MetaBeat;
+	import vjyourself4.media.MusicMetaMixer;
 
 	public class DualRot{
 		
@@ -17,7 +19,8 @@
 		public var path;
 		public var me;
 		public var cont:Scene3D;
-		var rhythm;
+		var beat:MetaBeat;
+		var mixer:MusicMetaMixer;
 
 		public var stream:String;
 		public var params:Object;
@@ -35,7 +38,8 @@
 		
 		
 		public function init(){
-			rhythm = ns.ns._sys.music.meta.rhythm;
+			beat = ns.ns._sys.music.meta.beat;
+			mixer = ns.ns._sys.music.meta.mixer;
 			elems={};
 			lights=[];
 			
@@ -85,22 +89,18 @@
 			l.ambientColor=ColorTrans.mix(p.ambientColor_val,col,p.ambientColor/100);//trace("PointColorAmb>"+l.ambientColor);
 		}
 		
+		// Slow / Norm / Fast
+		var beatChs:Array=["Saw8_1","Saw4_1","Saw2_1","Saw1_1"];
 		public function onEF(e=null){
-			if(rhythm!=null){
-				if(rhythm.counter[1]==0){
-					elems.up.l.color=0;
-					elems.down.l.color=colorDown;
-				}else{
-					elems.up.l.color=colorUp;
-					elems.down.l.color=0;
-				}
-				alpha=Math.PI/2;
+			//trace(beat.enabled);
+			if(beat.enabled){
+				alpha=Math.PI*2*beat.A[beatChs[mixer.litInd]].val;
 			}else{
 				alpha+=preset.speed;
 			}
 		
-			elems.up.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha),Math.cos(alpha),0));
-			elems.down.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(-alpha),Math.cos(-alpha),0));
+			elems.up.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(alpha),Math.cos(alpha),0.5*Math.sin(alpha)));
+			elems.down.l.direction=ns.me.rot.transformVector(new Vector3D(Math.sin(-alpha),Math.cos(-alpha),0.5*Math.sin(alpha+Math.PI)));
 
 		}
 	}
