@@ -60,14 +60,40 @@
 			s.Left = false;
 			s.Right = false;
 		}
+
+		public static function toDefault(s):void 
+		{
+			if(s.LeftStick==null) s.LeftStick={};
+			s.LeftStick.x=0;
+			s.LeftStick.y=0;
+			
+			if(s.RightStick==null) s.RightStick={};
+			s.RightStick.x=0;
+			s.RightStick.y=0;
+
+			s.LeftTrigger = 0;
+			s.RightTrigger = 0;
+			s.A = false;
+			s.B = false;
+			s.X = false;
+			s.Y = false;
+			s.LB = false;
+			s.RB = false;
+			s.Start = false;
+			s.Back = false;
+			s.Up = false;
+			s.Down = false;
+			s.Left = false;
+			s.Right = false;
+		}
 		
 		public static function merge(a:Object,b:Object):Object{
 			var c={};
 			c.LeftTrigger=Math.min(a.LeftTrigger+b.LeftTrigger,1);
 			c.RightTrigger=Math.min(a.RightTrigger+b.RightTrigger,1);
 			
-			c.LeftStick={x:Math.min(a.LeftStick.x+b.LeftStick.x,1),y:Math.min(a.LeftStick.y+b.LeftStick.y,1)};
-			c.RightStick={x:Math.min(a.RightStick.x+b.RightStick.x,1),y:Math.min(a.RightStick.y+b.RightStick.y,1)};
+			c.LeftStick={x:Math.max(Math.min(a.LeftStick.x+b.LeftStick.x,1),-1),y:Math.max(Math.min(a.LeftStick.y+b.LeftStick.y,1),-1)};
+			c.RightStick={x:Math.max(Math.min(a.RightStick.x+b.RightStick.x,1),-1),y:Math.max(Math.min(a.RightStick.y+b.RightStick.y,1),-1)};
 			c.A=a.A || b.A;
 			c.B=a.B || b.B;
 			c.X=a.X || b.X;
@@ -83,8 +109,47 @@
 			
 			return c;
 		}
+		public static function mergeInto(a:Object,b:Object){
+			var c=a;
+			c.LeftTrigger=Math.min(a.LeftTrigger+b.LeftTrigger,1);
+			c.RightTrigger=Math.min(a.RightTrigger+b.RightTrigger,1);
+			
+			c.LeftStick.x=Math.max(Math.min(a.LeftStick.x+b.LeftStick.x,1),-1);
+			c.LeftStick.y=Math.max(Math.min(a.LeftStick.y+b.LeftStick.y,1),-1);
+			c.RightStick.x=Math.max(Math.min(a.RightStick.x+b.RightStick.x,1),-1);
+			c.RightStick.y=Math.max(Math.min(a.RightStick.y+b.RightStick.y,1),-1);
+			c.A=a.A || b.A;
+			c.B=a.B || b.B;
+			c.X=a.X || b.X;
+			c.Y=a.Y || b.Y;
+			c.LB=a.LB || b.LB;
+			c.RB=a.RB || b.RB;
+			c.Start=a.Start || b.Start;
+			c.Back=a.Back || b.Back;
+			c.Up=a.Up || b.Up;
+			c.Down=a.Down || b.Down;
+			c.Left=a.Left || b.Left;
+			c.Right=a.Right || b.Right;
+		}
 		
-		
+		public static var isBool:Object={
+			RightStick:false,
+			LeftStick:false,
+			LeftTrigger:false,
+			RightTrigger:false,
+			A:true,
+			B:true,
+			X:true,
+			Y:true,
+			LB:true,
+			RB:true,
+			Start:true,
+			Back:true,
+			Up:true,
+			Down:true,
+			Left:true,
+			Right:true
+		}
 	}
 	
 }

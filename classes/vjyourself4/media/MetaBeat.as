@@ -10,7 +10,7 @@
 		public var enabled:Boolean=true;
 		public var sync:String="tap"; // tap / playback
 
-		public var tap:Object={};
+		public var tapParams:Object={};
 		public var play:Object={
 			tack:0,
 			start:0
@@ -98,7 +98,7 @@
 		public function init(){
 			enabled=params.enabled;
 			sync=params.sync;
-			tap=params.tap;
+			tapParams=params.tap;
 			play=params.play;
 			
 			if(sync=="play"){
@@ -173,29 +173,32 @@
 		var spaceTime0:Number=0;
 		var spaceTime1:Number=0;
 		var taps:Array=[];
+
 		public function onKeyDown(e:KeyboardEvent){
 			if(e.charCode==32){
-				trace("SPACE");
-				spaceTime1=new Date().getTime();
-				var delta=spaceTime1-spaceTime0;
-				if(delta<2000){
-					start=spaceTime1;
-					taps.push(delta);
-					var summ=0;
-					for(var i=0;i<taps.length;i++) summ+=taps[i];
-					tack=summ/taps.length;
-					bpm=60000/tack;
-					trace(delta+" "+Math.round(60000/delta)+" : "+Math.round(tack)+" "+Math.round(bpm));
-
-					restartCalculations();
-				}else{
-					trace("START");
-					taps=[];
-					start=spaceTime1;
-				}
-				spaceTime0=spaceTime1;
+				tap();
 			}
-			//trace(e.charCode);
+		}
+		public function tap(){
+			trace("TAP");
+			spaceTime1=new Date().getTime();
+			var delta=spaceTime1-spaceTime0;
+			if(delta<2000){
+				start=spaceTime1;
+				taps.push(delta);
+				var summ=0;
+				for(var i=0;i<taps.length;i++) summ+=taps[i];
+				tack=summ/taps.length;
+				bpm=60000/tack;
+				trace(delta+" "+Math.round(60000/delta)+" : "+Math.round(tack)+" "+Math.round(bpm));
+
+				restartCalculations();
+			}else{
+				trace("START");
+				taps=[];
+				start=spaceTime1;
+			}
+			spaceTime0=spaceTime1;
 		}
 		
 	

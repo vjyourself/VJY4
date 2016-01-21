@@ -199,6 +199,7 @@
 		public function next(ind:Number,lev:Number=0){
 			setIndex(ind,"next",lev);
 		}
+	
 		public function setIndex(ind:Number,iii,lev:Number=0,startCh:Number=0){
 			if(ind<channels.length){
 				var ch=channels[ind];
@@ -220,6 +221,8 @@
 						switch(iii){
 							case "next":ch.i=(ch.i+1)%ch.e.length;break;
 							case "prev":ch.i=(ch.i-1+ch.e.length)%ch.e.length;break;
+							case "inv":ch.i=(ch.i+Math.floor(ch.e.length/2))%ch.e.length;break;
+							case "invBack":ch.i=(ch.i-Math.floor(ch.e.length/2)+ch.e.length)%ch.e.length;break;
 							default:if((iii>=0)&&(iii<ch.e.length)) ch.i=iii;
 						}
 					}

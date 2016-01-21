@@ -8,7 +8,8 @@
 		public var ns:Object;
 		public var params:Object;
 
-		var ind:Number=0;
+		var indInOut:int=0;
+		var indFrontBack:int=0;
 		
 		var me:Object;
 		var ctrlPath:Object;
@@ -19,20 +20,30 @@
 			ctrlPath = ns.mid.cs.GP.ctrlPath;
 		}
 	
-		
-		public function setCameraMode(i){
-			ind=(i+4)%4;
-			switch(ind){
-				case 0:ctrlPath.setCameraMode("beginning");me.setCameraMode("inside");break;
-				case 1:ctrlPath.setCameraMode("beginning");me.setCameraMode("outside");break;
-				case 2:ctrlPath.setCameraMode("end");me.setCameraMode("outside");break;	
-				case 3:ctrlPath.setCameraMode("end");me.setCameraMode("inside");break;
-			}
-		};
+		// Front - Back
+		public function setFrontBack(i){
+			indFrontBack=(i+2)%2;
+			indFrontBack==0?ctrlPath.setCameraMode("beginning"):ctrlPath.setCameraMode("end");
+		}
+		public function nextFrontBack(){ setFrontBack(indFrontBack+1);}
+		public function prevFrontBack(){ setFrontBack(indFrontBack-1);}
 
-		public function next(e=null){setCameraMode(ind+1);}
-		
-		public function prev(e=null){setCameraMode(ind-1);}
+		// In - Out
+		public function setInOut(i){
+			indInOut=(i+2)%2;
+			indInOut==0?me.setCameraMode("inside"):me.setCameraMode("outside");
+		}
+		public function nextInOut(){ setInOut(indInOut+1);}
+		public function prevInOut(){ setInOut(indInOut-1);}
+
+		// In.Front - Out.Front - Out.Back - In.Back
+		public function setFrontBackInOut(i){
+			i=(i+4)%4;
+			setFrontBack(Math.floor(i/2));
+			setInOut(i%2);
+		}
+		public function nextFrontBackInOut(e=null){setFrontBackInOut(indFrontBack*2+indInOut+1);}
+		public function prevFrontBackInOut(e=null){setFrontBackInOut(indFrontBack*2+indInOut-1);}
 
 	}
 }

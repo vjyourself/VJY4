@@ -21,6 +21,7 @@
 		var input;
 		var screen;
 		public var params:Object;
+		var outsideY:Number=300;
 		
 		//self
 		public var pos:Vector3D = new Vector3D();
@@ -49,13 +50,14 @@
 		
 		public function Me(){}
 		
-		public function setCameraMode(b){
+		public function setCameraMode(b:String){
 			cameraMode=b;
+			if(cameraMode=="outside") outsideY=-outsideY;
 		}
 
 		public function nextCameraMode(){
-			if(cameraMode=="inside")cameraMode="outside";
-			else cameraMode="inside";
+			if(cameraMode=="inside") setCameraMode("outside");
+			else setCameraMode("inside");
 			/*
 			cameraAnglesInd=(cameraAnglesInd+1)%cameraAngles.length;
 			cameraAngle=cameraAngles[cameraAnglesInd];
@@ -113,7 +115,7 @@
 				case "outside":
 				camera.transform=rot;
 				var npos:Vector3D = pos.clone();
-				npos.incrementBy(rot.transformVector(new Vector3D(0,300,0)));
+				npos.incrementBy(rot.transformVector(new Vector3D(0,outsideY,0)));
 				camera.x=npos.x;
 				camera.y=npos.y;
 				camera.z=npos.z;
