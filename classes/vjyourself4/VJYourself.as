@@ -70,6 +70,8 @@
 			CtrlCameraMode;
 			SpaceProgress;
 			AnyRouter;
+			LiveBuilderManager;
+			GamepadMapper;
 
 			//COMP SCENE
 			ContextLocal;

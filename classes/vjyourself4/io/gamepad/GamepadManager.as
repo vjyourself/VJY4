@@ -15,10 +15,10 @@
 		public var events:EventDispatcher= new EventDispatcher();
 		public var platform:String=""; //Mac
 		public var defGamepadType:String="XBOX";
-		var devices:Array;
+		public var devices:Array;
 
 		//to keep a device original ind, after previous devices get removed ...
-		var deviceInd:Array=[{empty:false,merged:true},{empty:true},{empty:true},{empty:true},{empty:true}];
+		public var deviceInd:Array=[{empty:false,merged:true},{empty:true},{empty:true},{empty:true},{empty:true}];
 		
 		/*
 			0: merged 1. & 2. gamepad
@@ -111,6 +111,8 @@
 			//merge into 0 ind
 			if(devices.length==1) states[0].setState(devices[0].handler.state);
 			if(devices.length==2) states[0].setState(GamepadState.merge(devices[0].handler.state,devices[1].handler.state));
+			if(devices.length==3) states[0].setState(GamepadState.merge(devices[2].handler.state,GamepadState.merge(devices[0].handler.state,devices[1].handler.state)));
+			
 			active = states[0].changed;
 
 			//more inds 1-2-3-4

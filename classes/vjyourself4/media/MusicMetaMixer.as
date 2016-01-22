@@ -38,13 +38,13 @@
 		public var peakInd:Number=0;
 		public var peakVal:String="";
 
-		public var VaryFuncElems:Array=["ASR","Sin","Insta","None"];
+		public var VaryFuncElems:Array=["ASR","Sin","Insta"];
 		public var VaryFuncInd:Number=0;
 		public var VaryFuncVal:String="";
 
-		public var VaryModElems:Array=[1,2,4];
+		public var VaryModElems:Array=[0,1,2,4];
 		public var VaryModInd:Number=0;
-		public var VaryModVal:Number=1;
+		public var VaryModVal:Number=0;
 
 		var VaryVol:Number=1;
 
@@ -111,7 +111,7 @@
 				}
 
 				if(beat.enabled){
-					if(VaryFuncVal!="None") for(var i=0;i<4;i++) A["Vary"+(i+1)].val=beat.A[VaryFuncVal+""+VaryModVal+"_"+((i%VaryModVal)+1)].val*VaryVol;
+					if(VaryModVal!=0) for(var i=0;i<4;i++) A["Vary"+(i+1)].val=beat.A[VaryFuncVal+""+VaryModVal+"_"+((i%VaryModVal)+1)].val*VaryVol;
 					else for(var i=0;i<4;i++) A["Vary"+(i+1)].val=0;
 				}
 			}
