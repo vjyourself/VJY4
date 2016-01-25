@@ -81,12 +81,14 @@
 			CompCentralObjs;			
 			Lights;
 			
+			//Overlay
 			OverlayAni;
 			OverlayAniChannels;
 			OverlayAniSeq;
 			OverlayAniTrans;
 			OverlayVideo;
 			OverlayMusicMeta;
+			OverlayMusicTimeline;
 			OverlayConsole;
 			OverlayMask;
 

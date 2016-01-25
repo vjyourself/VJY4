@@ -252,8 +252,7 @@
 				break;
 			}
 		}
-		public function initLinearTurn(){
-		}
+		
 		public function pathSpiralSoft(){
 			addSegment(new PathSegment({type:"SpiralXY",alpha:360,length:curveLength*16,depth:2400}));
 			/*
@@ -274,7 +273,8 @@
 				}*/
 		}
 
-		public function pathRandomSoftCurves(){
+		public function pathRandomSoftCurves(){pathNice();}
+		public function pathNice(){
 			var zTwist={alpha0:0,alpha1:0};
 				if(Math.random()<=0.6){
 					addSegment(new PathSegment({type:"Line",length:curveLength,zTwist:zTwist}));
@@ -326,7 +326,7 @@
 		
 		}
 
-		public function pathNice(){
+		public function pathNiceOld(){
 				if(Math.random()<=0.6){
 					addSegment(new PathSegment({type:"Line",length:curveLength}));
 				}else{
@@ -370,6 +370,19 @@
 				addSegment(new PathSegment({type:"Line",length:curveLength}));
 		}
 
+		public function pathZigZagFast(){
+					addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:60,length:curveLength*3}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:60,length:curveLength*3}));
+		}
+
+		public function pathZigZag(){
+					addSegment(new PathSegment({type:"Line_ZigZag",width:68,height:0,length:curveLength*6}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:68,height:0,length:curveLength*6}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:68,length:curveLength*6}));
+					addSegment(new PathSegment({type:"Line_ZigZag",width:0,height:68,length:curveLength*6}));
+		}
 
 		public function pathTest(){
 					addSegment(new PathSegment({type:"Line_ZigZag",width:60,height:0,length:curveLength*3}));

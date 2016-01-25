@@ -38,17 +38,20 @@
 		}
 
 		public function update(){
-			if(enabled){
-			if(beatCount!=beat.beatCounter){
-				beatCount=beat.beatCounter;
-				var bi=0;
-				for(var i=0;(i<struct.length)&&(bi<=beatCount);i++) bi+=struct[i].b;
-				structInd=i-1;
-				bi-=struct[structInd].b;
-				beatInd=beatCount-bi;
-				if(beatInd>=struct[structInd].b) beatInd=struct[structInd].b-1;
+			if(enabled&&(beat.beatCounter>=0)){
+				if(beatCount!=beat.beatCounter){
+					beatCount=beat.beatCounter;
+					trace("TIMELINE "+beatCount);
+					
+					var bi=0;
+					for(var i=0;(i<struct.length)&&(bi<=beatCount);i++) bi+=struct[i].b;
+					structInd=i-1;
+					bi-=struct[structInd].b;
+					beatInd=beatCount-bi;
+					if(beatInd>=struct[structInd].b) beatInd=struct[structInd].b-1;
+					
+				}
 			}
-		}
 		}
 	}
 }

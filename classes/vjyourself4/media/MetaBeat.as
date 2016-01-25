@@ -11,7 +11,7 @@
 		public var sync:String="tap"; // tap / playback
 
 		public var tapParams:Object={};
-		public var play:Object={
+		public var playback:Object={
 			tack:0,
 			start:0
 		};
@@ -99,11 +99,11 @@
 			enabled=params.enabled;
 			sync=params.sync;
 			tapParams=params.tap;
-			play=params.play;
+			playback=params.playback;
 			
-			if(sync=="play"){
-				tack=params.play.tack;
-				start=params.play.tack;
+			if(sync=="playback"){
+				tack=params.playback.tack;
+				start=params.playback.start;
 				bpm=60000/tack;
 			}
 			if(sync=="tap"){
@@ -162,7 +162,7 @@
 
 		/* Play Sync */
 		public function setPosition(pos:Number){
-			if(sync=="play"){
+			if(sync=="playback"){
 				//if music restarted
 				if(pos<time0) restartCalculations();
 				time=pos;
@@ -213,9 +213,11 @@
 	
 
 		public function onEF(){
+			trace("BEAT: "+time);
 			if(sync=="tap"){
 				time=new Date().getTime();
 			}
+			if(time>=start){
 			var delta = time-time0;
 			time0 = time;
 
@@ -273,7 +275,7 @@
 		}
 			
 		}
-
+}
 		
 	}
 

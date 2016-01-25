@@ -124,7 +124,7 @@
 		}
 		
 		public function onEF(e:DynamicEvent){
-			trace("DELTA "+e.data.mul);
+			//trace("DELTA "+e.data.mul);
 			if(deltaControl){
 				if(aniOn){
 					aniTime+=e.data.delta;
