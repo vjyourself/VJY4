@@ -15,6 +15,7 @@
 			LogicStartHigh;
 			LogicCirco;
 			LogicShake;
+			LogicMultiStates;
 		}
 		public function init(){
 			prgs=[];

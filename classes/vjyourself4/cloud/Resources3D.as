@@ -333,15 +333,17 @@
 			{n:"MCBW100",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1},
 			{n:"MCBWADD",synch:"peak",col0:0x000000,col1:0xffffff,alpha:1,blend:"ADD"},
 			
-			{n:"Beat1","synch":"beat","ind":"ASR4_1",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat2","synch":"beat","ind":"ASR4_2",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat3","synch":"beat","ind":"ASR4_3",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
-			{n:"Beat4","synch":"beat","ind":"ASR4_4",col0:0x444444,col1:0xffffff,alpha0:1,alpha1:1},
+			{n:"Beat4_1","synch":"beat","ind":"Sin4_1",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat4_2","synch":"beat","ind":"Sin4_2",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat4_3","synch":"beat","ind":"Sin4_3",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat4_4","synch":"beat","ind":"Sin4_4",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
 			{n:"Beat1A","synch":"beat","ind":"ASR4_1",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 			{n:"Beat2A","synch":"beat","ind":"ASR4_2",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 			{n:"Beat3A","synch":"beat","ind":"ASR4_3",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 			{n:"Beat4A","synch":"beat","ind":"ASR4_4",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
-
+			{n:"Beat2_1A","synch":"beat","ind":"Sin2_1",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat2_2A","synch":"beat","ind":"Sin2_2",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			
 			//{n:"mc1ma",col0:0x6633aa,col1:0xffffff,alpha:0.7},
 			//{n:"mc2ma",col0:0xaa0066,col1:0xffffff,alpha:0.7},
 			//{n:"mc3ma",col0:0x993399,col1:0xffffff,alpha:0.7}

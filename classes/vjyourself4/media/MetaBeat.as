@@ -213,7 +213,7 @@
 	
 
 		public function onEF(){
-			trace("BEAT: "+time);
+			//trace("BEAT: "+time);
 			if(sync=="tap"){
 				time=new Date().getTime();
 			}

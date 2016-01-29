@@ -94,7 +94,7 @@
 		/* Do Frame */
 		function doFrame(fr){
 			framesInd=fr;
-			var comm=frames[framesInd].comm;
+			var comm=frames[framesInd].command;
 			var tar=Eval.evalString(ns,comm[0]);
 			tar[comm[1]].apply(tar,comm[2]);
 		}
