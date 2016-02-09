@@ -38,7 +38,7 @@
 		public var peakInd:Number=0;
 		public var peakVal:String="";
 
-		public var VaryFuncElems:Array=["ASR","Sin","Insta"];
+		public var VaryFuncElems:Array=["ASR","Sin","Insta","FullSin"];
 		public var VaryFuncInd:Number=0;
 		public var VaryFuncVal:String="";
 
@@ -81,6 +81,11 @@
 		public function findInd(a,v){
 			for(var i in a) if(a[i]==v) return i;
 			return 0;
+		}
+		public function setVal(name,val){
+			this[name+"Ind"]=findInd(this[name+"Elems"],val);
+			this[name+"Val"]=this[name+"Elems"][this[name+"Ind"]];
+			log(6,name+" : "+this[name+"Val"]);
 		}
 		public function next(name){
 			if(name=="litTurbo"){

@@ -11,6 +11,7 @@
 		public var meter=4
 		public var LFO=0;
 		public var LFOInc=0;
+		public var pos:Number=0;
 		
 		//256*Float
 		public var waveDataDamped:Array; 
@@ -102,6 +103,7 @@
 		}
 
 		public function setPosition(val){
+			pos=val;
 			beat.setPosition(val);
 			timeline.update();
 		}

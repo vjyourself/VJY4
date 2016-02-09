@@ -12,7 +12,7 @@
 	import vjyourself4.DynamicEvent;
 	import vjyourself4.media.MusicMetaMixer;
 	
-	public class StreamObjs{
+	public class StreamAni{
 		public var buildDelay:Number=10;
 		public var buildCC:Number=0;
 		public var buildFast:Number=400;
@@ -21,7 +21,6 @@
 		public var musicTrans:Boolean=true;
 		public var cloud;
 		public var mmMixer:MusicMetaMixer;
-		public var lengthPos:Number=0;
 		public var lengthRun:Number=0;
 		public var elems:Array;
 		public var path:Path;
@@ -37,7 +36,8 @@
 		
 		public var id:String="";
 		public var name:String="";
-		public var gap:Number=0;
+		public var lengthPos:Number=0;
+		public var fire:Object={"sync":"frame","delay":120,"onlyMe":false};
 		
 		public var rotate:Boolean=false;
 		public var rotateZ:Number =0;
@@ -66,7 +66,7 @@
 		public var logic;
 		var logicList:Array=[];
 
-		public function StreamObjs(){
+		public function StreamAni(){
 			transVar = new TransVar();
 			transVar.NS = trans;
 			transVar.init();
@@ -78,7 +78,7 @@
 			state="Running";
 			if(prgObj!=null) dsonPrg = new DSON(prgObj,{cloud:cloud,context:contextHandler});
 			else dsonPrg = new DSON(prg,{cloud:cloud,context:contextHandler});
-		
+			buildCC=fire.delay;
 			//var ll= new ColorRun();
 			//ll.stream=this;
 			//logicList.push(ll);
@@ -86,8 +86,8 @@
 		
 		//if path's own coordinate space (p0,p1) is shifted
 		public function updateLength(d:Number){
-			lengthPos+=d;
-			for(var i=0;i<elems.length;i++)elems[i].lengthPos+=d;
+			//lengthPos+=d;
+			//for(var i=0;i<elems.length;i++)elems[i].lengthPos+=d;
 		}
 
 		//if world's whole coord space shifted ( resetToOrigo )
@@ -100,20 +100,21 @@
 			}
 		}
 		
-		
+		var p1:Number=0;
 		public function onEF(e:DynamicEvent){
+
 			transVar.update();
-			
+			if(state=="Running"){
+				p1 = path.p1;
+			}
 
 			//ADD NEXT
-			//instant all
-			if(buildDelay==0){
-				while ((path.p1>=lengthPos+gap)&&(state=="Running")) addNext();
-			}else{
+			if((state=="Running")||(state == "Decomposing")){
 				buildCC++;
-				if((buildCC>=buildDelay*gap/120)||(buildFast>lengthRun)){
-					buildCC=0;
-					if((path.p1>=lengthPos+gap)&&(state=="Running")) addNext();
+				if(buildCC>=fire.delay){
+						buildCC=0;
+						if(path.pMe<p1) addNext();
+					
 				}
 			}
 
@@ -121,55 +122,41 @@
 			forEachElem(e);
 
 			//Stream Logic
-			for(var i=0;i<logicList.length;i++) logicList[i].onEF(e);
+			//for(var i=0;i<logicList.length;i++) logicList[i].onEF(e);
 
 			//If Decomposing ...
 			if( (state=="Decomposing") && (elems.length==0))state="Finished";
 		}
 
 		function addNext(){
-
-			lengthPos+=gap;
-			lengthRun+=gap;
-			
-			var pathPos=path.getPos(lengthPos);
-			var pathRot=path.getRot(lengthPos);
-			//	trace("ROT "+pathRot);
-			//var vv=pathRot.transformVector(new Vector3D(1,0,0));
-			//trace(vv.x+","+vv.y+","+vv.z);
 			
 			var objM=dsonPrg.getNext();
-			if(objM.gap!=null) gap=objM.gap;
 			var obj = assemblerObj3D.build(objM);
-			
-			var transM=new Matrix3D();
-			transM.append(obj.obj3D.transform);
-			transM.append(pathRot);
-			transM.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
-			obj.obj3D.transform = transM;
 			cont.addChild(obj.obj3D);
-			//obj.logic.coordTrans= new Matrix3D();
+/*
 			if(obj.logicActive){
 					obj.logic.coordTrans.append(pathRot);
 					obj.logic.coordTrans.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
 					obj.logic.init();
-			}
+			}*/
 			
 			parity=(parity+1)%2;
 			parity4=(parity4+1)%4;
 			var el={
 				logic:{},
-				pos:pathPos,
 				sX:obj.obj3D.scaleX,
 				sY:obj.obj3D.scaleY,
 				sZ:obj.obj3D.scaleZ,
 				obj3D:obj.obj3D,
 				obj:obj,
-				lengthPos:lengthPos,
 				parity:parity,
 				parity4:parity4,
-				catchitAniState:0 // obsolete
+				trans0:obj.obj3D.transform.clone(),
+				pathX:Math.max(path.pMe,lengthPos),
+				pathSpeed:objM.pathSpeed
 			}
+
+			updateObjTrans(el);
 
 			//caluculate animated params
 			//global overwrite :: OBSOLETE
@@ -188,103 +175,51 @@
 			if((objM.rotX!=null)||(calculateFullRot)){
 				el.rotX_bool=true;
 				el.rotX=0;if(objM.rotX!=null) el.rotX=objM.rotX;
-				el.locX=pathRot.transformVector(new Vector3D(1,0,0));
+				el.locX=el.pathRot.transformVector(new Vector3D(1,0,0));
 			}else el.rotX_bool=false;
 			
 			if((objM.rotY!=null)||(calculateFullRot)){
 				el.rotY_bool=true;
 				el.rotY=0;if(objM.rotY!=null) el.rotY=objM.rotY;
-				el.locY=pathRot.transformVector(new Vector3D(0,1,0));
+				el.locY=el.pathRot.transformVector(new Vector3D(0,1,0));
 			}else el.rotY_bool=false;
 
 			if((objM.rotZ!=null)||(calculateFullRot)){
 				el.rotZ_bool=true;
 				el.rotZ=0;if(objM.rotZ!=null) el.rotZ=objM.rotZ;
-				el.locZ=pathRot.transformVector(new Vector3D(0,0,1));
+				el.locZ=el.pathRot.transformVector(new Vector3D(0,0,1));
 			}else el.rotZ_bool=false;
 		
 			//var vecZ=obj.obj3D.forwardVector;
 		
+			//set to ani pos 0
+			
+			
+			
 			elems.push(el);
 		
+		}
+
+		function updateObjTrans(el){
+			var pathPos=path.getPos(el.pathX);
+			var pathRot=path.getRot(el.pathX);
+			var transM=new Matrix3D();
+			transM.append(el.trans0);
+			transM.append(pathRot);
+			transM.appendTranslation(pathPos.x,pathPos.y,pathPos.z);
+			el.obj.obj3D.transform = transM;
+			el.pathPos=pathPos;
+			el.pathRot=pathRot;
 		}
 
 		function forEachElem(e){
 			//animate / remove elems
 			for(var i=0;i<elems.length;i++){
 				var el=elems[i];
+				el.pathX+=el.pathSpeed;
 
-				// TRANS SCALE
-				var tscale=trans.scale0; //*(1+mmMixer.A["Sin1"].val*0.3);
-			 	if(el.parity==1) tscale=trans.scale1; //*(1+mmMixer.A["Sin1"].val*0.3);
-			 	tscale*=trans.scale;
-
-			 	if(musicTrans) tscale*=(1+mmMixer.A["Vary"+(el.parity4+1)].val*0.3);
-			 	//	tscale*=(1+mmMixer.A["FullSin2_"+(i%2+1)].val*0.3);
-			
-				//if(tscale!=1){
-				if(tscale<0.05){
-						el.obj3D.visible=false;
-					}else{
-						el.obj3D.visible=true;
-						el.obj3D.scaleX=el.sX*tscale;
-						el.obj3D.scaleY=el.sY*tscale;
-						el.obj3D.scaleZ=el.sZ*tscale;
-					}
-				//}
-					
-				if(el.obj.logicActive) el.obj.logic.onEF(e);
-
-				if(el.rot_bool) el.obj3D.rotationY+=el.rot+trans.rot;
-				if(trans.rot!=0) el.obj3D.rotationY+=trans.rot;
-
-				var t;var v;
-				if(el.rotX_bool){
-					v=el.rotX+trans.rotX;
-					if(v!=0){
-						t=el.obj3D.transform.clone();
-						t.appendRotation(v,el.locX,t.position);
-						el.obj3D.transform=t;
-					}
-				}
-				if(el.rotY_bool){
-					v=el.rotY+trans.rotY;
-					if(v!=0){
-						t=el.obj3D.transform.clone();
-						t.appendRotation(v,el.locY,t.position);
-						el.obj3D.transform=t;
-					}
-				}
-				if(el.rotZ_bool){
-					v=el.rotZ+trans.rotZ;
-					if(v!=0){
-						t=el.obj3D.transform.clone();
-						t.appendRotation(v,el.locZ,t.position);
-						el.obj3D.transform=t;
-					}
-				}
-				/*
-				if(catchit){
-					if((el.lengthPos<lengthPos+80)&&(el.catchitAniState==0)){
-						el.catchitAniState=1;
-						el.catchitAni={cc:0,length:60};
-						trace("CATCH IT!!!");
-					}
-				}
-				if(el.catchitAniState==1){
-					el.catchitAni.cc++;
-					var perc=el.catchitAni.cc/el.catchitAni.length;
-					if(el.catchitAni.cc>=el.catchitAni.length){
-						perc=1;
-						el.catchitAniState=2;
-					}
-					var ss=1+Math.sin(Math.PI/2*perc)*5;
-					el.obj3D.scaleX=ss;
-					el.obj3D.scaleY=ss;
-					el.obj3D.scaleZ=ss;
-				}*/
-	
-				if(el.lengthPos<path.p0){
+				//despose if outside of path
+				if((el.pathX<path.p0)||(el.pathX>p1)){
 					cont.removeChild(el.obj3D);
 					for(var di=0;di<el.obj.dispose.length;di++){ 
 						try {
@@ -300,7 +235,62 @@
 					el.obj.obj3D=null;
 					elems.splice(i,1);
 					i--;
+				}else{
+
+					// set new Pos & Rot
+					updateObjTrans(el);
+
+					// TRANS SCALE
+					var tscale=trans.scale0; //*(1+mmMixer.A["Sin1"].val*0.3);
+				 	if(el.parity==1) tscale=trans.scale1; //*(1+mmMixer.A["Sin1"].val*0.3);
+				 	tscale*=trans.scale;
+				 	
+				 	if(musicTrans) tscale*=(1+mmMixer.A["Vary"+(el.parity4+1)].val*0.3);
+				 	//	tscale*=(1+mmMixer.A["FullSin2_"+(i%2+1)].val*0.3);
+				
+					//if(tscale!=1){
+					if(tscale<0.05){
+							el.obj3D.visible=false;
+						}else{
+							el.obj3D.visible=true;
+							el.obj3D.scaleX=el.sX*tscale;
+							el.obj3D.scaleY=el.sY*tscale;
+							el.obj3D.scaleZ=el.sZ*tscale;
+						}
+					//}
+						
+					if(el.obj.logicActive) el.obj.logic.onEF(e);
+
+					if(el.rot_bool) el.obj3D.rotationY+=el.rot+trans.rot;
+					if(trans.rot!=0) el.obj3D.rotationY+=trans.rot;
+
+					var t;var v;
+					if(el.rotX_bool){
+						v=el.rotX+trans.rotX;
+						if(v!=0){
+							t=el.obj3D.transform.clone();
+							t.appendRotation(v,el.locX,t.position);
+							el.obj3D.transform=t;
+						}
+					}
+					if(el.rotY_bool){
+						v=el.rotY+trans.rotY;
+						if(v!=0){
+							t=el.obj3D.transform.clone();
+							t.appendRotation(v,el.locY,t.position);
+							el.obj3D.transform=t;
+						}
+					}
+					if(el.rotZ_bool){
+						v=el.rotZ+trans.rotZ;
+						if(v!=0){
+							t=el.obj3D.transform.clone();
+							t.appendRotation(v,el.locZ,t.position);
+							el.obj3D.transform=t;
+						}
+					}
 				}
+				
 			}
 			
 		}

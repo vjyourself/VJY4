@@ -17,6 +17,7 @@
 		public var input;
 		public var music;
 		
+		var enabled:Boolean=true;
 		var track:Array;
 		var trackInd:Number;
 		var section:Object;
@@ -33,6 +34,7 @@
 		var initSeq=-1;
 		public function init(){
 			initSeq=0;
+			if(params.enabled!=null) enabled=params.enabled;
 		}
 		public function init1(){
 			
@@ -53,6 +55,7 @@
 				if(ff.pre!=null) ff.time-=ff.pre;
 				if(ff.path_synch!=null){
 					var pr=(path_length-ff.path_synch.pixelShift)/(path_speed*60)*1000;
+					trace("TIME "+ff.time+" - "+pr);
 					ff.time-=pr;
 				}
 			}
@@ -64,8 +67,10 @@
 		}
 		
 		public function onMusicStart(e){
-			state="run";
-			framesInd=-1;
+			if(enabled){
+				state="run";
+				framesInd=-1;
+			}
 		}
 
 		public function onEF(e=null){

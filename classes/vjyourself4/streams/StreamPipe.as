@@ -12,6 +12,10 @@
 	import vjyourself4.media.MetaBeat;
 	
 	public class StreamPipe{
+		public var buildDelay:Number=20;
+		public var buildCC:Number=0;
+		public var buildFast:Number=400;
+
 		public var type:String="Pipe";
 		public var cloud;
 		public var beat:MetaBeat;
@@ -97,58 +101,76 @@
 		}
 		
 		// ADD > ANIMATE > REMOVE
-		public function onEF(ev:Object){
+		public function onEF(e:Object){
 			transVar.update();
-			var ff=ev.delta/(1000/60);
-			//trace("streamPipe "+elems.length+" : "+path.length+" ? "+lengthPos+"+"+elemLength);
 			
-			//***** ADD NEW ELEM *************************************************************************
-			if((path.p1>=lengthPos+elemLength)&&(state=="Running")){
-				//new elem holder 
-				parity=(parity+1)%2;
-				var elm={lengthPos:lengthPos+elemLength,parity:parity};
-				
-				//***** create next Prg *****************************************************
-				var prg=dsonPrg.getNext();
-				//global modifiers
-				if(prg.global!=null) global.setGlobals(prg.global);
-				//add path to Prg
-				var planeCount=(prg.planeCount==null)?Math.floor(elemLength/100):prg.planeCount;
-				var pathPos=path.getPath(lengthPos,lengthPos+elemLength,elemLength/planeCount);
-				var pathRot=path.getPathRot(lengthPos,lengthPos+elemLength,elemLength/planeCount);
-				var pos0=pathPos[0].clone();
-				for(var i=0;i<pathPos.length;i++) pathPos[i].decrementBy(pos0);
-				prg.path={pos:pathPos,rot:pathRot}
-
-				//***** Prg -> Obj **********************************************************
-				var obj=assemblerObj3D.build(prg);
-				elm.obj=obj;
-				var obj3D=obj.obj3D;
-
-				if(obj3D.mesh!=null){
-					obj3D.mesh.x=pos0.x;
-					obj3D.mesh.y=pos0.y;
-					obj3D.mesh.z=pos0.z;
-					cont.addChild(obj3D.mesh);
-					elm.mesh=obj3D.mesh;
+			//Add Next Elem
+			if(buildDelay==0){
+				while((path.p1>=lengthPos+elemLength)&&(state=="Running")) addNext();
+			}else{
+				buildCC++;
+				if((buildCC>=buildDelay*elemLength/400)||(buildFast>lengthRun)){
+					buildCC=0;
+					if((path.p1>=lengthPos+elemLength)&&(state=="Running")) addNext();
 				}
-				if(obj3D.wf!=null) {
-					obj3D.wf.x=pos0.x;
-					obj3D.wf.y=pos0.y;
-					obj3D.wf.z=pos0.z;
-					cont.addChild(obj3D.wf);
-					elm.wf=obj3D.wf
-				}
-				elm.locZ=pathRot[0].transformVector(new Vector3D(0,0,1))
-				
-				//add new elem to the elems list
-				elems.push(elm);
-
-				//increment stream's length
-				lengthPos+=elemLength;
-				lengthRun+=elemLength;
 			}
 
+			//for each elem :: Animate + Remove?
+			forEachElem(e);
+
+			//if Decomposing...
+			if( (state=="Decomposing") && (elems.length==0))state="Finished";
+	
+		}
+
+		function addNext(){
+			//new elem holder 
+			parity=(parity+1)%2;
+			var elm={lengthPos:lengthPos+elemLength,parity:parity};
+			
+			//***** create next Prg *****************************************************
+			var prg=dsonPrg.getNext();
+			//global modifiers
+			if(prg.global!=null) global.setGlobals(prg.global);
+			//add path to Prg
+			var planeCount=(prg.planeCount==null)?Math.floor(elemLength/100):prg.planeCount;
+			var pathPos=path.getPath(lengthPos,lengthPos+elemLength,elemLength/planeCount);
+			var pathRot=path.getPathRot(lengthPos,lengthPos+elemLength,elemLength/planeCount);
+			var pos0=pathPos[0].clone();
+			for(var i=0;i<pathPos.length;i++) pathPos[i].decrementBy(pos0);
+			prg.path={pos:pathPos,rot:pathRot}
+
+			//***** Prg -> Obj **********************************************************
+			var obj=assemblerObj3D.build(prg);
+			elm.obj=obj;
+			var obj3D=obj.obj3D;
+
+			if(obj3D.mesh!=null){
+				obj3D.mesh.x=pos0.x;
+				obj3D.mesh.y=pos0.y;
+				obj3D.mesh.z=pos0.z;
+				cont.addChild(obj3D.mesh);
+				elm.mesh=obj3D.mesh;
+			}
+			if(obj3D.wf!=null) {
+				obj3D.wf.x=pos0.x;
+				obj3D.wf.y=pos0.y;
+				obj3D.wf.z=pos0.z;
+				cont.addChild(obj3D.wf);
+				elm.wf=obj3D.wf
+			}
+			elm.locZ=pathRot[0].transformVector(new Vector3D(0,0,1))
+			
+			//add new elem to the elems list
+			elems.push(elm);
+
+			//increment stream's length
+			lengthPos+=elemLength;
+			lengthRun+=elemLength;
+			
+		}
+
+		function forEachElem(e){
 			// ******** ANI + REMOVE ******************************************************************
 			for(var i=0;i<elems.length;i++){
 				var elm=elems[i];
@@ -203,8 +225,7 @@
 					if(elm.obj.logicActive) elm.obj.logic.onEF();
 				}
 			}
-		if( (state=="Decomposing") && (elems.length==0))state="Finished";
-
+		
 		
 		}
 		

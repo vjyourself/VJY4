@@ -71,7 +71,7 @@
 
 		public function onEF(e){
 			if(statePerFrame>0){
-				trace(state["X"]+" -> "+stateNew["X"]);
+				//trace(state["X"]+" -> "+stateNew["X"]);
 				// Process Map
 				//Anal
 				var m:Object;

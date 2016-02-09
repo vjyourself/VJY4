@@ -50,6 +50,10 @@
 			{n:"FullSin1_1",mod:1,ind:0,trig:{pre:0,length:1},func:{t:"FullSin"}},
 			{n:"FullSin2_1",mod:2,ind:0,trig:{pre:0,length:2},func:{t:"FullSin"}},
 			{n:"FullSin2_2",mod:2,ind:1,trig:{pre:0,length:2},func:{t:"FullSin"}},
+			{n:"FullSin4_1",mod:4,ind:0,trig:{pre:0,length:4},func:{t:"FullSin"}},
+			{n:"FullSin4_2",mod:4,ind:1,trig:{pre:0,length:4},func:{t:"FullSin"}},
+			{n:"FullSin4_3",mod:4,ind:2,trig:{pre:0,length:4},func:{t:"FullSin"}},
+			{n:"FullSin4_4",mod:4,ind:3,trig:{pre:0,length:4},func:{t:"FullSin"}},
 			
 			{n:"Saw1_1",mod:1,ind:0,trig:{pre:0,length:1},func:{t:"Saw"}},
 			{n:"Saw2_1",mod:2,ind:0,trig:{pre:0,length:2},func:{t:"Saw"}},
@@ -180,6 +184,7 @@
 			}
 		}
 		public function tap(){
+			if(sync=="tap"){
 			trace("TAP");
 			spaceTime1=new Date().getTime();
 			var delta=spaceTime1-spaceTime0;
@@ -199,6 +204,7 @@
 				start=spaceTime1;
 			}
 			spaceTime0=spaceTime1;
+		}
 		}
 		
 	

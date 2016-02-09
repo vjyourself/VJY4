@@ -30,6 +30,8 @@
 			{ch:7,tar:"Pipe",prop:"texZoomY",v0:1,v1:0.03}
 				
 		];
+		var currBind:Array;
+
 		var channels:Array;
 
 		public function BindSpace(){}
@@ -38,7 +40,8 @@
 		}
 		public function setBind(b){
 			unBind();
-			list=pathSpace.streams.list;
+			currBind=b;
+			list=pathSpace.streams;
 			var bb:Object;
 			var bind:Object;
 			var tar:Array;
@@ -46,7 +49,7 @@
 			//create channels
 			var maxInd=-1;
 			for(var i=0;i<b.length;i++) if(b[i].ch>maxInd)maxInd=b[i].ch;
-			for(var i=0;i<=maxInd;i++) channels.push({ch:i,bind:[]});
+			for(var i=0;i<=maxInd;i++) channels.push({ch:i,bind:[],val:0});
 
 			//add binds to channels
 			for(var ii=0;ii<b.length;ii++){
@@ -54,17 +57,45 @@
 				bind={prop:bb.prop,v0:bb.v0,v1:bb.v1,tar:[]};
 				//resolve target
 				switch(bb.tar){
-					case "all":for(var i in list) bind.tar.push(i);break;
-					case "Pipe":for(var i in list) if(list[i].type=="Pipe") bind.tar.push(i);break;
-					case "Objs":for(var i in list) if(list[i].type=="Objs") bind.tar.push(i);break;
+					case "all":for(var i in list) if (list[i].active) bind.tar.push(i);break;
+					case "Pipe":for(var i in list) if (list[i].active) if(list[i].strm.type=="Pipe") bind.tar.push(i);break;
+					case "Objs":for(var i in list) if (list[i].active) if(list[i].strm.type=="Objs") bind.tar.push(i);break;
 					default:
-					for(var i in list) if(list[i].id==bb.tar) bind.tar.push(i);break;
+					for(var i in list) if (list[i].active) if (list[i].strm.id==bb.tar) bind.tar.push(i);break;
 					break;
-				}
+				} 
 				channels[bb.ch].bind.push(bind);
 			}
 			reset();
 		}
+
+		public function updateBind(){
+			var b=currBind;
+			var bb:Object;
+			var bind:Object;
+			var tar:Array;
+
+			//empty channel binds
+			for(var i=0;i<channels.length;i++) channels[i].bind=[];
+
+			//add binds to channels
+			for(var ii=0;ii<b.length;ii++){
+				bb=b[ii];
+				bind={prop:bb.prop,v0:bb.v0,v1:bb.v1,tar:[]};
+				//resolve target
+				switch(bb.tar){
+					case "all":for(var i in list) if (list[i].active) bind.tar.push(i);break;
+					case "Pipe":for(var i in list) if (list[i].active) if(list[i].strm.type=="Pipe") bind.tar.push(i);break;
+					case "Objs":for(var i in list) if (list[i].active) if(list[i].strm.type=="Objs") bind.tar.push(i);break;
+					default:
+					for(var i in list) if (list[i].active) if (list[i].strm.id==bb.tar) bind.tar.push(i);break;
+					break;
+				} 
+				channels[bb.ch].bind.push(bind);
+			}
+			sendAll();
+		}
+
 		public function unBind(){
 			channels=[];
 		}
@@ -72,14 +103,18 @@
 			for(var i=0;i<channels.length;i++) setInput(i,0);
 			
 		}
+		public function sendAll(){
+			for(var i in channels) setInput(i,channels[i].val);
+		}
 		public function setInput(ind,val){
 			if(ind<channels.length){
 				var ch=channels[ind];
+				ch.val=val;
 				//trace("setInput",ind,val,ch);
 				for(var i=0;i<ch.bind.length;i++){
 					var bb=ch.bind[i];
 					var val2=bb.v0+(bb.v1-bb.v0)*val;
-					for(var ii=0;ii<bb.tar.length;ii++) if((list[bb.tar[ii]]!=null)&&((list[bb.tar[ii]].state=="Running")||(list[bb.tar[ii]].state=="Decomposing"))) list[bb.tar[ii]].transVar.setVal(bb.prop,val2);
+					for(var ii=0;ii<bb.tar.length;ii++) if((list[bb.tar[ii]]!=null)&&list[bb.tar[ii]].active&&((list[bb.tar[ii]].strm.state=="Running")||(list[bb.tar[ii]].strm.state=="Decomposing"))) list[bb.tar[ii]].strm.transVar.setVal(bb.prop,val2);
 				}
 			
 			}

@@ -37,7 +37,8 @@
 			if(params.init!=null){
 				if(params.init.scene!=null){
 					if(params.init.flags==null)params.init.flags={};
-					setScene(params.init.scene,params.init.flags);
+					if(params.init.scene=="World4") setScene(ns._sys.cloud.World4.d.startScene,params.init.flags);
+					else setScene(params.init.scene,params.init.flags);
 				}
 			}
 			
@@ -108,6 +109,12 @@
 			log(2,"< Fore Comps >");
 			ns.fore.build(currScene.state.fore);
 
+			//mclp
+			if(currScene.state.mclp!=null){
+				ns._sys.cloud.R3D.setMCLP(currScene.state.mclp);
+			}
+			if(currScene.state.mm!=null) ns._sys.cloud.R3D.setParamsMM(currScene.state.mm);
+			
 			//filter
 			log(2,"< Filter >");
 			if(currScene.state.filter!=null){

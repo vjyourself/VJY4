@@ -77,6 +77,11 @@
 		var spaces:Array=[];
 		public var cont:ObjectContainer3D;
 		public var anal:BindAnalPipes;
+
+		public var maxLevel:Number = 4;
+		public var level:Number=maxLevel;
+		public var objBuildDelay:Number=1;
+		public var pipeBuildDelay:Number=1;
 		
 		function SynthPath2(){}
 		
@@ -92,16 +97,22 @@
 		//START A NEW PathSpace
 		//p:{n:"name",prgN:"program name"}
 		public function start(p:Object){
+			var lev = level;
+			if(p.level!=null) lev=p.level;
 			stopGrow("all");
 
 			var lp=path.p0;
-			if(spaces.length>0) lp=spaces[spaces.length-1].space.lengthPos;
+			if(spaces.length>0) lp=path.p1; //spaces[spaces.length-1].space.lengthPos;
 
 			var e={};spaces.push(e);
 			e.prgN=p.prgN;
 			e.n=p.prgN;if(p.n!=null) e.n=p.n;
 			log(1,"START Space "+e.n);
 			e.space = new PathSpace();
+			e.space.pipeBuildDelay=pipeBuildDelay;
+			e.space.objBuildDelay=objBuildDelay;
+			e.space.level=lev;
+			e.space.maxLevel=maxLevel;
 			e.space.context=context;
 			e.space.assemblerObj3D=assemblerObj3D;
 			e.space.cloud=cloud;
@@ -114,7 +125,23 @@
 			e.space.startSpace(ns._sys.cloud.RPrg.cont.programs.path[p.prgN],lp);
 			anal.tars.push(e.space.anal);
 		}
-
+		public function levelUp(){
+			for(var i in spaces) spaces[i].space.levelUp();
+			if(spaces.length>0) level = spaces[spaces.length-1].space.level;
+		}
+		public function levelDown(){
+			for(var i in spaces) spaces[i].space.levelDown();
+			if(spaces.length>0) level = spaces[spaces.length-1].space.level;
+		}
+		public function setLevel(lev:Number,p:Object=null){
+			for(var i in spaces) spaces[i].space.setLevel(lev,p);
+			if(spaces.length>0) level = spaces[spaces.length-1].space.level;
+		}
+		public function setLastLevel(lev:Number,p:Object=null){
+			trace("setLastLevel !!");
+			if(spaces.length>0) spaces[spaces.length-1].space.setLevel(lev,p);
+			if(spaces.length>0) level = spaces[spaces.length-1].space.level;
+		}
 		//Stop A Space to grow (will be destroyed if empted out)
 		//Stop grow, then listen when fully decomoposed, then remove
 		public function stopGrow(selector:String){

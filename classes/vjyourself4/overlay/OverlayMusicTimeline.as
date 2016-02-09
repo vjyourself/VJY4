@@ -15,11 +15,14 @@
 		function log(level,msg){if(dLevels[level-1])_debug.log(this,level,msg);}
 		
 		public var ns:Object;
-		var rhythm;
-		var struct;
+		var beat;
+		var timeline;
+		var musicMeta;
+
 		public var params:Object;
 		var tfStruct:TextField;
 		var tfSection:TextField;
+		var tfTime:TextField;
 		
 		
 
@@ -38,8 +41,9 @@
 		
 		public function init(){
 			TestSign = getDefinitionByName("OverlayMusicTestSign") as Class;
-			struct=ns.sys.music.meta.struct;
-			rhythm=ns.sys.music.meta.rhythm;
+			timeline=ns.sys.music.meta.timeline;
+			beat=ns.sys.music.meta.beat;
+			musicMeta=ns.sys.music.meta;
 
 			
 			
@@ -53,17 +57,31 @@
 			tf.font = "Arial"
 			tf.color = 0xffffff;
 	
+			tfTime = new TextField();
+			tfTime.width=100;
+			tfTime.y=30;
+			tfTime.x=-18;
+			tfTime.defaultTextFormat = tf;
+			vis.addChild(tfTime);
+
+			var tf2:TextFormat = new TextFormat();
+			tf2.size = 28;
+			tf2.bold = true;
+			tf2.font = "Arial"
+			tf2.color = 0xffffff;
+
 			tfStruct = new TextField();
-			tfStruct.width=500;
-			tfStruct.x=100;
-			tfStruct.defaultTextFormat = tf;
+			tfStruct.width=100;
+			tfStruct.y=75;
+			tfStruct.x=-18;
+			tfStruct.defaultTextFormat = tf2;
 			vis.addChild(tfStruct);
 
 			tfSection = new TextField();
-			tfSection.width=500;
-			tfSection.y=30;
-			tfSection.x=100;
-			tfSection.defaultTextFormat = tf;
+			tfSection.width=300;
+			tfSection.y=75;
+			tfSection.x=80;
+			tfSection.defaultTextFormat = tf2;
 			vis.addChild(tfSection);
 
 	
@@ -92,13 +110,17 @@
 		}
 		
 		public function onEF(e:DynamicEvent){
-			tfStruct.text=(struct.structInd+1)+" . "+(struct.beatInd+1);
-			tfSection.text=struct.struct[struct.structInd].n;
+			tfStruct.text=(timeline.structInd+1)+" . "+(timeline.beatInd+1);
+			tfSection.text=timeline.struct[timeline.structInd].n;
+			var m:Number = Math.floor(musicMeta.pos/1000/60);
+			var s:Number = Math.floor((musicMeta.pos/1000-m*60)*10)/10;
+			tfTime.text=m+" : "+s+( (s==Math.floor(s))?".0":"" );
+
 			//STRUCT
 				var chh=channels[0];
-				if(chh.val!=struct.beatInd){
+				if(chh.val!=timeline.beatInd){
 					chh.signs[chh.val].gotoAndStop(1);
-					chh.val=struct.beatInd;
+					chh.val=timeline.beatInd;
 					chh.signs[chh.val].gotoAndStop(2);	
 				}
 			
@@ -107,16 +129,16 @@
 			//General Channels
 			for(var i=0;i<channels.length;i++){
 				var chh=channels[i];
-				if(chh.val!=rhythm.counter[chh.ch]){
+				if(chh.val!=beat.counter[chh.ch]){
 					chh.signs[chh.val].gotoAndStop(1);
-					chh.val=rhythm.counter[chh.ch];
+					chh.val=beat.counter[chh.ch];
 					chh.signs[chh.val].gotoAndStop(2);	
 				}
 			}*/
 
 			/*
 			// Analoug
-			var ss=rhythm.chA[0].val*2;
+			var ss=beat.chA[0].val*2;
 			signTrig.scaleX=ss;
 			signTrig.scaleY=ss;
 			*/

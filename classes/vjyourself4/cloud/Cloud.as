@@ -29,6 +29,7 @@ package vjyourself4.cloud{
 	import vjyourself4.sys.MetaStream;
 	import com.adobe.serialization.json.*;
 	import vjyourself4.media.Music;
+	import vjyourself4.cloud.RWorld4;
 
 	public class Cloud{
 		public var _debug:Object;
@@ -69,6 +70,9 @@ package vjyourself4.cloud{
 		// GLOBAL DB
 		public var DB:DBHandler;
 		
+		//World4
+		public var World4:RWorld4;
+
 		// Spaces
 		public var RPrg:ResourcesPrg;
 		public var CPrg:Cycles;
@@ -76,6 +80,8 @@ package vjyourself4.cloud{
 		public var spacesG:Array;
 		public var spacesMap:Array=[];
 		public var spacesP:Array; // all spaces files :: for total reload
+
+		
 
 		//Paths
 		public var paths:Array=[];
@@ -133,7 +139,9 @@ package vjyourself4.cloud{
 			DB.cloud = this;
 
 			//////////////////////////////////////////////////////////////////////////////////////////////
-			
+			//WORLD4
+			World4 = new RWorld4();
+
 			//SPACES
 			RPrg = new ResourcesPrg();
 			CPrg = new Cycles();
@@ -595,6 +603,12 @@ package vjyourself4.cloud{
 				case "RTimelines":RTimelines.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
 
 				case "presets":presets.add(packages[packagesInd].data.path,packages[packagesInd].data.data);ready=true;break;
+				case "RWorld4":
+					World4.add(packages[packagesInd].data.meta,packages[packagesInd].data.data);
+				ready=true;
+				break;
+				default:
+				ready=true;
 			}
 			if(ready) packagesStartNext();
 		}
@@ -731,6 +745,7 @@ package vjyourself4.cloud{
 				cont.spaceG={l:spacesG,e:spaces};
 				cont.space={l:spaces,e:RPrg.NS.cont.programs.path};
 				cont.path={l:paths};
+				cont.world4=World4;
 				
 				//first init
 				log(1,"COMPLETE");

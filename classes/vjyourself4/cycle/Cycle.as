@@ -21,6 +21,7 @@ package vjyourself4.cycle{
 		var cycLast:Boolean=false;
 		var meta:Object;
 		var n:String;
+		var id:String;
 		
 		public var last:Boolean=false;
 		public var first:Boolean=false;

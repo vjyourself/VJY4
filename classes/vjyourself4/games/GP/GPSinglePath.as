@@ -107,6 +107,8 @@
 			
 			//synthPath
 			synthPath = new SynthPath2();
+			if(params.synthPath!=null) for(var i in params.synthPath) synthPath[i]=params.synthPath[i];
+			
 			synthPath._debug=_debug;
 			synthPath.cont=cont3D;
 			synthPath.path=path;
@@ -146,6 +148,8 @@
 		    //	if(p.mixMode!=null) synthPath.mixMode=p.mixMode;
 
 			//do Restart ? 
+			var level = synthPath.level;
+			if(p.level!=null) level=p.level;
 			var rstr=true;
 			if(p.restart!=null) rstr=p.restart;
 
@@ -161,11 +165,11 @@
 
 			//start new SpacePrg -> Streams
 			if(p.space!=null){
-				synthPath.start({prgN:p.space});
+				synthPath.start({prgN:p.space,level:level});
 					//ns._sys.cloud.RPrg.cont.programs.path["Prg"+p.space]);
 				state.space=p.space;
 				events.dispatchEvent(new Event("SPACE_CHANGE"));
-			}else if(rstr) synthPath.start({prgN:state.space});
+			}else if(rstr) synthPath.start({prgN:state.space,level:level});
 				//ns._sys.cloud.RPrg.cont.programs.path["Prg"+currSpace]);
 
 		}

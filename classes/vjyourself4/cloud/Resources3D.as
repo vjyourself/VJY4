@@ -41,6 +41,7 @@
 	import away3d.tools.helpers.MeshHelper;
 	import away3d.materials.lightpickers.StaticLightPicker;
 	import vjyourself4.three.VideoTexture2;
+	import vjyourself4.dson.ColorType;
 	
 	public class Resources3D{
 		var assembler:AssemblerAsset3D;
@@ -105,6 +106,9 @@
 			cont.lightPicker=lp;
 			
 		}
+		public function setMCLP(v:Boolean){
+			enableMCLightPicker(v);
+		}
 		public function toggleMCLP(){
 			enableMCLightPicker(!mclp);
 		}
@@ -120,6 +124,10 @@
 		}
 
 		var blendAdd:Boolean=false;
+		public function setBlendAdd(v){
+			blendAdd=v;
+			applyBlendMode(blendAdd?"ADD":"NORMAL");
+		}
 		public function toggleBlendAdd(){
 			blendAdd=!blendAdd;
 			applyBlendMode(blendAdd?"ADD":"NORMAL");
@@ -341,8 +349,8 @@
 			{n:"Beat2A","synch":"beat","ind":"ASR4_2",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 			{n:"Beat3A","synch":"beat","ind":"ASR4_3",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
 			{n:"Beat4A","synch":"beat","ind":"ASR4_4",col0:0x444444,col1:0xffffff,alpha0:0.2,alpha1:1},
-			{n:"Beat2_1A","synch":"beat","ind":"Sin2_1",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
-			{n:"Beat2_2A","synch":"beat","ind":"Sin2_2",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat2_1A","synch":"beat","ind":"ASR2_1",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
+			{n:"Beat2_2A","synch":"beat","ind":"ASR2_2",col0:0xffffff,col1:0xffffff,alpha0:0,alpha1:1},
 			
 			//{n:"mc1ma",col0:0x6633aa,col1:0xffffff,alpha:0.7},
 			//{n:"mc2ma",col0:0xaa0066,col1:0xffffff,alpha:0.7},
@@ -356,6 +364,16 @@
 		var musicWaveTexture2:BitmapTexture;
 		var mmm1:Matrix;
 		var mmm2:Matrix;
+		public function setParamsMM(mm){
+			if(mm.drawWave!=null) for(var i in mm.drawWave) switch(i){
+				case "fillColor":
+				case "lineColor0":
+				compDrawWave[i]=ColorType.toNumber(mm.drawWave[i]);
+				break;
+				default:
+				compDrawWave[i]=mm.drawWave[i];
+			}
+		}
 		function initMusicMaterials(){
 			for(var i=0;i<musicColors.length;i++){
 				var mc=musicColors[i];
