@@ -36,6 +36,11 @@
 			initSeq=0;
 			if(params.enabled!=null) enabled=params.enabled;
 		}
+
+		public function toggleEnabled(){
+			enabled=!enabled;
+			log(6,enabled?"ON":"OFF");
+		}
 		public function init1(){
 			
 			path_length=ns.mid.cs.GP.ctrlPath.beforeMe;

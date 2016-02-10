@@ -37,7 +37,7 @@
 		public var id:String="";
 		public var name:String="";
 		public var lengthPos:Number=0;
-		public var fire:Object={"sync":"frame","delay":120,"onlyMe":false};
+		public var fire:Object={"sync":"frame","delay":120,"onlyMe":false,"initNum":1};
 		
 		public var rotate:Boolean=false;
 		public var rotateZ:Number =0;
@@ -101,6 +101,7 @@
 		}
 		
 		var p1:Number=0;
+		var firstFire:Boolean=true;
 		public function onEF(e:DynamicEvent){
 
 			transVar.update();
@@ -110,11 +111,17 @@
 
 			//ADD NEXT
 			if((state=="Running")||(state == "Decomposing")){
-				buildCC++;
-				if(buildCC>=fire.delay){
-						buildCC=0;
-						if(path.pMe<p1) addNext();
-					
+				if(firstFire){
+					for(var i=0;i<fire.initNum;i++) addNext();
+					buildCC=0;
+					firstFire=false;
+				}else{
+					buildCC++;
+					if(buildCC>=fire.delay){
+							buildCC=0;
+							if(path.pMe<p1) addNext();
+						
+					}
 				}
 			}
 
