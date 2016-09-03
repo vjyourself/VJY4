@@ -56,7 +56,7 @@
 			}
 			currScene=TransJson.clone(s);
 
-			log(1,"setScene: "+s.name);
+			log(1,"setScene: "+currScene.name);
 			if(currScene.init==null) currScene.init={varyToState:false,stateToVary:false};
 			/*
 			log(2,"< Context >");
@@ -112,7 +112,18 @@
 			//mclp
 			if(currScene.state.mclp!=null){
 				ns._sys.cloud.R3D.setMCLP(currScene.state.mclp);
+			}else{
+				currScene.state.mclp=ns._sys.cloud.R3D.mclp;
 			}
+
+			//blendAdd
+			if(currScene.state.blendAdd!=null){
+				ns._sys.cloud.R3D.setBlendAdd(currScene.state.blendAdd);
+			}else{
+				currScene.state.blendAdd=ns._sys.cloud.R3D.blendAdd;
+			}
+
+			//MM
 			if(currScene.state.mm!=null) ns._sys.cloud.R3D.setParamsMM(currScene.state.mm);
 			
 			//filter
@@ -120,7 +131,8 @@
 			if(currScene.state.filter!=null){
 				ns.filter.setParams(currScene.state.filter);
 			}else{
-				ns.filter.setParams("Normal");
+				ns.filter.setParams({type:"Normal"});
+				currScene.state.filter={type:"Normal"};
 			}
 
 			ns.sceneVary.evalObjPath();
@@ -130,13 +142,22 @@
 			log(2,"< Anal >");
 			if(currScene.anal!=null) anal.setBind(currScene.anal.bind);
 
+			events.dispatchEvent(new Event(Event.OPEN));
+			events.dispatchEvent(new Event(Event.CHANGE));
+		}
+
+		public function paramsChanged(){
 			events.dispatchEvent(new Event(Event.CHANGE));
 		}
 
 		public function getDef(){
 			currScene.state.back=TransJson.clone(ns.back.compParams.params);
+			currScene.state.back.context.texA.ind=ns.back.cs.context.cs.texA.elemsInd;
 			currScene.state.mid=TransJson.clone(ns.mid.compParams.params);
 			currScene.state.fore=TransJson.clone(ns.fore.compParams.params);
+			currScene.state.mclp=ns._sys.cloud.R3D.mclp;
+			currScene.state.filter={type:ns.filter.type};
+			currScene.state.blendAdd=ns._sys.cloud.R3D.blendAdd;
 			return currScene;
 		}
 		/*

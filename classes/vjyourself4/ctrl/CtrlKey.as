@@ -43,11 +43,13 @@
 				else if(maps["std"][butt]!=null) comm=maps["std"][butt].command;
 				if(comm!=null) execComm(comm);
 			}*/
+
 		}
 		
 		function execComm(comm){
 			var tar=Eval.evalString(ns,comm[0]);
 			tar[comm[1]].apply(tar,comm[2]);
+			ns.scene.paramsChanged();
 		}
 
 		public function onEF(e){

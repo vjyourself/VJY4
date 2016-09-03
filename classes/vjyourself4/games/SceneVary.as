@@ -32,6 +32,7 @@
 		}
 		
 		public function init(){
+			if(params.initFromScene) ns.scene.events.addEventListener(Event.OPEN,onSceneOpen);
 			setParams(params);
 		}
 		public function setParams(p){
@@ -105,6 +106,8 @@
 						//SINGLE e,i,v
 						}else{
 							ch.nested=false;
+
+							// ch.e : calculate actual variations 
 							if(chm.val_type!=null) ch.val_type=chm.val_type;
 							if(chm.vals is String){
 								vals=[];
@@ -117,17 +120,25 @@
 								for(var ii=0;ii<chm.vals.length;ii++)vals.push(chm.vals[ii]);
 							}
 							ch.e=vals;
+
+							// ch.i : calculate variation index
 							ch.i=0;
-							if(chm.i!=null){
-								if(chm.i is String){
-									switch(chm.i){
-										case "random": ch.i=Math.floor(Math.random()*ch.e.length);break;
+							ch.initFromScene=false;
+							if(params.initFromScene && chm.initFromScene!=null && chm.initFromScene ){
+								ch.initFromScene=true;
+								setIndexFromScene(ch);
+							}else{
+								if(chm.i!=null){
+									if(chm.i is String){
+										switch(chm.i){
+											case "random": ch.i=Math.floor(Math.random()*ch.e.length);break;
+										}
+									}else{
+										ch.i=chm.i;
 									}
-								}else{
-									ch.i=chm.i;
 								}
 							}
-							
+							// ch.v : actual value
 							ch.v=ch.e[ch.i];
 						}
 					}
@@ -154,6 +165,19 @@
 			cont.scene.i=0;
 			*/
 		}
+		public function onSceneOpen(e){
+			for(var i=0;i<channels.length;i++){
+				if(channels[i].initFromScene) setIndexFromScene(channels[i]);
+			}
+		}
+
+		function setIndexFromScene(ch:Object){
+			trace(">> Scene State "+ch.prop+" ?");
+			var vv=ch.obj.compParams.getParam(ch.prop);
+			for(var iii=0;iii<ch.e.length;iii++) if(ch.e[iii]==vv) ch.i=iii;
+			trace(">> index: "+ch.i+" value: "+vv);
+		}
+
 		public function evalObjPath(){
 			for(var i=0;i<channels.length;i++){
 				var ch=channels[i];
@@ -247,7 +271,7 @@
 					log(6,ch.n+" : Next");
 					break;
 				}
-				
+				ns.scene.paramsChanged();
 			}
 		}
 		/*

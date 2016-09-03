@@ -48,8 +48,10 @@
 			//trace("string?"+(p is String));
 			if(p is String) p = {name:p};
 			
-			for(var i in p) if((i!="name")&&(i!="refresh")) this[i]=p[i];
+			for(var i in p) if((i!="name")&&(i!="refresh")&&(i!="ind")) this[i]=p[i];
 			for(var i in p) if((i!="refresh"))params[i]=p[i];
+			if(p.ind!=null) startInd=p.ind;
+			
 			//trace("name:"+p.name);
 			if(p.name!=null) setElemsCyc(context.getRaw(p.name));
 	
@@ -98,6 +100,7 @@
 					case "random":ret=elems[Math.floor(Math.random()*elems.length)];break;	
 				}
 			}
+			params.ind=elemsInd;
 		//	trace("Pattern.getNext ("+type+")> ",ret);
 			return ret;
 		}

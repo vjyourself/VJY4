@@ -67,6 +67,7 @@
 		function execComm(comm){
 			var tar=comm[0];
 			tar[comm[1]].apply(tar,comm[2]);
+			ns.scene.paramsChanged();
 		}
 
 		public function onEF(e){

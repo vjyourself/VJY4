@@ -53,6 +53,7 @@
 		}
 		public function init(){
 			enabled=params.enabled;
+			if(enabled){
 			A_Decl = params.A;
 			
 			peakVal = A_Decl.peak;
@@ -77,6 +78,7 @@
 			A.Vary4 = {val:0};
 
 			A.peak = {val:0};
+		}
 		}
 		public function findInd(a,v){
 			for(var i in a) if(a[i]==v) return i;

@@ -26,7 +26,7 @@
 		public var mapper:GamepadMapper;
 
 		public var switchMap:String="";
-		public var switchSubMap:String="";
+		public var switchMapMode:String="Step";
 
 		public var events:EventDispatcher = new EventDispatcher();
 
@@ -38,8 +38,9 @@
 			for(var i in params) this[i]=params[i];
 
 			gamepadManager.events.addEventListener("Gamepad"+gamepadInd+"_"+switchMap,onSwitchMap,0,0,1);
-			gamepadManager.events.addEventListener("Gamepad"+gamepadInd+"_"+switchSubMap,onSwitchSubMap,0,0,1);
-			
+			for(i=0;i<maps.length;i++){
+				if(maps[i].switchMapMode=="Step") gamepadManager.events.addEventListener("Gamepad"+gamepadInd+"_"+maps[i].switchMap,this["onSwitchSubMap"+i],0,0,1);
+			}
 			
 			/*
 			trigPage_pp=trigNum/trigPage_num;
@@ -70,11 +71,17 @@
 			manager.showMsg(gamepadInd+" "+maps[mapsInd].name+" "+map.name);
 			mapper=ns["map_"+maps[mapsInd].name+"_"+map.name];
 		}
-		function onSwitchSubMap(e){
-			maps[mapsInd].mapsInd=(maps[mapsInd].mapsInd+1)%maps[mapsInd].maps.length;
-			map=maps[mapsInd].maps[maps[mapsInd].mapsInd];
-			manager.showMsg(gamepadInd+" "+maps[mapsInd].name+" "+map.name);
-			mapper=ns["map_"+maps[mapsInd].name+"_"+map.name];
+		function onSwitchSubMap0(e){onSwitchSubMap(0);}
+		function onSwitchSubMap1(e){onSwitchSubMap(1);}
+		function onSwitchSubMap2(e){onSwitchSubMap(2);}
+		function onSwitchSubMap3(e){onSwitchSubMap(3);}
+		function onSwitchSubMap(i){
+			if((i==mapsInd)&&(maps[i].switchMapMode=="Step")){
+				maps[mapsInd].mapsInd=(maps[mapsInd].mapsInd+1)%maps[mapsInd].maps.length;
+				map=maps[mapsInd].maps[maps[mapsInd].mapsInd];
+				manager.showMsg(gamepadInd+" "+maps[mapsInd].name+" "+map.name);
+				mapper=ns["map_"+maps[mapsInd].name+"_"+map.name];
+			}
 		}
 		/*
 		function onPageAnal(e=null){
@@ -146,7 +153,17 @@
 		}*/
 
 		public function onEF(e){
-			if(!gamepadManager.deviceInd[gamepadInd].empty) mapper.setState(gamepadManager.getState(gamepadInd));
+			if(!gamepadManager.deviceInd[gamepadInd].empty){
+				var ss=gamepadManager.getState(gamepadInd);
+				if(maps[mapsInd].switchMapMode=="Step") mapper.setState(ss);
+				else{
+					var ii=ss[maps[mapsInd].switchMap]?1:0;
+					map=maps[mapsInd].maps[ii];
+					//manager.showMsg(gamepadInd+" "+maps[mapsInd].name+" "+map.name);
+					mapper=ns["map_"+maps[mapsInd].name+"_"+map.name];
+					mapper.setState(ss);
+				}
+			}
 		}
 
 		/*

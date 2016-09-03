@@ -110,6 +110,7 @@
 		
 			ns.context.cont.colA.events.addEventListener(Event.CHANGE,colorsCHANGE,0,0,1);
 			ns.context.cont.texA.events.addEventListener(Event.CHANGE,texACHANGE,0,0,1);
+			ns.context.cont.texB.events.addEventListener(Event.CHANGE,texBCHANGE,0,0,1);
 			
 			anal=new BindSpace();
 			anal.pathSpace=this;
@@ -271,6 +272,10 @@
 		public function texACHANGE(e){
 			for(var i=0;i<streams.length;i++) if(streams[i].active) streams[i].strm.updateTex("A");
 		}
+		public function texBCHANGE(e){
+			trace("TEX B - CHG");
+			for(var i=0;i<streams.length;i++) if(streams[i].active) streams[i].strm.updateTex("B");
+		}
 		
 		public function sceneToOrigo(shift){
 			for(var i=0;i<streams.length;i++) if(streams[i].active) streams[i].strm.coordShift(shift);
@@ -322,6 +327,7 @@
 			anal.unBind();
 			ns.context.cont.colA.events.removeEventListener(Event.CHANGE,colorsCHANGE);
 			ns.context.cont.texA.events.removeEventListener(Event.CHANGE,texACHANGE);
+			ns.context.cont.texB.events.removeEventListener(Event.CHANGE,texBCHANGE);
 			destroyStreamAll();
 			streams=null;
 			params=null;

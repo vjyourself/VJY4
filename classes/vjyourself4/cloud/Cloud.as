@@ -207,11 +207,13 @@ package vjyourself4.cloud{
 			/*****************************************************************************************
 			  CLOUD 2 Packages (cloud.world4)
 			*****************************************************************************************/
-		
+			var firstActive=false;
 			if(p.world4!=null) for(var i=0;i<p.world4.length;i++) if(p.world4[i].active){
 				cloud2.online=p.world4[i].online;
-				if(cloud2.online) packages.push({url:"export/world4/"+p.world4[i].n,cloud:2});
-				else packages.push({url:p.world4[i].n+".json",cloud:2});
+				if(cloud2.online) packages.push({url:"export/world4/"+p.world4[i].name,cloud:2});
+				else packages.push({url:p.world4[i].name+".json",cloud:2});
+				log(1,"Active World4 : "+p.world4[i].name);
+				firstActive=true;
 			}
 
 			/*****************************************************************************************
@@ -678,8 +680,11 @@ package vjyourself4.cloud{
 				for(var i in RScenes.NS){
 					switch(i){
 						default:
-						var lll=true;
-						if(RScenes.NS[i].listed!=null) lll=RScenes.NS[i].listed;
+						var lll=false;
+						for(var iin in RScenes.NS[i].worlds) if(World4.m.n==RScenes.NS[i].worlds[iin]) lll=true;
+						if(RScenes.NS[i].worlds.length==0) lll=true;
+						//listed modifier
+						if(RScenes.NS[i].listed!=null) lll=lll && RScenes.NS[i].listed;
 						if(lll){
 							el={name:i};
 							scenes.push(el);
@@ -700,10 +705,7 @@ package vjyourself4.cloud{
 					}
 				}
 				
-			if(!ready){
-				//all packages loaded, calculate metas
-				
-				
+				// Texture Sequences ( themes )
 				var el:Object;
 				//themes from artists
 				if(DB.cont.artists.length>0){
@@ -724,7 +726,8 @@ package vjyourself4.cloud{
 						break;
 						default:
 						//trace("THEME: "+i);
-						el={code:i,name:i};
+						el={code:i,name:i,id:""};
+						if(C3D.NS[i][0].id!=null)el.id=C3D.NS[i][0].id;
 						if(C3D.NS[i][0].meta!=null){
 							el.meta=C3D.NS[i][0].meta;
 							//trace("FOUND :"+el.meta.name+" "+el.meta.colcode);
@@ -736,27 +739,80 @@ package vjyourself4.cloud{
 					}
 				}
 				
+				// World4 --> TexA / TexB / TexBack
+				var W4D = World4.d;
+				var texAll = themes;
+				var texName="";
+				var texA=[];
+				for(var i=0;i<W4D.texA.length;i++){
+					texName="";
+					for(var ii=0;ii<texAll.length;ii++) if(texAll[ii].id==W4D.texA[i]) texName=texAll[ii].name;
+					if(texName!="") texA.push({name:texName,code:texName,id:W4D.texA[i]});
+				}
+				var texB=[];
+				for(var i=0;i<W4D.texB.length;i++){
+					texName="";
+					for(var ii=0;ii<texAll.length;ii++) if(texAll[ii].id==W4D.texB[i]) texName=texAll[ii].name;
+					if(texName!="") texB.push({name:texName,code:texName,id:W4D.texB[i]});
+				}
+				var texBack=[];
+				for(var i=0;i<W4D.texSkybox.length;i++){
+					texName="";
+					for(var ii=0;ii<texAll.length;ii++) if(texAll[ii].id==W4D.texSkybox[i]) texName=texAll[ii].name;
+					if(texName!="") texBack.push({name:texName,code:texName,id:W4D.texSkybox[i]});
+				}
+
+				// PUBLIC CONTAINERS
 				cont.light={l:lights,e:RLights.NS,m:RLights}
 				cont.filter={l:filters,e:RFilters.NS,m:RFilters}
 				cont.scene={l:scenes,e:RScenes.NS,m:RScenes}
 				cont.color={l:colors,e:CCol.NS,m:CCol}
-				cont.texture={l:themes,e:R3D.NS,m:R3D}
-				cont.ImageSequence={l:themes,e:C3D.NS,m:C3D}
+
+				cont.texAll={l:texAll,e:C3D.NS,m:C3D};
+				cont.texA={l:texA,e:C3D.NS,m:C3D};
+				cont.texB={l:texB,e:C3D.NS,m:C3D};
+				cont.texBack={l:texBack,e:C3D.NS,m:C3D};
+				/* obsolate name */ cont.texture={l:texAll,e:R3D.NS,m:R3D};
+				/* obsolate name */ cont.ImageSequence={l:texAll,e:C3D.NS,m:C3D};
+				
 				cont.spaceG={l:spacesG,e:spaces};
 				cont.space={l:spaces,e:RPrg.NS.cont.programs.path};
 				cont.path={l:paths};
 				cont.world4=World4;
 				
+				trace("*****************************************************************");
+				trace("World4:"+World4.m.n);
+				trace("texture "+cont.texture.l.length);
+				trace("ImageSequence "+cont.ImageSequence.l.length);
+
+				var l=cont.texAll.l;trace("texAll "+l.length);
+				for(i=0;i<l.length;i++) trace(l[i].name+" : "+l[i].id);
+				var l=cont.texA.l;trace("texA "+l.length);
+				for(i=0;i<l.length;i++) trace(l[i].name+" : "+l[i].id);
+				var l=cont.texB.l;trace("texB "+l.length);
+				for(i=0;i<l.length;i++) trace(l[i].name+" : "+l[i].id);
+				var l=cont.texBack.l;trace("texBack "+l.length);
+				for(i=0;i<l.length;i++) trace(l[i].name+" : "+l[i].id);
+				
+				trace("*****************************************************************");
+
+			//RUN ONCE ONLY, at the end of the Cloud main load sequence 
+			// not executed at extra RT package loads...
+			if(!ready){
+				
 				//first init
 				log(1,"COMPLETE");
 				ready=true;
 				events.dispatchEvent(new Event(Event.COMPLETE));
+
+			//RUN AT RT package insertion / reload
 			}else{
 				log(1,"PACKAGE COMPLETE");
 				events.dispatchEvent(new Event("PACKAGE_COMPLETE"));
 			}
 			
 		}
+
 		public function themeColcodeToInd(colcode:String):int{
 			var ret=-1;
 			for(var i=0;i<themes.length;i++) if(themes[i].meta.colcode==colcode) ret=i;

@@ -307,6 +307,7 @@
 		
 		public function updateColors(){}
 		public function updateTex(str:String){
+			trace("STR> updateTex:"+context.texture+" : "+str);
 			if(((state=="Running")||(state=="Decomposing"))&&(str==context.texture)){
 			for(var i=0;i<elems.length;i++){
 				var elm=elems[i];

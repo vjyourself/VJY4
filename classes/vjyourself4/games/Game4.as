@@ -267,8 +267,12 @@
 		
 		public function show(n){
 			var comp=ns[n];
-			if(comp.hasOwnProperty("vis")) comp.vis.visible=!comp.vis.visible;
+			if(comp.hasOwnProperty("vis")){
+				comp.vis.visible=!comp.vis.visible;
+				if(comp.vis.visible) if(comp.hasOwnProperty("update")) comp.update();
+			}
 			if(comp.hasOwnProperty("cont3D")) comp.cont3D.visible=!comp.cont3D.visible;
+			
 		}
 		function onStage(e=null){
 			onResize();
@@ -315,7 +319,7 @@
 				view.height=dimY;
 			}
 
-			for(var i=0;i<modulesResize.length;i++)modulesResize[i].onResize(e);
+			for(var i=0;i<modulesResize.length;i++) modulesResize[i].onResize(e);
 		}
 		
 		

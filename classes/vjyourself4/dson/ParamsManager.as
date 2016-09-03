@@ -11,6 +11,7 @@
 
 		function ParamsManager(){
 		}
+		/*
 		public function setDesc(o){
 			desc=TransJson.clone(o);
 			processDesc(params,desc);
@@ -29,7 +30,11 @@
 						processDesc(ns[i],desc[i]);
 					}
 			}
+		public function getDesc(path){
+			return Eval.evalString(desc,path);
 		}
+		}*/
+
 		public function setParams(p){
 			TransJson.over(params,p);
 			events.dispatchEvent(new DynamicEvent("CHANGE",{changed:p}));
@@ -47,9 +52,7 @@
 		public function getParam(path){
 			return Eval.evalString(params,path);
 		}
-		public function getDesc(path){
-			return Eval.evalString(desc,path);
-		}
+		
 		public function clear(){
 			desc={};
 			params={};

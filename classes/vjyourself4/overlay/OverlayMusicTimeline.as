@@ -35,11 +35,14 @@
 		var visGap:Number=50;
 
 		var TestSign:Class;
+		var HelpBox:Class;
 		
 		public function OverlayMusicTimeline(){
 		}
 		
 		public function init(){
+			
+			HelpBox = getDefinitionByName("OverlayMuscMetaTimelineCtrl") as Class;
 			TestSign = getDefinitionByName("OverlayMusicTestSign") as Class;
 			timeline=ns.sys.music.meta.timeline;
 			beat=ns.sys.music.meta.beat;
@@ -107,6 +110,10 @@
 			signTrig.x=100;
 			signTrig.y=500;
 			//vis.addChild(signTrig);
+			var helpBox = new HelpBox();
+			vis.addChild(helpBox);
+			helpBox.x=0;
+			helpBox.y=visGap*4;
 		}
 		
 		public function onEF(e:DynamicEvent){

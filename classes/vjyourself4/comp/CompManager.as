@@ -55,7 +55,8 @@
 				compParams.clear();
 				var preset=ns._sys.cloud.presets.NS.comp[p.preset];
 				compPreset=p.preset;
-				compParams.setDesc(preset.paramsDesc);
+				//Desc not yet implemented
+				//compParams.setDesc(preset.paramsDesc);
 				compParams.setParams(preset.paramsDef);
 				compParams.setParams(p.params);
 				

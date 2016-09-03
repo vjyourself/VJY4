@@ -25,7 +25,7 @@
 		var filterDelay:Number=60*10;
 		var active:Boolean=false;
 		var autoOff:Object;
-		var firstSet:Boolean=true;
+		var initPhase:Boolean=true;
 		var type:String="Normal";
 		public function CompFilters(){
 			away3d.filters.BlurFilter3D;
@@ -76,6 +76,11 @@
 					case "type":setVal(v);
 				}
 		}
+		public function getParam(n){
+			switch(n){
+					case "type": return type;
+				}
+		}
 		public function setParams(p){
 			for(var i in p){
 				setParam(i,p[i]);
@@ -84,6 +89,7 @@
 		public function setVal(name:String){
 			if(type!=name){
 				type=name;
+				params["type"]=type;
 				var code=ns.cloud.RFilters.NS[name];
 				if(ff!=null){
 					for(var i=0;i<ff.length;i++){
@@ -93,12 +99,8 @@
 				}
 				ff=[];
 				for(var i=0;i<code.length;i++) ff.push(Assembler.createObject(code[i]));
-				if(firstSet){
-					//filter can't be set on the first frame... >> will cause crazy error
-					active=true;
-					filterCC=0;
-					firstSet=false;
-				}else{
+				//filter can't be set on the first frame... >> will cause crazy error
+				if(!initPhase){
 					ns.view.filters3d=ff;
 				}
 			}
@@ -120,13 +122,15 @@
 		}
 		*/
 		public function onEF(e=null){
-			if(active){
+			//filter can't be set on the first frame... >> will cause crazy error
+			if(initPhase){
 				filterCC++;
 				if(filterCC>=60){
-					active=false;
+					initPhase=false;
 					ns.view.filters3d=ff;
 				}
 			}
+		}
 			/*
 			if(active){
 				if(autoOff.active){
@@ -140,7 +144,7 @@
 				}
 			}
 			*/
-		}
+		
 		
 		
 	}

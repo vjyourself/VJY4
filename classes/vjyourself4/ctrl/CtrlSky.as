@@ -26,6 +26,7 @@
 		public function CtrlSky(){}
 		
 		public function init(){
+			if(params.rotate!=null) rotSpeed=params.rotate;
 			cont3D= ns.cont3D;
 			me = ns.me;
 		}

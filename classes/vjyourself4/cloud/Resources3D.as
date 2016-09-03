@@ -40,6 +40,7 @@
 	import away3d.entities.Mesh;
 	import away3d.tools.helpers.MeshHelper;
 	import away3d.materials.lightpickers.StaticLightPicker;
+	import away3d.lights.DirectionalLight;
 	import vjyourself4.three.VideoTexture2;
 	import vjyourself4.dson.ColorType;
 	
@@ -60,7 +61,8 @@
 		public var postInd:Number;
 		var assetLoader:AssetLoader;
 
-		public var mcLightPicker:StaticLightPicker = new StaticLightPicker([]);
+		public var mcLightPicker:StaticLightPicker;
+		public var mcDirLight:DirectionalLight;
 		public var globalLightPicker:StaticLightPicker = new StaticLightPicker([]);
 		public var mclp:Boolean=false;
 
@@ -81,6 +83,13 @@
 			
 			//cont.lightPicker = new StaticLightPicker([]);
 			//if(musicMaterials)
+			mcDirLight = new DirectionalLight();
+			mcDirLight.ambientColor=0xffffff;
+			mcDirLight.ambient=0.3;
+			mcDirLight.specular=0;
+		
+
+			mcLightPicker = new StaticLightPicker([mcDirLight]);
 			initMusicMaterials();
 			initVideoMaterials();
 		}
@@ -112,7 +121,9 @@
 		public function toggleMCLP(){
 			enableMCLightPicker(!mclp);
 		}
-		
+		public function setMCLPRot(r:Vector3D){
+			mcDirLight.direction =r;
+		}
 		public function enableMCLightPicker(b:Boolean){
 			mclp=b;
 			if(globalLightPicker!=null){
@@ -123,7 +134,7 @@
 			}
 		}
 
-		var blendAdd:Boolean=false;
+		public var blendAdd:Boolean=false;
 		public function setBlendAdd(v){
 			blendAdd=v;
 			applyBlendMode(blendAdd?"ADD":"NORMAL");

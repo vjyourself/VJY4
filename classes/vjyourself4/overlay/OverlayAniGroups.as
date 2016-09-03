@@ -18,8 +18,6 @@
 		
 		var aniCN:String;
 		var aniCNs:Array;
-		var aniGroups:Array;
-		var aniGroupsInd:Number=0;
 		var aniWidth:Number;
 		var aniHeight:Number;
 
@@ -38,13 +36,7 @@
 		}
 		
 		public function init(){
-
 			if(params.aniCNs!=null) aniCNs=params.aniCNs;
-			if(params.aniGroups!=null) aniGroups=params.aniGroups;
-			else{
-				aniGroups=[[]];
-				for(var i=0;i<aniCNs.length;i++)aniGroups[0].push(i);
-			}
 			if(params.aniCN !=null) aniCNs.push(params.aniCN);
 			aniWidth=params.aniWidth;
 			aniHeight=params.aniHeight;
@@ -66,16 +58,12 @@
 			anisInd=0;
 		}
 		var anisInd=0;
-		public function nextGroup(){
-			aniGroupsInd = (aniGroupsInd+1)%aniGroups.length;
-		}
 		public function play(){
 			if(ani!=null) ani.gotoAndStop(ani.totalFrames);
-			ani=anis[aniGroups[aniGroupsInd][anisInd]].ani;
+			ani=anis[anisInd].ani;
+			anisInd=(anisInd+1)%anis.length;
 			ani.gotoAndPlay(2);
 			cc=0;
-
-			anisInd=(anisInd+1)%aniGroups[aniGroupsInd].length;
 		}
 		
 		public function onEF(e:DynamicEvent){

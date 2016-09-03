@@ -38,6 +38,8 @@
 			if(name.indexOf("ouya")>=0) type="OUYA";
 			if(name.indexOf("nvidia")>=0) type="NVIDIA";
 			if(name.indexOf("mad catz")>=0) type="MADCATZ";
+			if(name.indexOf("wireless controller")>=0) type="PS4";
+			if(name.indexOf("steelseries")>=0) type="STEEL";
 			
 			log(2,"-type: "+type);
 			//collect controllers
@@ -296,7 +298,93 @@
 			
 		}
 		
+		// **** WIN - PS4 Bluetooth ****************************************************************
+		public static var map_Win_PS4 = {
+			LeftStick_X:"AXIS_0",
+			LeftStick_Y:"AXIS_1",
+			RightStick_X:"AXIS_2",
+			RightStick_Y:"AXIS_5",			
+			LeftTrigger:"AXIS_3",
+			RightTrigger:"AXIS_4",
+
+			A:"BUTTON_11",
+			B:"BUTTON_12",
+			X:"BUTTON_10",
+			Y:"BUTTON_13",
+			LB:"BUTTON_14",
+			RB:"BUTTON_15",
+			Back:"BUTTON_18",
+			Start:"BUTTON_19",
+			Up:"BUTTON_6",
+			Down:"BUTTON_7",
+			Left:"BUTTON_8",
+			Right:"BUTTON_9"
+		}
+		
+		public static var calibr_Win_PS4 ={
+			//multiply axes (for inversion)
+			LeftStick_X:1,
+			LeftStick_Y:-1,
+			RightStick_X:1,
+			RightStick_Y:-1,
+	
+			//fullrange -1 - 1 ; normal 0 -1 
+			// a:analouge
+			LeftTrigger:{fullRange:true,a:true},
+			RightTrigger:{fullRange:true,a:true},
+			DPad:"BUTTON"
+			
+		}
+
+		// **** WIN - SteelSeries Stratus XL ( Bluetooth ) ****************************************************************
+		public static var map_Win_STEEL = {
+			LeftStick_X:"AXIS_0",
+			LeftStick_Y:"AXIS_1",
+			RightStick_X:"AXIS_3",
+			RightStick_Y:"AXIS_4",			
+			LeftTrigger:"",
+			RightTrigger:"",
+
+			A:"BUTTON_10",
+			B:"BUTTON_11",
+			X:"BUTTON_13",
+			Y:"BUTTON_14",
+			LB:"BUTTON_16",
+			RB:"BUTTON_17",
+			Back:"",
+			Start:"BUTTON_21",
+			Up:"BUTTON_6",
+			Down:"BUTTON_7",
+			Left:"BUTTON_8",
+			Right:"BUTTON_9"
+		}
+		
+		public static var calibr_Win_STEEL ={
+			//multiply axes (for inversion)
+			LeftStick_X:1,
+			LeftStick_Y:-1,
+			RightStick_X:1,
+			RightStick_Y:-1,
+	
+			//fullrange -1 - 1 ; normal 0 -1 
+			// a:analouge
+			LeftTrigger:{fullRange:false,a:true},
+			RightTrigger:{fullRange:false,a:true},
+			DPad:"BUTTON"
+			
+		}
 		
 	}
 	
 }
+
+/*
+
+WIN Madcatz C.T.R.L ( Bluetooth)
+HID Gamepad
+FFFFFFFF919B6460-A194-11E5-8002-444553540000
+
+WIN SteelSeries ( Bluetooth )
+SteelSeries Stratus XL
+id: 64094F80-5DBE-11E6-8005-444553540000
+*/

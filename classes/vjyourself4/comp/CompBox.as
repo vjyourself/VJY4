@@ -60,9 +60,8 @@
 			//var skyMat = new ColorMaterial(0x0000ff);
 			//skyCubeTex = new BitmapTexture(skyBoxBmpD);
 			
-			
-			skyTexMat = cloneMaterial(ns._sys.cloud.R3D.cont.mat[textureStream.getNext()]);
-			
+			if(cont3D.visible) skyTexMat = cloneMaterial(ns._sys.cloud.R3D.cont.mat[textureStream.getNext()]);
+			else skyTexMat = new ColorMaterial();
 		
 			skyCube = new Mesh(skyCubeGeom,skyTexMat);
 			
@@ -91,15 +90,19 @@
 		}
 		
 		public function setParams(p){
+			log(1,"SetParams "+p.visible);
 			if(p.visible!=null) cont3D.visible=p.visible;
 			if(p.rotate!=null) rotate=p.rotate;
+			if(p.textureStream) textureStream=ns.context.cont["tex"+p.textureStream];
 		}
 		public function texCHANGE(e=null){
 			//skyCube.material=ns._glob.cloud.R3D.cont.mat[ns._glob.context.getNext({type:"texture",stream:"Back",params:{}})];
 			//skyCube.material=ns._sys.cloud.R3D.cont.mat[textureStream.getNext()];
 			//skyTexMat.texture=ns._sys.cloud.R3D.cont.mat[textureStream.getNext()].texture;
-			skyTexMat=cloneMaterial(ns._sys.cloud.R3D.cont.mat[textureStream.getNext()]);
-			skyCube.material=skyTexMat;
+			if(cont3D.visible){
+				skyTexMat=cloneMaterial(ns._sys.cloud.R3D.cont.mat[textureStream.getNext()]);
+				skyCube.material=skyTexMat;
+			}
 		}
 
 		

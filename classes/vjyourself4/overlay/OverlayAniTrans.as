@@ -54,6 +54,7 @@
 		public function OverlayAniTrans(){
 		}
 		
+
 		public function init(){
 		//	rhythm = ns._sys.music.meta.rhythm;
 		//	tackCounter=rhythm.counter[1];
@@ -64,7 +65,9 @@
 			inputNum=channels.length;
 			
 		}
-		
+		public function reset(){
+			def.transInd=0;
+		}
 		public function setInput(ch,val){}
 
 		public function stopAni(){

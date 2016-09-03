@@ -77,9 +77,11 @@
 			ContextLocal;
 			CompBox;
 			CompGridBox;
+			CompRandomField;
 			CtrlSky;
 			CompCentralObjs;			
 			Lights;
+			CompFlipFlow;
 			
 			//Overlay
 			OverlayAni;
@@ -91,6 +93,7 @@
 			OverlayMusicTimeline;
 			OverlayConsole;
 			OverlayMask;
+			OverlayDecScene;
 
 			GPSinglePath;
 			

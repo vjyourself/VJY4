@@ -121,7 +121,7 @@
 				camera.z=npos.z;
 				break;
 			}
-			
+			ns._sys.cloud.R3D.setMCLPRot(camera.forwardVector);
 			//if(gui) gui.tfPos.text=Math.floor(pos.x)+" / "+Math.floor(pos.y)+" / "+Math.floor(pos.z);
 		}
 		

@@ -12,11 +12,16 @@
 		//io
 		public var io:IOManager;
 		public var ns:Object;
+
+		//Params
 		public var speedMax:Number=10;
 		public var speedDef:Number=1;
 		public var speedMin:Number=0;
-		public var cameraRotXMax:Number=90;
-		public var cameraRotYMax:Number=90;
+		public var cameraRotXYMode:String="fix"; // speed
+		public var cameraRotXYDiv:Number=1;
+		public var cameraRotXMax:Number=180;
+		public var cameraRotYMax:Number=180;
+		public var cameraRotZSpeed:Number=1;
 		
 		//Output
 		public var speed:Number=0; //actualized by delta time
@@ -47,6 +52,8 @@
 				io.touch.manager.events.addEventListener(TransformGestureEvent.GESTURE_ZOOM,onZoom,0,0,1);
 				io.touch.manager.events.addEventListener(TransformGestureEvent.GESTURE_ROTATE,onRotate,0,0,1);
 			}
+			WFRotY.div=cameraRotXYDiv*20;
+			WFRotX.div=cameraRotXYDiv*20;
 		}
 
 		//reset speed to v
@@ -83,8 +90,8 @@
 					}
 					if(sA>speedDef) sA-=0.02;
 					if(sA>speedMax) sA=speedMax;
-					if(io.mkb.manager.keys.Right) cameraRotZ+=1;
-					if(io.mkb.manager.keys.Left) cameraRotZ-=1;
+					if(io.mkb.manager.keys.Right) cameraRotZ+=cameraRotZSpeed;
+					if(io.mkb.manager.keys.Left) cameraRotZ-=cameraRotZSpeed;
 					if(cameraRotZ>360) cameraRotZ-=360;if(cameraRotZ<0) cameraRotZ+=360;
 					if(io.mkb.manager.drag.active){
 						WFRotX.setVal(io.mkb.manager.drag.drX);
@@ -118,10 +125,19 @@
 					merge(s0.RightStick,s1.RightStick,"x");
 					merge(s0.RightStick,s1.RightStick,"y");
 					
-					cameraRotZ+=s0.LeftStick.x*ff;
-						
-					WFRotX.setVal(s0.RightStick.x);
-					WFRotY.setVal(-s0.RightStick.y);
+					cameraRotZ+=s0.LeftStick.x*ff*cameraRotZSpeed;
+					
+					switch(cameraRotXYMode){
+						case "speed":
+						WFRotX.setVal(WFRotX.dest+s0.RightStick.x/50);
+						WFRotY.setVal(WFRotY.dest-s0.RightStick.y/50);
+						break;
+						case "fix":
+						default:
+						WFRotX.setVal(s0.RightStick.x);
+						WFRotY.setVal(-s0.RightStick.y);
+						break;
+					}
 						
 					var val=s0.LeftStick.y;
 					if(val>=0) sA=speedDef+val*(speedMax-speedDef);

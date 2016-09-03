@@ -72,6 +72,7 @@
 		public var landing:Object;
 		
 		public var saveImage:Object;
+		public var ppi:Number=130;
 		public var gui;
 		function ScreenManager(){
 			events= new EventDispatcher();
