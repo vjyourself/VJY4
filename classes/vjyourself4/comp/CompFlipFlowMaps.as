@@ -254,6 +254,38 @@
                         cn:"StarsAdditive"
                     }
 				},
+				 Okama:{
+                    name:"Jungle",
+                    thumbMC:"ThumbJungle",
+                    titleMC:"TitleJungle2",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:0,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:false,val:2},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                        {cn:"OkamaA",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                        //{cn:"MapWavesWhite",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:0.5},
+                        {cn:"OkamaB",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1}
+					],
+                    buildOrder:[1,0],
+					baseMap:{
+                        enabled:true,
+                        cn:"StarsAdditive"
+                    }
+				},
             Rhombus:{
                     name:"Rhombus",
                     thumbMC:"ThumbRhombus",
@@ -607,6 +639,7 @@
 			};
             
 		public static var mapsApp=[
+			maps.Okama,
             maps.Jungle,
             maps.LeoStripes,
 			maps.CarnivalGems,
