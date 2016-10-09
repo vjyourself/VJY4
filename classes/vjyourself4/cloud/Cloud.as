@@ -756,11 +756,15 @@ package vjyourself4.cloud{
 					if(texName!="") texB.push({name:texName,code:texName,id:W4D.texB[i]});
 				}
 				var texBack=[];
-				for(var i=0;i<W4D.texSkybox.length;i++){
+				var W4DTexBack;
+				if(W4D.texSkybox!=null) W4DTexBack=W4D.texSkybox;
+				if(W4D.texBack!=null) W4DTexBack=W4D.texBack;
+				for(var i=0;i<W4DTexBack.length;i++){
 					texName="";
-					for(var ii=0;ii<texAll.length;ii++) if(texAll[ii].id==W4D.texSkybox[i]) texName=texAll[ii].name;
-					if(texName!="") texBack.push({name:texName,code:texName,id:W4D.texSkybox[i]});
+					for(var ii=0;ii<texAll.length;ii++) if(texAll[ii].id==W4DTexBack[i]) texName=texAll[ii].name;
+					if(texName!="") texBack.push({name:texName,code:texName,id:W4DTexBack[i]});
 				}
+
 
 				// PUBLIC CONTAINERS
 				cont.light={l:lights,e:RLights.NS,m:RLights}
