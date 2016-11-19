@@ -2,6 +2,168 @@
     public class CompFlipFlowMaps{
         
         public static var maps:Object={
+            OkamaTropica:{
+                    name:"Jungle",
+                    thumbMC:"ThumbJungle",
+                    titleMC:"TitleJungle2",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:0,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:false,val:2},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                        {cn:"OkamaA",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                        //{cn:"MapWavesWhite",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:0.5},
+                        {cn:"OkamaB",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1}
+                    ],
+                    buildOrder:[1,0],
+                    baseMap:{
+                        enabled:true,
+                        cn:"StarsAdditive"
+                    }
+                },
+                OkamaGladiolus:{
+                    name:"Jungle",
+                    thumbMC:"ThumbJungle",
+                    titleMC:"TitleJungle2",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:0,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:false,val:2},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                        {cn:"MapBW3",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                        //{cn:"MapWavesWhite",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:0.5},
+                        {cn:"OkamaB",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1}
+                    ],
+                    buildOrder:[1,0],
+                    baseMap:{
+                        enabled:true,
+                        cn:"StarsAdditive"
+                    }
+                },
+                OkamaMemphis:{
+                    name:"Jungle",
+                    thumbMC:"ThumbJungle",
+                    titleMC:"TitleJungle2",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:0,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:false,val:2},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                        {cn:"MapBW4Inv",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                        //{cn:"MapWavesWhite",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:0.5},
+                        {cn:"MapOkamaC",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1}
+                    ],
+                    buildOrder:[1,0],
+                    baseMap:{
+                        enabled:true,
+                        cn:"StarsAdditive"
+                    }
+                },
+            D80_1:{
+                    name:"80s",
+                    thumbMC:"ThumbB",
+                    titleMC:"TitleLeoStripe",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:-40,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:true,val:3},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                    {cn:"MapBW3",dimX:3000,dimY:2000,mul:0.1,scale:1,alpha:1},
+                        {cn:"MapShape1",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1},
+                        {cn:"MapShape2",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1}
+                   // {cn:"MapAfroDance",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                   //{cn:"MapWavesBRed",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:1},
+                        
+                    ],
+                    baseMap:{
+                        enabled:false
+                    }
+                },
+                D80_2:{
+                    name:"80s",
+                    thumbMC:"ThumbB",
+                    titleMC:"TitleLeoStripe",
+                    clearAtStart:false,
+                    drawScale:1,
+                    drawScaleMobile:1,
+                    filter:{
+                        type:"ColorAdjust",
+                        delay:1,
+                        params:{
+                            brightness:-40,
+                            contrast:0,
+                            hue:-3,
+                            hueAni:{enabled:false},
+                            saturation:0
+                        }
+                    },
+                    blur:{enabled:false,val:3},
+                    glitchEffect:false,
+                    shiftEffect:{enabled:false,x:0,y:0},
+                    layers:[
+                    {cn:"MapBW4",dimX:3000,dimY:2000,mul:0.1,scale:1,alpha:1},
+                        {cn:"MapShape3",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1},
+                        {cn:"MapShape4",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1}
+                   // {cn:"MapAfroDance",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
+                   //{cn:"MapWavesBRed",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:1},
+                        
+                    ],
+                    baseMap:{
+                        enabled:false
+                    }
+                },
             Afro1:{
                     name:"Afro",
                     thumbMC:"ThumbB",
@@ -254,38 +416,7 @@
                         cn:"StarsAdditive"
                     }
 				},
-				 Okama:{
-                    name:"Jungle",
-                    thumbMC:"ThumbJungle",
-                    titleMC:"TitleJungle2",
-                    clearAtStart:false,
-                    drawScale:1,
-                    drawScaleMobile:1,
-                    filter:{
-                        type:"ColorAdjust",
-                        delay:1,
-                        params:{
-                            brightness:0,
-                            contrast:0,
-                            hue:-3,
-                            hueAni:{enabled:false},
-                            saturation:0
-                        }
-                    },
-                    blur:{enabled:false,val:2},
-                    glitchEffect:false,
-                    shiftEffect:{enabled:false,x:0,y:0},
-                    layers:[
-                        {cn:"OkamaA",dimX:3000,dimY:2000,mul:1,scale:1,alpha:1},
-                        //{cn:"MapWavesWhite",dimX:3000,dimY:2000,mul:0.5,scale:1,alpha:0.5},
-                        {cn:"OkamaB",dimX:3000,dimY:2000,mul:-1,scale:1,alpha:1}
-					],
-                    buildOrder:[1,0],
-					baseMap:{
-                        enabled:true,
-                        cn:"StarsAdditive"
-                    }
-				},
+				 
             Rhombus:{
                     name:"Rhombus",
                     thumbMC:"ThumbRhombus",
@@ -639,7 +770,14 @@
 			};
             
 		public static var mapsApp=[
-			maps.Okama,
+            maps.OkamaTropica,
+            maps.OkamaMemphis,
+            maps.OkamaGladiolus,
+            
+
+            maps.D80_2,
+            maps.D80_1,
+			
             maps.Jungle,
             maps.LeoStripes,
 			maps.CarnivalGems,

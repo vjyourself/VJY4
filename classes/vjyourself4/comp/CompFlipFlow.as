@@ -657,6 +657,7 @@
 				for(var i=0;i<layers.length;i++){
 					var ll=layers[i];
 					var pole=(i%2)*2-1;
+					pole=ll.m.mul;
 					ll.obj.setScale(drawScale);
 					switch(inputMode){
 						//free move (not controlled)
