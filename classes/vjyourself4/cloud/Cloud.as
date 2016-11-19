@@ -210,9 +210,11 @@ package vjyourself4.cloud{
 			var firstActive=false;
 			if(p.world4!=null) for(var i=0;i<p.world4.length;i++) if(p.world4[i].active){
 				cloud2.online=p.world4[i].online;
-				if(cloud2.online) packages.push({url:"export/world4/"+p.world4[i].name,cloud:2});
-				else packages.push({url:p.world4[i].name+".json",cloud:2});
-				log(1,"Active World4 : "+p.world4[i].name);
+				var nnn =""; if(p.world4[i].name!=null) nnn=p.world4[i].name;
+				if(p.world4[i].n!=null) nnn=p.world4[i].n;
+				if(cloud2.online) packages.push({url:"export/world4/"+nnn,cloud:2});
+				else packages.push({url:nnn+".json",cloud:2});
+				log(1,"Active World4 : "+nnn);
 				firstActive=true;
 			}
 
@@ -786,6 +788,7 @@ package vjyourself4.cloud{
 				
 				trace("*****************************************************************");
 				trace("World4:"+World4.m.n);
+				trace("startScene:"+World4.d.startScene);
 				trace("texture "+cont.texture.l.length);
 				trace("ImageSequence "+cont.ImageSequence.l.length);
 

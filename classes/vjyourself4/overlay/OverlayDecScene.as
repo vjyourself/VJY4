@@ -77,11 +77,13 @@
 			update();
 			tfJson.visible=true;
 			var ssd=TransJson.clone(sd);
-			ssd.state.back={preset:"BackBoxBallGrid",params:ssd.state.back};
-			ssd.state.mid={preset:"PathSpace",params:ssd.state.mid};
-			ssd.state.fore={preset:"ForeOverlayAni",params:ssd.state.fore};
-
-			tfJson.text=JSON.stringify(ssd,null,4);
+			var output=ssd.state;
+			output.back={preset:"BackBoxBallGrid",params:output.back};
+			output.mid={preset:"PathSpace",params:output.mid};
+			output.fore={preset:"ForeOverlayAni",params:{}};
+		
+			
+			tfJson.text=JSON.stringify(output,null,4);
 		}
 		var sd:Object;
 		public function update(){

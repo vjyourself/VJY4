@@ -48,12 +48,17 @@
 			if(n=="scene") setScene(v);
 		}
 		public function setScene(s,$flags=null){
+			trace("SETSCENE "+s);
 			if($flags==null)$flags={};
+
+			if( s==null) s="All";
 			
 			if(s is String){
+				if(s=="") s="All";
 				setScene(ns.cloud.RScenes.NS[s],$flags);
 				return;
 			}
+
 			currScene=TransJson.clone(s);
 
 			log(1,"setScene: "+currScene.name);

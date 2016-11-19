@@ -100,6 +100,8 @@
 			for(var i in anis){
 				anis[i].ani.scaleX=sX;
 				anis[i].ani.scaleY=sY;
+				anis[i].ani.x=(ns.screen.wDimX-aniWidth*sX)/2;
+				anis[i].ani.y=(ns.screen.wDimY-aniHeight*sY)/2;
 			}
 			
 		}

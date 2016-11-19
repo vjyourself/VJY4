@@ -112,6 +112,10 @@
 			}
 			if(sync=="tap"){
 				stage.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
+				if(tapParams.bpm!=null){
+					bpm=tapParams.bpm;
+					tack = 60/bpm*1000;
+				}
 			}
 			T=[0,0,0,0,0];
 			C=[0,0,0,0,0];
